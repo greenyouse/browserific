@@ -1,4 +1,4 @@
-* Learnable Programming
+# Learnable Programming
 The environment should allow the learner to:
 
     read the vocabulary -- what do these words mean?
@@ -13,8 +13,9 @@ The language should provide:
     decomposition -- how do I break down my thoughts into mind-sized pieces?
     recomposition -- how do I glue pieces together?
     readability -- what do these words mean?
-* Smalltalk Ideas
-** General
+    
+# Smalltalk Ideas
+## General
 
     Personal Mastery: If a system is to serve the creative spirit,
     it must be entirely comprehensible to a single individual.
@@ -23,7 +24,7 @@ The language should provide:
     unchangeable parts; those parts should be as general as possible;
     and all parts of the system should be held in a uniform framework.
 
-** Language
+## Language
 
     Purpose of Language: To provide a framework for communication.
 
@@ -31,7 +32,7 @@ The language should provide:
     internal models, external media, and the interaction between these
     in both the human and the computer.
 
-** Comunicating Objects
+## Comunicating Objects
 
     Objects: A computer language should support the concept of "object"
     and provide a uniform means for referring to the objects in its
@@ -46,7 +47,7 @@ The language should provide:
     Uniform Metaphor: A language should be designed around a powerful
     metaphor that can be uniformly applied in all areas.
 
-** Organization
+## Organization
 
     Modularity: No component in a complex system should depend on the
     internal details of any other component.
@@ -67,7 +68,7 @@ The language should provide:
     Virtual Machine: A virtual machine specification establishes a
     framework for the application of technology.
 
-** UI
+## UI
 
     Reactive Principle: Every component accessible to the user should
     be able to present itself in a meaningful way for observation and
@@ -75,12 +76,13 @@ The language should provide:
 
     Operating System: An operating system is a collection of things
     that don't fit into a language. There shouldn't be one.
-* Mindstorm
 
-"We are in the process of digging ourselves into an anachronism by
+# Mindstorm
+
+`"We are in the process of digging ourselves into an anachronism by
 preserving practices that have no rational basis beyond their
 historical roots in an earlier period of technological and theoretical
-development."
+development."`
 
 Ex: BASIC was the go-to language for teaching programming to newbies
 even though there were much easier languages that could offer greater
@@ -91,17 +93,17 @@ technological advancements had done away with the original computational
 limitiations that caused BASIC to be used in the first place.
 
 
-;; Modern extension/app development should be packaged into a uniform build
-;; process and apps should be data-driven, easy to build, built in pieces
-;; (swappable widgets/modules), feature complete (ability to call _all_ native
-;; features, not just LCD of various systems, using a protocol similar to
-;; Common LISP feature expressions), abstract (don't program like C or JS,
-;; go higher-level and leave the details to the build tool), simple debugging
-;; (build errors and source maps?),
+Modern extension/app development should be packaged into a uniform build
+process and apps should be data-driven, easy to build, built in pieces
+(swappable widgets/modules), feature complete (ability to call _all_ native
+features, not just a least common denominator of various systems, using a 
+protocol similar to Common LISP feature expressions), abstract (don't program
+like C or JS, go higher-level and leave the details to the build tool), 
+simple debugging (build errors and source maps?),
 
-;; Having an extensible build tool would be nice (add your own plugins that
-;; hook into the build process to do things like offering new ways to build
-;; widgets or process data) but this is hard to reason about how to implement.
-;; People will just need to conform to my library API and send suggestions on
-;; ways to change it for now. What I mean by extensible build tool is something
-;; similar to LISP macros, Smalltalk objects, or Cordova/PhoneGap plugins.
+Having an extensible build tool would be nice (add your own plugins that
+hook into the build process to do things like offering new ways to build
+widgets or process data) but this is hard to reason about how to implement.
+People will just need to conform to my library API and send suggestions on
+ways to change it for now. What I mean by extensible build tool is something
+similar to LISP macros, Smalltalk objects, or Cordova/PhoneGap plugins.

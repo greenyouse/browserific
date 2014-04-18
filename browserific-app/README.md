@@ -1,6 +1,6 @@
 # Browserific-app template
 --------------------------
-A Leiningen template for ClojureScript browser extensions
+A Leiningen template for ClojureScript app developement.
 
 
 ## Status

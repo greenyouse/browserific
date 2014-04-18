@@ -12,8 +12,8 @@ usable yet. I set up a [Trello](https://trello.com/b/hDlRgiHo/browserific) board
 to organize the developement workflow, foster ideas, and discuss some of the
 design decisions. If you're thinking of contributing please join the board.
 
-The docs folder will (eventualy) have design ideas, docs, and dev notes but 
-right now it doesn't have anything very useful in it.
+The docs folder has some helpful notes on browser details and an overview of the 
+project design.
 
 
 ## License

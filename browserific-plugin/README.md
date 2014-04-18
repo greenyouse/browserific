@@ -1,7 +1,7 @@
-# browserific-plugin
+# Browserific-plugin
 --------------------
 
-A Leiningen plugin to do many wonderful things.
+A Leiningen plugin for ClojureScript app developement.
 
 ## Status
 ---------
