@@ -1,0 +1,10 @@
+{:name {{name}}
+ :author {:author-name "" :email "" :url ""}
+ :version "0.1.0-SNAPSHOT"
+ :description "FIXME: write this!"
+ :extension {
+             :browsers ["chrome" "firefox" "opera" "safari"]
+             :activations []
+             :content {}
+             :access {}
+             :update-url []}}

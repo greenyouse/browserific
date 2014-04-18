@@ -1,0 +1,1 @@
+(ns browserific.chrome.core)

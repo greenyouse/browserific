@@ -1,0 +1,25 @@
+{"author": "",
+ "contributors": "",
+ "dependencies": "" or [...], // string or array of strings
+ "description": "",
+ "harnessClassID": ...,  // random GUID (needed?)
+ "homepage": "", // addon's website
+ "icon": 	"", // path to icon, default icon.png, 48x48
+ "icon64": "", // defaults to icon64.png
+ "id": ..., // GUID of the addon
+ "lib": "", // should be "lib" location
+ "license": "",
+ "main": "", // should be "main"
+ "name": "", // no spaces periods
+ "packages": "" or [...], // string or array of strings pointing to dirs with additional packages (shouldn't need)
+ "permissions": {"private-browsing": bool,
+                 "cross-domain-content": [""]},
+ "preferences": [...], // JSON of name, type, value, title, description
+ "preferences-branch": "", // for alternative prefs location (shouldn't need)
+ "tests": "", // optional JS tests (shouldn't need)
+ "title": "", // overrides name (necessary?)
+ "translators": [""], // array of strings lising translators (translations?)
+ "version": ""
+}
+
+// Required: name, (author?), version, id, (license?)

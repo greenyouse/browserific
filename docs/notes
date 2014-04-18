@@ -1,0 +1,37 @@
+# Testing
+For now just write tests with clojurescript.test, then open a bREPL
+and evaluate the test file to catch errors. WORK ON IMPROVING THIS!
+
+Cordova Notes:
+
+
+Custom pub-sub "channel" that can have functions subscribed to it
+This object is used to define and control firing of events for
+cordova initialization, as well as for custom events thereafter.
+
+The order of events during page load and Cordova startup is as follows:
+
+onDOMContentLoaded*         Internal event that is received when the web page is loaded and parsed.
+onNativeReady*              Internal event that indicates the Cordova native side is ready.
+onCordovaReady*             Internal event fired when all Cordova JavaScript objects have been created.
+onDeviceReady*              User event fired to indicate that Cordova is ready
+onResume                    User event fired to indicate a start/resume lifecycle event
+onPause                     User event fired to indicate a pause lifecycle event
+onDestroy*                  Internal event fired when app is being destroyed (User should use window.onunload event, not this one).
+
+The events marked with an * are sticky. Once they have fired, they will stay in the fired state.
+All listeners that subscribe after the event is fired will be executed right away.
+
+The only Cordova events that user code should register for are:
+     deviceready           Cordova native code is initialized and Cordova APIs can be called from JavaScript
+     pause                 App has moved to background
+     resume                App has returned to foreground
+
+Listeners can be registered as:
+     document.addEventListener("deviceready", myDeviceReadyListener, false);
+     document.addEventListener("resume", myResumeListener, false);
+     document.addEventListener("pause", myPauseListener, false);
+
+The DOM lifecycle events should be used for saving and restoring state
+     window.onload
+     window.onunload

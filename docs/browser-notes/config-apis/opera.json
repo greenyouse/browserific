@@ -1,0 +1,75 @@
+{
+    // Required
+    "name": "My Extension",
+    "version": "versionString",
+    "manifest_version": 2,
+
+    // Recommended
+    "description": "A plain text description",
+    "developer": { "name": "John Doe",
+                   "url": "http://www.example.org" },
+    "icons": { "16": "icon16.png",
+               "48": "icon48.png",
+               "128": "icon128.png" },
+    "default_locale": "en",
+
+    // Pick one (or none)
+    "browser_action": {
+        "default_icon": {                    // optional
+            "19": "images/icon19.png",           // optional
+            "38": "images/icon38.png"            // optional
+        },
+        "default_title": "Google Mail",      // optional; shown in tooltip
+        "default_popup": "popup.html"        // optional
+    },
+    "page_action": {
+        "default_icon": {                    // optional
+            "19": "images/icon19.png",           // optional
+            "38": "images/icon38.png"            // optional
+        },
+        "default_title": "Google Mail",      // optional; shown in tooltip
+        "default_popup": "popup.html"        // optional
+    },
+
+// Add any of these that you need
+    "background": {"scripts": ["background.js"],
+                   "persistent": false
+                  },
+    "content_scripts": [
+        {
+            "matches": ["http://www.google.com/*"],
+            "css": ["mystyles.css"],
+            "js": ["jquery.js", "myscript.js"],
+            "exclude-matches": ["http://malware.net"],
+            "run_at": "document_start", // document_end or document_idle
+            "all_frames": true,
+            "include_globs": ["*nytimes.com/???s/*"],
+            "exclude_globs": ["*ads*"]
+        } ...],
+    "content_security_policy": "policyString",
+    "homepage_url": "http://path/to/homepage",
+    "incognito": "spanning" or "split",
+    "key": "publicKey",
+    "options_page": "aFile.html",
+    "permissions":  [
+        "tabs",
+        "http://www.google.com/*",
+        "https://www.something-else.com",
+            ...],
+    "requirements": { "3D": {
+        "features": ["webgl"]
+    } },
+    "update_url": "http://path/to/updateInfo.xml",
+    "web_accessible_resources": [ "images/my-awesome-image1.png",
+                                  "images/my-amazing-icon1.png",
+                                  "style/double-rainbow.css",
+                                  "script/double-rainbow.js" ],
+    "sandbox": [  "pages": [
+        "page1.html",
+        "directory/page2.html"
+    ]
+                  // content_security_policy is optional.
+        "content_security_policy":
+             "sandbox allow-scripts; script-src https://www.google.com"
+               ], ...
+}
