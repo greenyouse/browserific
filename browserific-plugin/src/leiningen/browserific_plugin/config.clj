@@ -71,27 +71,97 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Config Builders
-;;; NOTE: this is a work in progress, not done at all yet
+;;; FIXME: I'm including full paths for common options so I can edit config.edn names
+;;;  without having the system break (otherwise it won't output correct JSON names).
+;;;  Eventually we should take lots of ! nesting out to make this more succinct.
 
-; FIXME: add _all_ available options to these config generators!
-; FIXME: use js/write instead so output is readable
+;;; TODO: Could we give an all option that, if it exists, takes precedence over anything else?
+;;;  To allow cross-browser apps have a less verbose config.edn.
+
+;; NOTE: :key isn't really necessary so we'll leave it out for now (chrome + opera)
+;; we're omitting :plugins because that is being phased out
+;; FIXME: add _all_ available options to these config generators!
+;; FIXME: use js/write instead so output is readable
 (defn- chrome-config
   "Creates the chrome extension config files using config.edn"
   []
   (spit "resources/extension/chrome/manifest.json"
-        (js/write-str {})))
+        (js/write-str (config-reader {:name [:name]
+                :version [:version]
+                :manifest-version ^{:browserific "config"} [2]
+                :description [:description]
+                :developer!name [:author :author-name]
+                :developer!url [:author :url]
+                :icons [:extensions :icons :chrome]
+                :default-locale [:default-locale]
+                :action!type [:extensions :action :type]
+                :action!default-icon [:extensions :action :default-icon :chrome]
+                :action!default-title [:extensions :action :default-title]
+                :action!default-popup [:extensions :action :default-popup]
+                :background!scripts [:extensions :background :scripts]
+                :background!persistent [:extensions :background :persistent]
+                :content-scripts!matches [:extensions :content :matches]
+                :content-scripts!exclude [:extensions :content :exclude]
+                :content-scripts!js [:extensions :content :js]
+                :content-scripts!css [:extensions :content :css]
+                :homepage [:extensions :homepage]
+                :incognito ^{:browserific "config"} ["spanning"] ; split is for legacy
+                :options-page [:extensions :options-page]
+                :permissions [:extensions :permissions]
+                :requirements [:extensions :extra :shared :requirements]
+                :web-accessible-resources [:extensions :web-accessible-resources]
+                :update-url [:extensions :update-url :chrome]
+
+                :chrome-ui-overrides [:extensions :extra :chrome :chrome-ui-overrides]
+                :chrome-settings-overrides [:extensions :extra :chrome :chrome-settings-overrides]
+                :chrome-url-overrides [:extensions :extra :chrome :chrome-url-overrides]
+                :commands [:extensions :extra :chrome :commands]
+                :current-locale [:extensions :extra :chrome :current-locale]
+                :devtools_page [:extensions :extra :chrome :devtools_page]
+                :externally-connectable [:extensions :extra :chrome :externally-connectable]
+                :file-browser-handlers [:extensions :extra :chrome :file-browser-handlers]
+                :import [:extensions :extra :chrome :import]
+                :input-components [:extensions :extra :chrome :input-components]
+                :minimum-chrome-version [:extensions :extra :chrome :minimum-chrome-version]
+                :nacl-modules [:extensions :extra :chrome :nacl-modules]
+                :oauth2 [:extensions :extra :chrome :oauth2]
+                :offline-enabled [:extensions :extra :chrome :offline-enabled]
+                :omnibox [:extensions :extra :chrome :omnibox]
+                :optional-permissions [:extensions :extra :chrome :optional-permissions]
+                :platforms [:extensions :extra :chrome :platforms]
+                :script-badge [:extensions :extra :chrome :script-badge]
+                :short-name [:extensions :extra :chrome :short-name]
+                :signature [:extensions :extra :chrome :signature]
+                :spellcheck [:extensions :extra :chrome :spellcheck]
+                :storage [:extensions :extra :chrome :storage]
+                :system-indicator [:extensions :extra :chrome :system-indicator]
+                :tts-engine [:extensions :extra :chrome :tts-engine]
+                :sandbox [:extensions :extra :shared :sandbox]}))))
 
 (defn- firefox-config
   "Creates the firefox config files using config.edn"
   []
   (spit "resources/extension/firefox/package.json"
-        (js/write-str {:name (config-get [:name])
-                       :title (config-get [:name])
-                       :version (config-get [:version])
-                       :id "" ; TODO: Generate valid ids here
-                       :description (config-get [:description])
-                       :author (config-get [:author :author-name])
-                       :license (config-get [:license])})))
+        (js/write-str (config-reader {:author [:author :author-name]
+                                      :contributors [:author :contributors]
+                                      :dependencies [:extensions :extra :firefox :dependencies]
+                                      :fullName [:name]
+                                      :homepage [:extensions :homepage]
+                                      :icon [:extensions :icons :firefox :48]
+                                      :icon64 [:extensions :icons :firefox :64]
+                                      ;; :id []  TODO: generate this
+                                      :lib [:extensions :extra :firefox :lib]
+                                      :license [:license]
+                                      :main [:extensions :extra :firefox :main]
+                                      :name [:extensions :extra :firefox :name]
+                                      :packages [:extensions :extra :firefox :packages]
+                                      :permissions!private-browsing [:extensions :private]
+                                      :permissions!cross-domain-content [:extensions :extra :firefox :permissions]
+                                      :preferences [:extensions :extra :firefox :preferences]
+                                      :tests [:extensions :extra :firefox :tests]
+                                      :title [:extensions :extra :firefox :title]
+                                      :translators [:extensions :extra :firefox :translators]
+                                      :version [:version]}))))
 
 (defn- opera-config
   "Creates the opera config files using config.edn"
@@ -112,15 +182,16 @@
                         :action!default-popup [:extensions :action :default-popup]
                         :background!scripts [:extensions :background :scripts]
                         :background!persistent [:extensions :background :persistent]
-                        :web-accessible-resources [:extensions :accessible-content]
                         :content-scripts!matches [:extensions :content :matches]
                         :content-scripts!exclude [:extensions :content :exclude]
                         :content-scripts!js [:extensions :content :js]
                         :content-scripts!css [:extensions :content :css]
                         :homepage [:extensions :homepage]
-                        :incognito [:extensions :private]
+                        :incognito ^{:browserific "config"} ["spanning"] ; split is for legacy
                         :options-page [:extensions :options-page]
                         :permissions [:extensions :permissions]
+                        :requirements [:extensions :extra :shared :requirements]
+                        :web-accessible-resources [:extensions :web-accessible-resources]
                         :update-url [:extensions :update-url :opera]}))))
 
 (defn safari-config
