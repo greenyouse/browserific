@@ -40,7 +40,7 @@
             "matches": ["http://www.google.com/*"],
             "css": ["mystyles.css"],
             "js": ["jquery.js", "myscript.js"],
-            "exclude-matches": ["http://malware.net"],
+            "exclude-matches": ["http://www.malware.net"],
             "run_at": "document_start", // document_end or document_idle
             "all_frames": true,
             "include_globs": ["*nytimes.com/???s/*"],
@@ -67,9 +67,9 @@
     "sandbox": [  "pages": [
         "page1.html",
         "directory/page2.html"
-    ]
+    ],
                   // content_security_policy is optional.
-        "content_security_policy":
-             "sandbox allow-scripts; script-src https://www.google.com"
+                  "content_security_policy":
+                  "sandbox allow-scripts; script-src https://www.google.com"
                ], ...
 }

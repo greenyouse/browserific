@@ -5,8 +5,7 @@
  :version "0.1.0-SNAPSHOT"
  :license ""
  :description "FIXME: write this!"
- :access-permissions ["https://www.my.server.com/stuff" ; files only?
-                      "https://www.another-server.com"]
+ ;; would like full sites here but being conservative for xss reasons
  :default-locale "en"
  :extensions {
               :browsers ["firefox" "chrome" "opera" "safari"]
@@ -14,7 +13,7 @@
               :activations [ ; different url addresses can load different namespaces of the app
                             {:urls ["https://www.example.com/*"
                                     "http://www.example.com/*"]
-                             :namespaces [(str "tester" ".example")]}]
+                             :scripts ["example-code.js"]}]
               :private true
 
               :action {:type "browser" ; Either browser or page
@@ -25,6 +24,9 @@
                                       :safari {:19 "my-safari-icon19.png"}}
                        :default-title "example title"
                        :default-popup "popup.html"}
+
+              :background {:scripts ["background.js"]
+                           :persistent false}
 
               ;; For firefox use inject pageMod at compile time
               :content {:matches ["http*www.woot.com"]
@@ -39,10 +41,21 @@
                               :128 "my-opera-icon128.png"}
                       :safari {:128 "my-safari-icon128.png"}}
 
-              :update-url [:chrome "https://your-repo.com/somewhere/chrome"
+              :homepage "https://www.my-cool-site.com"
+
+              :options-page "options.html"
+
+              :permissions ["tabs"
+                            "https://www.wahoo.com/"
+                            "https://www.yoogle.com/"]
+
+              :update-url {:chrome "https://your-repo.com/somewhere/chrome"
                            :firefox "https://your-repo.com/somewhere/firefox"
                            :opera "https://your-repo.com/somewhere/opera"
-                           :safari "https://your-repo.com/somewhere/safari"]}
+                           :safari "https://your-repo.com/somewhere/safari"}
+
+              :accessible-content ["https://www.my.server.com/stuff.js"
+                                   "https://www.another-server.com/woot.img"]}
 
  :mobile {
           :id "com.example.tester"
@@ -60,6 +73,9 @@
                             "android/icon-72-hdpi.png"
                             "android/icon-96-xhdpi.png"]
                   :wp8 []]
+
+          :permissions ["https://www.wahoo.com/"
+                        "https://www.yoogle.com/"]
 
           :preferences {:Fullscreen "false"
                         :Orientation "default"
