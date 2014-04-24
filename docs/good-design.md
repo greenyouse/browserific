@@ -79,10 +79,12 @@ The language should provide:
 
 # Mindstorm
 
-`"We are in the process of digging ourselves into an anachronism by
+```
+"We are in the process of digging ourselves into an anachronism by
 preserving practices that have no rational basis beyond their
 historical roots in an earlier period of technological and theoretical
-development."`
+development."
+```
 
 Ex: BASIC was the go-to language for teaching programming to newbies
 even though there were much easier languages that could offer greater

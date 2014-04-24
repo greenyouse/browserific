@@ -1,5 +1,6 @@
 {:name "tester"
  :author {:author-name "me"
+          :author-id "me.woot.corp"
           :email "woot@tester.com"
           :url "http://www.testme.com"
           :contributors ["the lambda monster"
@@ -11,8 +12,8 @@
  :extensions {
               :browsers ["firefox" "chrome" "opera" "safari"]
 
-              :activations [ ; different url addresses can load different namespaces of the app
-                            {:urls ["https://www.example.com/*"
+              ;; different url addresses can load different namespaces of the app
+              :activations [{:urls ["https://www.example.com/*"
                                     "http://www.example.com/*"]
                              :scripts ["example-code.js"]}]
               :private true
@@ -141,6 +142,35 @@
                                 :title "even moar titles"
                                 :translators ["frank-the-translator"
                                               "jennie-the-translita"]}
+
+                      ;; FIXME: we can't require users to enter tokens like -.- redo safari later
+                      :safari {:bars [{:Filename "bar.html"
+                                       :Identifier "some bar id"
+                                       :Label "some bar label"}]
+                               :context-items [{:Command "console.log(\"woohoo it's context!\");"
+                                                :Identifier "some wooting context id"
+                                                :Title "I show up on hover"}]
+                               :menus [{:Identifier "my cool menu"  ; FIXME: check other menu options!
+                                        :Menu-.-Items [{:Command "yourCommand.menu.here();"
+                                                        :Disabled true
+                                                        :Identifier "my little menu item"
+                                                        :Title "menu item woot"}]}]
+                               :popovers [{:Filename "popover.html"
+                                           :Height 200
+                                           :Width 200
+                                           :Identifier "super neat popover"}]
+                               :toolbar [{:Command "someToolbar.command();" ; tokenize "Toolbar Items"
+                                          :Identifier "woot.toolbar"
+                                          :Image "toolbar.png"
+                                          :Label "some-label"
+                                          :Menu "my cool menu"
+                                          :Pallete "my cool tool"
+                                          :Popover "super neat popover"
+                                          :Tool-.-tip "hover to see this"}] ; tokenize "Tool Tip"
+                               :database-quota 1048576 ;tokenize "Database Quota"
+                               :start-script "adblocker.js" ;fired before dom is loaded, usually to block unwanted content (ads)
+                               :access-level "Some" ; None/Some/All
+                               }
 
                       :shared {:requirements {:3D {:features ["webgl"]}}
                                :sandbox {:page ["page1.html"

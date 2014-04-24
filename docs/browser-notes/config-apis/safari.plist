@@ -2,22 +2,149 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-   <key>Extension Updates</key>
-   <array>
-     <dict>
-       <key>CFBundleIdentifier</key>
-       <string>com.yourCompany.safari.yourExtensionName</string>
-       <key>Developer Identifier</key>
-       <string>YourCertificateID</string>
-       <key>CFBundleVersion</key>
-       <string>Your current bundle version</string>
-       <key>CFBundleShortVersionString</key>
-       <string>Your current display version</string>
-       <key>URL</key>
-       <string>Your-.safariextz-URL</string>
-     </dict>
-   </array>
+	<key>Author</key>
+	<string>me</string>
+	<key>Builder Version</key>
+	<string>6534.59.10</string>
+	<key>CFBundleDisplayName</key>
+	<string>tester</string>
+	<key>CFBundleIdentifier</key>
+	<string>com.me.woot</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleShortVersionString</key>
+	<string>1.0</string>
+	<key>CFBundleVersion</key>
+	<string>1</string>
+	<key>Chrome</key>
+	<dict>
+		<key>Bars</key>
+		<array>
+			<dict>
+				<key>Filename</key>
+				<string>bar.html</string>
+				<key>Identifier</key>
+				<string>some-bar-id</string>
+				<key>Label</key>
+				<string>some-bar</string>
+			</dict>
+		</array>
+		<key>Context Menu Items</key>
+		<array>
+			<dict>
+				<key>Command</key>
+				<string>console.log("context pressed!");</string>
+				<key>Identifier</key>
+				<string>context-menu-id</string>
+				<key>Title</key>
+				<string>hover-for-context-menu</string>
+			</dict>
+		</array>
+		<key>Database Quota</key>
+		<real>1048576</real>
+		<key>Menus</key>
+		<array>
+			<dict>
+				<key>Identifier</key>
+				<string>woot.menu</string>
+				<key>Menu Items</key>
+				<array>
+					<dict>
+						<key>Command</key>
+						<string>console.log("hi");</string>
+						<key>Disabled</key>
+						<true/>
+						<key>Identifier</key>
+						<string>woot.menu.hello</string>
+						<key>Title</key>
+						<string>hello</string>
+					</dict>
+				</array>
+			</dict>
+		</array>
+		<key>Popovers</key>
+		<array>
+			<dict>
+				<key>Filename</key>
+				<string>popover.html</string>
+				<key>Height</key>
+				<real>200</real>
+				<key>Identifier</key>
+				<string>woot.popover</string>
+				<key>Width</key>
+				<real>200</real>
+			</dict>
+		</array>
+		<key>Toolbar Items</key>
+		<array>
+			<dict>
+				<key>Command</key>
+				<string>console.log("toolbar pressed!");</string>
+				<key>Identifier</key>
+				<string>woot.toolbar</string>
+				<key>Image</key>
+				<string>toolbar.png</string>
+				<key>Label</key>
+				<string>some-label</string>
+				<key>Menu</key>
+				<string>woot.menu</string>
+				<key>Palette Label</key>
+				<string>I'm a palette label</string>
+				<key>Popover</key>
+				<string>woot.popover</string>
+				<key>Tool Tip</key>
+				<string>hover to see this</string>
+			</dict>
+		</array>
+	</dict>
+	<key>Content</key>
+	<dict>
+		<key>Blacklist</key>
+		<array>
+			<string>http://www.evil-site.com/*</string>
+		</array>
+		<key>Scripts</key>
+		<dict>
+			<key>End</key>
+			<array>
+				<string>js/stop.js</string>
+			</array>
+			<key>Start</key>
+			<array>
+				<string>js/start.js</string>
+			</array>
+		</dict>
+		<key>Stylesheets</key>
+		<array>
+			<string>css/stylin.css</string>
+		</array>
+		<key>Whitelist</key>
+		<array>
+			<string>https://www.google.com/*</string>
+			<string>https://www.yahoo.com/woot/*</string>
+		</array>
+	</dict>
+	<key>Description</key>
+	<string>testing for safari extension dev</string>
+	<key>ExtensionInfoDictionaryVersion</key>
+	<string>1.0</string>
+	<key>Permissions</key>
+	<dict>
+		<key>Website Access</key>
+		<dict>
+			<key>Allowed Domains</key>
+			<array>
+				<string>https://www.woot.com</string>
+			</array>
+			<key>Include Secure Pages</key>
+			<true/>
+			<key>Level</key>
+			<string>Some</string>
+		</dict>
+	</dict>
+	<key>Update Manifest URL</key>
+	<string>http://www.my-update-site.com/safari</string>
+	<key>Website</key>
+	<string>http://www.my-cool-site.com</string>
 </dict>
 </plist>
-
-<!-- do more work here to get all the parts, not finished yet -->

@@ -52,8 +52,7 @@ compiled by the ClojureScript compiler.
 
 `src -> intermediate (auto-generated) -> js files`
 
-Unfortunately browser extensions usually have multiple JS files for dom, a `content
-script`,  and the browser chrome, a `background/event page`. The content script
+Unfortunately browser extensions usually have a JS file for dom, a `content script`, and the browser chrome, a `background/event page`. The content script
 sends messages using JS callbacks over `ports`. This would be great to abstract
 away with the library later and `^:export` hints should be put on the callback 
 functions so advanced compilation can still be used.
