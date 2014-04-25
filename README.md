@@ -17,6 +17,7 @@ project design.
 ## License
 
 Copyright © 2014 Ed Babcock
+
 Distributed under the Eclipse Public License either version 1.0.
 
 Apache Cordova is used for this project and distributed under the Apache
