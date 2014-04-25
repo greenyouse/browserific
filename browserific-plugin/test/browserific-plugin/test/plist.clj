@@ -1,4 +1,4 @@
-(ns plist-test
+(ns browserific-plugin.test.plist
   (:require [leiningen.browserific-plugin.helpers.plist :refer :all]
             [clojure.test :refer :all]))
 

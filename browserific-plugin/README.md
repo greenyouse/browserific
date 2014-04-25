@@ -1,15 +1,12 @@
 # Browserific-plugin
---------------------
 
 A Leiningen plugin for ClojureScript app developement.
 
 ## Status
----------
 
 Currently building config file generators.
 
 ## License
-----------
 
 Copyright © 2014 Ed Babcock
 

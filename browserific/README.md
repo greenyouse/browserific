@@ -1,11 +1,9 @@
 # Browserific
--------------
 
 The library for building apps.
 
 
 ## Status
----------
 
 Not started yet.
 

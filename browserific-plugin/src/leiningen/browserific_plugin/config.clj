@@ -83,7 +83,6 @@
 
 ;; NOTE: :key isn't really necessary so we'll leave it out for now (chrome + opera)
 ;; we're omitting :plugins because that is being phased out
-;; FIXME: add _all_ available options to these config generators!
 ;; FIXME: use js/write (or something better) instead so output is readable
 (defn- chrome-config
   "Creates the chrome extension config files using config.edn"
@@ -202,45 +201,41 @@
            :web-accessible-resources [:extensions :web-accessible-resources]
            :update-url [:extensions :update-url :opera]}))))
 
-(defn safari-config
+;; TODO: make sure that plist output order is not imporant
+(defn- safari-config
   "Creates the safari config files using config.edn"
   []
   (let [doctype "<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">"]
     (spit "resources/extension/safari/Info.plist"
-          (xml/indent-str (xml/sexp-as-element
-                           [:widget {:id (config-get [:mobile :id])
-                                     :version (config-get [:version])}])))))
-
-
-;; TODO: inject special safari header into the plist
-;; TODO: formating this into the DSL isn't critical but it may be nice for
-;; when the configs need to be tweaked, plus it's good programming practice
-(p/plist)
-(config-reader
- {:author [:author :author-name]
-  :Builder-.-Version ^{:browserific "config"} ["6534.59.10"] ; Shouldn't matter
-  :CFBundleDisplayName [:name]
-  :CFBundleIdentifier [:author :author-id]
-  :CFBundleInfoDictionaryVersion ^{:browserific "config"} ["6.0"] ; Shouldn't matter
-  :CFBundleShortVersionString [:version]
-  :CFBundleVersion ^{:browserific "config"} ["1.0"]; FIXME: lookup what this value signifies
-  :Chrome!Bars [:extensions :extra :safari :bars]
-  :Chrome!Context-.-Menu-.-Items [:extensions :extra :safari :context-items]
-  :Chrome!Database-.-Quota [:extensions :extra :safari :database-quota]
-  :Chrome!Menus [:extensions :extra :safari :menus]
-  :Content!Blacklist [:extensions :content :exclude]
-  :Content!Scripts!Start[:extensions :extra :safari :start-script]
-  :Content!Scripts!End [:extensions :content :js]
-  :Content!Stylesheets [:extensions :content :css]
-  :Content!Whitelist [:extensions :content :matches]
-  :Description [:description]
-  :ExtensionInfoDictionaryVersion ^{:browserific "config"} ["1.0"] ; FIXME: what is this?
-  :Permissions!Website-.-Access!Allowed-.-Domains [:extensions :permissions] ; FIXME: are options like "tabs" just negligeable?
-  :Permissions!Website-.-Access!Include-.-Secure-.-Pages [:extensions :private]
-  :Permissions!Website-.-Access!Level [:extensions :extra :safari :access-level]
-  :Update-.-Manifest-.-URL [:extensions :update-url :safari]
-  :Website [:extensions :homepage]})
-
+          (st/replace
+           (xml/indent-str
+            (xml/sexp-as-element
+             (p/plist
+              (config-reader
+               {:Author [:author :author-name]
+                :Builder-.-Version ^{:browserific "config"} ["6534.59.10"] ; Shouldn't matter
+                :CFBundleDisplayName [:name]
+                :CFBundleIdentifier [:author :author-id]
+                :CFBundleInfoDictionaryVersion ^{:browserific "config"} ["6.0"] ; Shouldn't matter
+                :CFBundleShortVersionString [:version]
+                :CFBundleVersion ^{:browserific "config"} ["1.0"]; FIXME: lookup what this value signifies
+                :Chrome!Bars [:extensions :extra :safari :bars]
+                :Chrome!Context-.-Menu-.-Items [:extensions :extra :safari :context-items]
+                :Chrome!Database-.-Quota [:extensions :extra :safari :database-quota]
+                :Chrome!Menus [:extensions :extra :safari :menus]
+                :Content!Blacklist [:extensions :content :exclude]
+                :Content!Scripts!Start[:extensions :extra :safari :start-script]
+                :Content!Scripts!End [:extensions :content :js]
+                :Content!Stylesheets [:extensions :content :css]
+                :Content!Whitelist [:extensions :content :matches]
+                :Description [:description]
+                :ExtensionInfoDictionaryVersion ^{:browserific "config"} ["1.0"] ; FIXME: what is this?
+                :Permissions!Website-.-Access!Allowed-.-Domains [:extensions :permissions] ; FIXME: are options like "tabs" just negligeable?
+                :Permissions!Website-.-Access!Include-.-Secure-.-Pages [:extensions :private]
+                :Permissions!Website-.-Access!Level [:extensions :extra :safari :access-level]
+                :Update-.-Manifest-.-URL [:extensions :update-url :safari]
+                :Website [:extensions :homepage]}))))
+           "?>" (str "?>\n" doctype "\n")))))
 
 ;; FIXME: problem with multiple content + access
 ;; FIXME: add manifest.webapp file?
@@ -273,17 +268,17 @@
         mobile (config-get [:mobile :systems])]
     (doseq [vendor browsers]
       (cond
-       (= vendor "chrome") '()
-       (= vendor "firefox") '()
-       (= vendor "opera") '()
-       (= vendor "safari") '()
+       (= vendor "chrome") (chrome-config)
+       (= vendor "firefox") (firefox-config)
+       (= vendor "opera") (opera-config)
+       (= vendor "safari") (safari-config)
        :else
        (println (str "ERROR: browser " vendor " not supported, options are:\nfirefox, chrome, opera, safari"))))
     (doseq [system mobile] ; FIXME: Remove this loop if we rely on Cordova!
       (cond ;FIXME: add more here?
        (contains? #{"amazon-fire" "ios" "android" "firefox-mobile" "wp7"
                     "wp8" "ubuntu" "blackberry" "tizen"} system)
-       (mobile-configs (first system))
+       (mobile-config (first system))
        :else
        (println (str "ERROR: mobile system " system " not supported, options are:
  amazon-fire, ios, android, firefox-mobile, wp7, wp8, ubuntu, blackberry, tizen"))))))

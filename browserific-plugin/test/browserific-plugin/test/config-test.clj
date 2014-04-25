@@ -1,8 +1,8 @@
-(ns config-test
+(ns browserific-plugin.test.test.config
   (:require [clojure.java.io :as f]
-            [clojure.java.shell :as sh])
-  (:use [leiningen.browserific-plugin.config]
-        [clojure.test]))
+            [clojure.java.shell :as sh]
+            [clojure.test :refer :all])
+  (:use [leiningen.browserific-plugin.config]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; fixtures
@@ -24,21 +24,16 @@
     (do-tests)
     (sh/sh "rm" "-r" "resources")))
 
-(sh/sh "mkdir" "-p" (str "resources/mobile/" )
-           "resources/extension/firefox"
-           "resources/extension/chrome"
-           "resources/extension/opera"
-           "resources/extension/safari")
-
-(safari-config)
-
-(sh/sh "rm" "-r" "resources")
+(defn override [body]
+  (with-private-fns [leiningen.browserific-plugin.config [chrome-config firefox-config opera-config
+                                                          safari-config mobile-config name-get]]
+    body))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; tests
 
-(deftest extension-config-test []
-  ())
+(comment (deftest extension-config-test []
+            ()))
 
 (deftest mobile-config-test []
   (mobile-config "ios")
