@@ -1,10 +1,9 @@
-(ns leiningen.browserific-plugin.config
+(ns leiningen.browserific.config
   "This namespace is for generating config files from config.edn"
-  (:require [leiningen.browserific-plugin.helpers.plist :as p]
+  (:require [leiningen.browserific.helpers.plist :as p]
             [clojure.data.json :as js]
             [clojure.data.xml :as xml]
-            [clojure.string :as st]
-            [utils :as u])
+            [clojure.string :as st])
   (:use [environ.core :only [env]]))
 
 ;; TODO: Certain build options must be injected at compile time. Generate
@@ -14,7 +13,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Helper Fns
 
-;; FIXME: Add leiningen error if no file is found?
 (defn- config-get
   "Helper fn for getting data from the config-file"
   [coll]
@@ -66,7 +64,6 @@
         (parse-configs conf-map type {}))
       (parse-configs conf-map nil {})))
 
-;; FIXME: will this work or will it just read the plugin's project.clj?
 (defn- name-get
   "Helper fn for finding the project's name"
   []
@@ -259,11 +256,11 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Dispatch Fn
 
-;;FIXME: add leiningen error printouts
 (defn build-config
   "Processes the config.edn file to generate JavaScript
    output for the given platforms"
   []
+  (println "Compiling Browserific files.")
   (let [browsers (config-get [:extensions :browsers])
         mobile (config-get [:mobile :systems])]
     (doseq [vendor browsers]
@@ -273,12 +270,13 @@
        (= vendor "opera") (opera-config)
        (= vendor "safari") (safari-config)
        :else
-       (println (str "ERROR: browser " vendor " not supported, options are:\nfirefox, chrome, opera, safari"))))
-    (doseq [system mobile] ; FIXME: Remove this loop if we rely on Cordova!
-      (cond ;FIXME: add more here?
-       (contains? #{"amazon-fire" "ios" "android" "firefox-mobile" "wp7"
-                    "wp8" "ubuntu" "blackberry" "tizen"} system)
-       (mobile-config (first system))
-       :else
-       (println (str "ERROR: mobile system " system " not supported, options are:
- amazon-fire, ios, android, firefox-mobile, wp7, wp8, ubuntu, blackberry, tizen"))))))
+       (println (str "ERROR: browser " vendor " not supported, options are:
+firefox, chrome, opera, safari"))))
+    (cond
+     (contains?
+      #{"amazon-fire" "ios" "android" "firefox-mobile" "wp7"
+        "wp8" "ubuntu" "blackberry" "tizen"} (first mobile)) (mobile-config (first mobile))
+        (= [] mobile) '()
+        :else
+        (println (str "ERROR: mobile system " (first mobile) " not supported, options are:
+ amazon-fire, ios, android, firefox-mobile, wp7, wp8, ubuntu, blackberry, tizen")))))

@@ -1,8 +1,7 @@
-(ns leiningen.browserific-plugin.helpers.plist
+(ns leiningen.browserific.helpers.plist
   "Helper file for converting a Clojure map to a plist"
   (:require [clojure.walk :as w]
-            [clojure.string :as s])
-  (:use utils))
+            [clojure.string :as s]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Plist functions

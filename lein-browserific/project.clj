@@ -1,4 +1,4 @@
-(defproject browserific-plugin "0.1.0-SNAPSHOT"
+(defproject lein-browserific "0.1.0-SNAPSHOT"
   :description "Pre-compiler to convert browserific code to API code"
   :url "http://example.com/FIXME"
   :license {:name "Eclipse Public License"

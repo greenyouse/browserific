@@ -1,19 +1,16 @@
-;; Don't forget to fill in the spots for wrapper + plugin
-
 (defproject {{name}} "0.1.0-SNAPSHOT"
   :description "FIXME: write description"
   :url "http://example.com/FIXME"
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies [[org.clojure/clojure "1.6.0"]
-                 [org.clojure/clojurescript "0.0-2199"]
+                 [org.clojure/clojurescript "0.0-2199"] ; update before relase :)
                  ;FIXME: Add the SDK wrapper here after it's done
                  ]
   :plugins [[lein-cljsbuild "1.0.3"]
             [com.cemerick/clojurescript.test "0.3.0"]
             ;FIXME: Add the lein plugin here after it's done
             ]
-  :profiles {:env {:config-file "test/config.edn"}}
   :cljsbuild {
               :builds [
                        ;; Chrome
