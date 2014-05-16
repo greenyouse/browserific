@@ -13,26 +13,38 @@ structure of a typical browserific-app:
 ```
 [project-name]
 |-------project.clj
+|
 |-------src
 |       |-------background
 |       |        |-------background.cljs ;main project file
+|       |
 |       |-------content
 |       |        |-------content.cljs ;dom code, widgets, etc.
 |       |
 |       |-------config.edn ;the structure of the browser extension,
+|
 |-------resources
-|       |--------[browser vendor] ;holds development files for browsers
+|       |--------extensions
+|       |         |-------[browser vendor] ;holds app files for browsers
+|       |
+|       |--------mobile
+|                 |-------[project-name] ;holds app files for mobile
+|
 |-------intermediate
-|       |-------[browser-name] ;used for creating the app's logic
-|       |         |-------background
-|       |         |        |-------background.cljs ;main project file
-|       |         |-------content
-|       |                  |-------content.cljs ;dom code, widgets, etc.
+|       |-------[mobile + browser-name] ;used for creating the app's logic
+|                 |-------background
+|                 |        |-------background.cljs ;main project file
+|                 |-------content
+|                          |-------content.cljs ;dom code, widgets, etc.
+|
 |-------README.md
+|
 |-------doc
 |       |--------intro.md
+|
 |-------test
 |       |--------test.clj
+|
 |-------release ;where the final, production builds go for browsers
 |-------dev
         |--------brepl.cljs
@@ -52,10 +64,11 @@ compiled by the ClojureScript compiler.
 
 `src -> intermediate (auto-generated) -> js files`
 
-Unfortunately browser extensions usually have a JS file for dom, a `content script`, and the browser chrome, a `background/event page`. The content script
-sends messages using JS callbacks over `ports`. This would be great to abstract
-away with the library later and `^:export` hints should be put on the callback 
-functions so advanced compilation can still be used.
+Unfortunately browser extensions usually have a separate JS file for DOM,
+a `content script`, and browser chrome, a `background/event page`. The 
+content script sends messages using JS callbacks over `ports`. This would be 
+great to abstract away with the library later and `^:export` hints should be 
+put on the callback functions so advanced compilation can still be used.
 
 The second thing that the plugin does is convert a global configuration file
 called `config.edn`. This will write the respective config files for each app
@@ -87,7 +100,7 @@ To work with the 5 JavaScript APIs (chrome, firefox, opera, safari, and cordova)
 we'll need to create a high-level, abstract library to write our ClojureScript 
 code in. The goal is to have a unified API in ClojureScript that doesn't deal 
 with the incidental complexity of things like JS callbacks. I want to code apps
-without having to think about the specifics of the browser API or low-level JS
+without having to think about the specifics of the browser APIs or low-level JS
 details. 
 
 The first step in the creation of the library will be writing a ClojureScript

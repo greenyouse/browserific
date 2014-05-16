@@ -6,7 +6,7 @@
 (defn- once
   "Compile browserific files once and quit"
   []
-  (c/build-config))
+  (c/build-configs))
 
 (defn- auto
   "Automatically recompile browserific files when they are changed"

@@ -1,7 +1,7 @@
 # Browserific
 
-A project for cross-browser compatible extensions and cross-device mobile apps
-(using Cordova) in ClojureScript.
+A project for cross-browser compatible extensions and cross-device apps 
+in ClojureScript (using Cordova).
 
 
 ## Status
@@ -18,7 +18,7 @@ project design.
 
 Copyright © 2014 Ed Babcock
 
-Distributed under the Eclipse Public License either version 1.0.
+Distributed under the Eclipse Public License version 1.0.
 
 Apache Cordova is used for this project and distributed under the Apache
 License, Version 2.0.

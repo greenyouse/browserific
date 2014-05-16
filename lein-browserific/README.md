@@ -1,13 +1,13 @@
-# Browserific-plugin
+# lein-Browserific
 
 A Leiningen plugin for ClojureScript app developement.
 
 ## Status
 
-Currently building config file generators.
+Currently writing the pre-processor for feature expressions.
 
 ## License
 
 Copyright © 2014 Ed Babcock
 
-Distributed under the Eclipse Public License either version 1.0.
+Distributed under the Eclipse Public License version 1.0.

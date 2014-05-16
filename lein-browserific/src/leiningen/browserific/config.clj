@@ -13,11 +13,18 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Helper Fns
 
+;; NOTE: Put here to avoid circular dependency problems, is there a better solution?
+(def options
+  "Map of browserific options"
+  (reduce #(into %1 [(into [] %2)])
+          {} (partition 2 (nthrest (read-string (slurp "project.clj")) 3))))
+
 (defn- config-get
   "Helper fn for getting data from the config-file"
   [coll]
-  (let [config-file (read-string (slurp
-                                  (or (env :config) "src/config.edn")))]
+  (let [env (:config (:browserific options))
+        config-file (read-string (slurp
+                                  (or env "src/config.edn")))]
     (get-in config-file coll)))
 
 (defn- nested-options
@@ -55,8 +62,8 @@
          (recur (rest item) type (assoc acc name val)))))))
 
 (defn- config-reader
-  "This is a config file DSL for browser extensions. Enter !
-   to indicate a nested config option. Otherwise it will output
+  "This is a little config file DSL. Enter ! to indicate
+   a nested config option. Otherwise it will output
    a normal key value pair."
   [conf-map]
   (if (some #(= % :action!type) (keys conf-map)) ; format browser/page actions
@@ -256,7 +263,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Dispatch Fn
 
-(defn build-config
+(defn build-configs
   "Processes the config.edn file to generate JavaScript
    output for the given platforms"
   []
@@ -274,9 +281,10 @@
 firefox, chrome, opera, safari"))))
     (cond
      (contains?
-      #{"amazon-fire" "ios" "android" "firefox-mobile" "wp7"
-        "wp8" "ubuntu" "blackberry" "tizen"} (first mobile)) (mobile-config (first mobile))
+      #{"amazon-fire" "android" "blackberry" "firefox-os" "ios" "ubuntu" "wp7"
+        "wp8" "tizen" "webos" "win8" "osx" "qt"}
+      (first mobile)) (mobile-config (first mobile))
         (= [] mobile) '()
         :else
         (println (str "ERROR: mobile system " (first mobile) " not supported, options are:
- amazon-fire, ios, android, firefox-mobile, wp7, wp8, ubuntu, blackberry, tizen")))))
+ amazon-fire, android, blackberry, firefox-os, ios, ubuntu, wp7, wp8, webos, tizen, win8, osx, qt")))))

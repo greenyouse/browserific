@@ -1,0 +1,73 @@
+Not really an API anything yet... just helpful notes for now.
+
+* Mission
+
+  Make app development more sane by abstracting away the differences
+  between APIs and building functions that simplify the building process.
+
+* Objectives
+
+1. Make functions to simplify the building process.
+2. Keep incidental complexity low.
+3. Remove API differences.
+4. Write once work everywhere.
+
+* Strategies
+
+** Make functions to simplify the building process.
+   - Create special commands for the pre-processor (lein-browserific)
+     that override the normal SDKs. Try to have features like app
+     testing (launch app in the browser/SDK and run any automated
+     tests) and packaging. The commands may just provide syntatic sugar
+     by packaging pre-existing SDK commands into the lein-browserific
+     framework or they may require actually creating new commands.
+   - Make commands for usual tasks like ClojureScript testing,
+     compiling, and cleaning.
+   - Include a simple config map in project.clj to control the leiningen
+     plugin.
+
+** Keep incidental complexity low.
+   - Use a `content <-> background` core.async channel that pumps
+     messages back and forth. There should only be messages in the
+     queue if something is pending.
+   - Make a GUI for the config.edn file writing. This keeps developers
+     from having to memorize the useless config option codes.
+   - Apps should have nearly (if not) identical code for non-UI/Rendering
+     things. If the desktop version uses an atom for holding the app
+     state and updates state reactively, the mobile and browser
+     extension versions should too. This means app development will be
+     almost exactly the same as current web-app developement with the
+     exception of Rendering/DOM.
+
+** Remove API differences.
+   - Make general content-script and background-script functions that
+     cover the least common denominator of the five APIs. These functions
+     will be part of a DSL, so developers use them like normal library functions
+     but the pre-processor translates them into their respective vendor-specific
+     JS code. Fox example, a dev would use (get-bookmark "exmpale-bookmark) and
+     that would be translated accordingly by the pre-processor so it works in
+     all four browsers.
+   - Wrap more specific functions, that only apply to one or two
+     browsers, in LISP feature expressions.
+
+** Write once work everywhere.
+   - Use the content and background app format for all apps. (Is there
+     any way to improve this?).
+   - Allow the process to be environment agnostic by using the
+     pre-processor and a custom set of transformation fns. Target
+     browser extensions and mobile apps first but allow for future
+     extensions like Qt, Node-Webkit, Smart TV SDKs, etc.
+
+
+* What we're not doing!
+
+** Making any UI decisions
+  - There are already 101 UI libraries so devs should pick their own
+    poison.
+** Forcing X app type
+  - This framework can be used for building whatever kind of app a dev
+    wants. Someone could build a one page browser extension and mobile
+    app, a browser extension to extend the native browser dev tools, a
+    Greasemonkey style extension for site-specific tweaking, a mobile
+    game app, another content blocking/privacy filter for the
+    browser, etc. Whatever you want to build is up to you...
