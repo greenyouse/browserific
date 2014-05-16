@@ -9,10 +9,5 @@
 
   ;; TODO: delete the example :browserific when finished
 
-  ;; create this in the template with `lein new browserific-app [:firefox ... ]
-  ;; use this for running the compiler, one for each option
-  ;; default is failure, give help map. Use helpers for: all, mobile, and extensions
-  :browserific {:platforms [:firefox :opera :blackberry
-                            :ios :android]
-                :config "test/test-config.edn"}
+  :browserific {:config "test/test-config.edn"}
   :eval-in-leiningen true)

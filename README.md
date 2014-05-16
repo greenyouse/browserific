@@ -1,7 +1,7 @@
 # Browserific
 
 A project for cross-browser compatible extensions and cross-device apps 
-in ClojureScript (using Cordova).
+in ClojureScript.
 
 
 ## Status
