@@ -1,10 +1,9 @@
 (ns leiningen.browserific.helpers.plist
   "Helper file for converting a Clojure map to a plist"
-  (:require [clojure.walk :as w]
-            [clojure.string :as s]))
+  (:require [clojure.string :as s]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Plist functions
+;;; Plist functions
 
 (declare process-nodes)
 

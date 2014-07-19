@@ -1,3 +1,5 @@
+;; FIXME: this needs annotations for _all_ options!
+
 {:name "tester"
  :author {:author-name "me"
           :author-id "me.woot.corp"
@@ -182,7 +184,7 @@
           :id "com.example.tester"
 
           :platforms ["ios" "android" "firefox-os" "wp8" "ubuntu"
-                      "blackberry"]
+                    "blackberry"]
 
           :icons [:firefox []
                   :ios ["ios/icon-57-2x.png"
@@ -204,7 +206,6 @@
                         :BackgroundColor "0xff0000ff"
                         :HideKeyboardAcessoryBar "false"}
 
-                                        ; TODO: feature/plugin part
           :content ["index.html"]
           }
 
@@ -256,6 +257,3 @@
                     :java true
                     :page-cache false}}
  }
-
-
-;; http://stackoverflow.com/questions/11853046/how-to-exclude-sites-in-a-firefox-addon-contentscript-using-pagemod

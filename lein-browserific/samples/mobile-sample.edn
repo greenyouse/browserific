@@ -1,0 +1,41 @@
+{:name "tester"
+ :author {:author-name "me"
+          :author-id "me.woot.corp"
+          :email "woot@tester.com"
+          :url "http://www.testme.com"
+          :contributors ["the lambda monster"
+                         "a super-community"]}
+ :version "0.1.0-SNAPSHOT"
+ :license ""
+ :description "FIXME: write this!"
+ :default-locale "en"
+ :mobile {
+          :id "com.example.tester"
+
+          :platforms ["ios" "android" "firefox-os" "wp8" "ubuntu"
+                    "blackberry"]
+
+          :icons [:firefox []
+                  :ios ["ios/icon-57-2x.png"
+                        "ios/icon-57.png"
+                        "ios/icon-72-2x.png"
+                        "ios/icon-72.png"]
+                  :android ["android/icon-36-ldpi.png"
+                            "android/icon-48-mdpi.png"
+                            "android/icon-72-hdpi.png"
+                            "android/icon-96-xhdpi.png"]
+                  :wp8 []]
+
+          :permissions ["https://www.wahoo.com/"
+                        "https://www.yoogle.com/"]
+
+          :preferences {:Fullscreen "false"
+                        :Orientation "default"
+                        :DisallowOverscroll "false"
+                        :BackgroundColor "0xff0000ff"
+                        :HideKeyboardAcessoryBar "false"}
+
+          :content ["index.html"]
+          }
+
+ }

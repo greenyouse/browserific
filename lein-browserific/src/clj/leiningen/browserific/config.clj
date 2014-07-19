@@ -1,31 +1,72 @@
 (ns leiningen.browserific.config
-  "This namespace is for generating config files from config.edn"
+  "Generates config files from config.edn"
   (:require [leiningen.browserific.helpers.plist :as p]
-            [clojure.data.json :as js]
+            [cheshire.core :as js]
             [clojure.data.xml :as xml]
-            [clojure.string :as st])
-  (:use [environ.core :only [env]]))
+            [clojure.string :as st]))
 
 ;; TODO: Certain build options must be injected at compile time. Generate
 ;; a data file somewhere (dot file?) to keep track of what needs injecting.
 ;; ex. content-scripts for Firefox
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Helper Fns
+;;; Helper Fns
 
-;; NOTE: Put here to avoid circular dependency problems, is there a better solution?
-(def options
+(def ^:private options
   "Map of browserific options"
   (reduce #(into %1 [(into [] %2)])
           {} (partition 2 (nthrest (read-string (slurp "project.clj")) 3))))
 
-(defn- config-get
+(defn- get-config
   "Helper fn for getting data from the config-file"
   [coll]
   (let [env (:config (:browserific options))
         config-file (read-string (slurp
                                   (or env "src/config.edn")))]
     (get-in config-file coll)))
+
+(defn- name-get
+  "Helper fn for finding the project's name"
+  []
+  (second (read-string (slurp "project.clj"))))
+
+
+(def systems
+  {:browsers (get-config [:extensions :platforms])
+   :mobile (get-config [:mobile :platforms])
+   :desktop (get-config [:desktop :platforms])})
+
+
+(defn- config-check
+  "Validates whether the config file has proper platforms listed"
+  [browsers mobiles desktops]
+  (doseq [browser browsers]
+    (if-not (contains? #{"chrome" "firefox" "opera" "safari"}
+                       browser)
+      (do
+        (println (str "\033[31mERROR: browser " browser " not supported, options are:
+firefox, chrome, opera, safari\033[0m"))
+        false)))
+  (doseq [mobile mobiles]
+    (if-not (contains?
+             #{"amazon-fire" "android" "blackberry" "firefox-os" "ios"
+               "ubuntu" "wp7" "wp8" "tizen" "webos"}
+             mobile)
+      (do
+        (println (str "\033[31mERROR: mobile system " mobile " not supported, options are:
+ amazon-fire, android, blackberry, firefox-os, ios, ubuntu, wp7, wp8, webos, tizen\033[0m"))
+        false)))
+  (doseq [desktop desktops]
+    (if-not (contains?
+             #{"linux" "osx" "windows"}
+             desktop)
+      (do
+        (println (str "\033[31mERROR: desktop system" desktop " not supported, options are:
+linux, osx, windows\033[0m"))))))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Config parsing
 
 (defn- nested-options
   "Adds a nested option to the output config file."
@@ -39,7 +80,7 @@
 (defn- parse-configs [item type acc]
   (let [raw-val (first (vals item)) ; non-optional configs have metadata
         val (if (:browserific (meta raw-val))
-              (first raw-val) (config-get raw-val))
+              (first raw-val) (get-config raw-val))
         raw-name (first (keys item))
         name (if (re-seq #"!" (str raw-name))
                (map keyword
@@ -67,32 +108,25 @@
    a normal key value pair."
   [conf-map]
   (if (some #(= % :action!type) (keys conf-map)) ; format browser/page actions
-      (let [type (keyword (str (config-get (:action!type conf-map)) "-action"))]
+      (let [type (keyword (str (get-config (:action!type conf-map)) "-action"))]
         (parse-configs conf-map type {}))
       (parse-configs conf-map nil {})))
 
-(defn- name-get
-  "Helper fn for finding the project's name"
-  []
-  (second (read-string (slurp "project.clj"))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Config Builders
+;;; Config Builders
 ;;; FIXME: I'm including full paths for common options so I can edit config.edn names
 ;;;  without having the system break (otherwise it won't output correct JSON names).
 ;;;  Eventually we should take lots of ! nesting out to make this more succinct.
-
-;;; TODO: Could we give an all option that, if it exists, takes precedence over anything else?
-;;;  To allow cross-browser apps have a less verbose config.edn.
 
 ;; NOTE: :key isn't really necessary so we'll leave it out for now (chrome + opera)
 ;; we're omitting :plugins because that is being phased out
 ;; FIXME: use js/write (or something better) instead so output is readable
 (defn- chrome-config
-  "Creates the chrome extension config files using config.edn"
+  "Creates the chrome extension config file using config.edn"
   []
   (spit "resources/extension/chrome/manifest.json"
-        (js/write-str
+        (js/generate-string
          (config-reader
           {:name [:name]
            :version [:version]
@@ -144,13 +178,14 @@
            :storage [:extensions :extra :chrome :storage]
            :system-indicator [:extensions :extra :chrome :system-indicator]
            :tts-engine [:extensions :extra :chrome :tts-engine]
-           :sandbox [:extensions :extra :shared :sandbox]}))))
+           :sandbox [:extensions :extra :shared :sandbox]})
+         {:pretty true})))
 
 (defn- firefox-config
-  "Creates the firefox config files using config.edn"
+  "Creates the firefox config file using config.edn"
   []
   (spit "resources/extension/firefox/package.json"
-        (js/write-str
+        (js/generate-string
          (config-reader
           {:author [:author :author-name]
            :contributors [:author :contributors]
@@ -171,13 +206,14 @@
            :tests [:extensions :extra :firefox :tests]
            :title [:extensions :extra :firefox :title]
            :translators [:extensions :extra :firefox :translators]
-           :version [:version]}))))
+           :version [:version]})
+         {:pretty true})))
 
 (defn- opera-config
-  "Creates the opera config files using config.edn"
+  "Creates the opera config file using config.edn"
   []
   (spit "resources/extension/opera/manifest.json"
-        (js/write-str
+        (js/generate-string
          (config-reader
           {:name [:name]
            :version [:version]
@@ -203,11 +239,12 @@
            :permissions [:extensions :permissions]
            :requirements [:extensions :extra :shared :requirements]
            :web-accessible-resources [:extensions :web-accessible-resources]
-           :update-url [:extensions :update-url :opera]}))))
+           :update-url [:extensions :update-url :opera]})
+         {:pretty true})))
 
 ;; TODO: make sure that plist output order is not imporant
 (defn- safari-config
-  "Creates the safari config files using config.edn"
+  "Creates the safari config file using config.edn"
   []
   (let [doctype "<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">"]
     (spit "resources/extension/safari/Info.plist"
@@ -241,50 +278,102 @@
                 :Website [:extensions :homepage]}))))
            "?>" (str "?>\n" doctype "\n")))))
 
+;; NOTE: deleted (name-get) from the file path, line 288
 ;; FIXME: problem with multiple content + access
 ;; FIXME: add manifest.webapp file?
 (defn- mobile-config
-  "Outputs the mobile config files from the config.edn data"
-  [system]
-  (spit (str "resources/mobile/" (name-get)  "/config.xml")
+  "Outputs the mobile config file from the config.edn data"
+  []
+  (spit (str "resources/mobile/config.xml")
         (xml/indent-str (xml/sexp-as-element
-                         [:widget {:id (config-get [:mobile :id])
-                                   :version (config-get [:version])
+                         [:widget {:id (get-config [:mobile :id])
+                                   :version (get-config [:version])
                                    :xmlns "http://www.w3.org/ns/widgets"
                                    :xmlns:cdv "http://cordova.apache.org/ns/1.0"}
-                          [:name (config-get [:name])]
-                          [:description (config-get [:description])]
-                          [:author {:email (config-get [:author :email])
-                                    :href (config-get [:author :url])}
-                           (config-get [:author :author-name])]
-                          [:content {:src (config-get [:mobile :content])}]
-                          [:access {:origin (config-get [:access :permissions])}]]))))
+                          [:name (get-config [:name])]
+                          [:description (get-config [:description])]
+                          [:author {:email (get-config [:author :email])
+                                    :href (get-config [:author :url])}
+                           (get-config [:author :author-name])]
+                          [:content {:src (get-config [:mobile :content])}]
+                          [:access {:origin (get-config [:access :permissions])}]]))))
+
+(defn- desktop-config
+  "Generates the node-webkit config file using config.edn"
+  [platform]
+  (spit (str "resources/desktop/deploy/" platform "/package.json")
+        (js/generate-string
+         (config-reader
+          {:name [:name]
+           :main [:desktop :main]
+           :nodejs [:desktop :nodejs]
+           :node-main [:desktop :node-main]
+           :single-instance [:desktop :single-instance]
+           :user!%name [:desktop :user :name]
+           :user!%ver [:desktop :user :ver]
+           :user!%nwver [:desktop :user :nwver]
+           :user!%webkit_ver [:desktop :user :webkit-ver]
+           :user!%osinfo [:desktop :user :osinfo]
+           :node-remote [:desktop :permissions]
+           :chromium-args [:desktop :chromium-args]
+           :js-flags [:desktop :js-flags]
+           :inject-js-start [:desktop :inject-js-start]
+           :inject-js-end [:desktop :inject-js-end]
+           :snapshot [:desktop :snapshot]
+           :dom_storage_quota [:desktop :dom-storage-quota]
+           :no_edit_menu [:desktop :no-edit-menu]
+           :keywords [:desktop :keywords]
+           :bugs [:desktop :bugs]
+           :repositories!type [:desktop :repositories :type]
+           :repositories!url [:desktop :repositories :url]
+           :repositories!path [:desktop :repositories :path]
+           :window!title [:desktop :window :title]
+           :window!width [:desktop :window :width]
+           :window!height [:desktop :window :height]
+           :window!toolbar [:desktop :window :toolbar]
+           :window!icon [:desktop :window :icon]
+           :window!position [:desktop :window :position]
+           :window!min_width [:desktop :window :min-width]
+           :window!min_height [:desktop :window :min-height]
+           :window!max_width [:desktop :window :max-width]
+           :window!max_height [:desktop :window :max-height]
+           :window!as_desktop [:desktop :window :as-desktop]
+           :window!resizable [:desktop :window :resizable]
+           :window!always_on_top [:desktop :window :always-on-top]
+           :window!fullscreen [:desktop :window :fullscreen]
+           :window!show_in_taskbar [:desktop :window :show-in-taskbar]
+           :window!frame [:desktop :window :frame]
+           :window!show [:desktop :window :show]
+           :window!kiosk [:desktop :window :kiosk]
+           :webkit!plugin [:desktop :webkit :plugins]
+           :webkit!java[:desktop :webkit :java]
+           :webkit!page-cache [:desktop :webkit :page-cache]})
+         {:pretty true})))
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Dispatch Fn
+;;; Dispatch Fn
 
 (defn build-configs
   "Processes the config.edn file to generate JavaScript
    output for the given platforms"
   []
-  (println "Compiling Browserific files.")
-  (let [browsers (config-get [:extensions :browsers])
-        mobile (config-get [:mobile :systems])]
+  (let [browsers (:browsers systems)
+        mobile (:mobile systems)
+        desktops (:desktop systems)]
+    (config-check browsers mobile desktops)
     (doseq [vendor browsers]
       (cond
        (= vendor "chrome") (chrome-config)
        (= vendor "firefox") (firefox-config)
        (= vendor "opera") (opera-config)
-       (= vendor "safari") (safari-config)
-       :else
-       (println (str "ERROR: browser " vendor " not supported, options are:
-firefox, chrome, opera, safari"))))
+       (= vendor "safari") (safari-config)))
     (cond
-     (contains?
-      #{"amazon-fire" "android" "blackberry" "firefox-os" "ios" "ubuntu" "wp7"
-        "wp8" "tizen" "webos" "win8" "osx" "qt"}
-      (first mobile)) (mobile-config (first mobile))
-        (= [] mobile) '()
-        :else
-        (println (str "ERROR: mobile system " (first mobile) " not supported, options are:
- amazon-fire, android, blackberry, firefox-os, ios, ubuntu, wp7, wp8, webos, tizen, win8, osx, qt")))))
+     (= [] mobile) '()
+     :else
+     (mobile-config))
+    (doseq [vendor desktops]
+      (cond
+       (= vendor "linux") (desktop-config "linux")
+       (= vendor "osx") (desktop-config "osx")
+       (= vendor "windows") (desktop-config "windows")))))

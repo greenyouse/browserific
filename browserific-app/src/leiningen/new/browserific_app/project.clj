@@ -7,10 +7,16 @@
                  [org.clojure/clojurescript "0.0-2199"] ; update before relase :)
                  ;FIXME: Add the SDK wrapper here after it's done
                  ]
+
   :plugins [[lein-cljsbuild "1.0.3"]
             [com.cemerick/clojurescript.test "0.3.0"]
+            [lein-pdo "0.1.1"]
             ;FIXME: Add the lein plugin here after it's done
             ]
+
+  :aliases {"dev" ["pdo" "cljsbuild" "auto" "dev," "browserific" "auto"]
+            "release" ["pdo" "cljsbuild" "auto" "release," "browserific" "auto"]}
+
   :cljsbuild {
               :builds [
                        ;; Chrome
