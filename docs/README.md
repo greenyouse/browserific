@@ -1,8 +1,9 @@
 # General
 
-This project is an attempt at building browser extensions and mobile
-apps in one unified format. The design is in flux so please take it with a grain
-of salt. Things will likely shift around as we hit obstacles. 
+This project is an attempt at building browser extensions, mobile apps,
+and desktop apps in one unified format. The design is in flux so please 
+take it with a grain of salt. Things will likely shift around as we hit 
+obstacles. 
 
 ## Templating
 
@@ -21,17 +22,20 @@ structure of a typical browserific-app:
 |       |-------content
 |       |        |-------content.cljs ;dom code, widgets, etc.
 |       |
-|       |-------config.edn ;the structure of the browser extension,
+|       |-------config.edn ;the structure of the project 
 |
 |-------resources
 |       |--------extensions
 |       |         |-------[browser vendor] ;holds app files for browsers
 |       |
 |       |--------mobile
-|                 |-------[project-name] ;holds app files for mobile
+|       |         |-------[project-name] ;holds app files for mobile
+|       |
+|       |--------desktop
+|                 |-------[project-name] ;holds app files for desktop
 |
 |-------intermediate
-|       |-------[mobile + browser-name] ;used for creating the app's logic
+|       |-------[platform-name] 
 |                 |-------background
 |                 |        |-------background.cljs ;main project file
 |                 |-------content
@@ -45,7 +49,7 @@ structure of a typical browserific-app:
 |-------test
 |       |--------test.clj
 |
-|-------release ;where the final, production builds go for browsers
+|-------release ;where the final, production builds go
 |-------dev
         |--------brepl.cljs
 ```
@@ -120,3 +124,4 @@ Here are some useful resources:
 * [Opera Extensions](http://dev.opera.com/extension-docs/)
 * [Safari Extensions](https://developer.apple.com/library/safari/documentation/UserExperience/Reference/SafariExtensionsReference/_index.html#//apple_ref/doc/uid/TP40009800)
 * [Cordova Apps](http://cordova.apache.org/docs/en/3.4.0/)
+* [node-webkit](https://github.com/rogerwang/node-webkit/wiki)

@@ -1,7 +1,7 @@
-(ns woot.test)
+(ns browserific.config.file)
 
 (def data
-  (read-string (slurp "resources/public/data/config.edn")))
+  (read-string (slurp "resources/config.edn")))
 
 (defn getter [opt]
   (get-in data opt))

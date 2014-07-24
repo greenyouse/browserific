@@ -1,4 +1,4 @@
-(defproject browserific-app/lein-template "0.1.0-SNAPSHOT"
+(defproject browserific-app/lein-template "0.1.0"
   :description "A Leiningen template for ClojureScript browser extensions"
   :url "http://example.com/FIXME"
   :license {:name "Eclipse Public License"

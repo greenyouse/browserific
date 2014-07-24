@@ -1,10 +1,9 @@
-(ns woot.client
+(ns browserific.config.client
     (:require-macros [cljs.core.async.macros :refer [go alt!]])
     (:require [goog.events :as events]
               [goog.dom :as gdom]
               [cljs.core.async :as async :refer [put! <! >! chan timeout]]
               [sablono.core :as sa :refer-macros [html]]
-              [secretary.core :as secretary :include-macros true :refer [defroute]]
               [om.core :as om :include-macros true]
               [om.dom :as dom :include-macros true]
               [om-sync.core :refer [om-sync]]
@@ -212,11 +211,10 @@
      js/e.target.dataset.help (println (str "help -- " js/e.target.dataset.help))
      js/e.target.dataset.page (println (str "page -- " js/e.target.dataset.page))))
 
-  (comment (println (str "id -- " js/e.target.id)))
+  (println (str "id -- " js/e.target.id))
   ;; Set a DOM level 4 event listener
   (events/listen (gdom/getDocument) "click" click-dispatcher)
 
   ;; a little clunky but oh well
   (def schema
-  {:author:email (first (om/transact! app-state ))})
-  )
+  {:author:email (first (om/transact! app-state ))}))

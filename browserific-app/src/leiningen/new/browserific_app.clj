@@ -13,7 +13,7 @@
     (->files data
              [".gitignore" (render "gitignore" data)]
              ["project.clj" (render "project.clj" data)]
-             ["src/{{sanitized}}/config.edn" (render "config.edn" data)]
+             ["src/config.edn" (render "config.edn" data)]
              ["src/{{sanitized}}/background/background.cljs"
               (render "background.cljs" data)]
              ["src/{{sanitized}}/content/content.cljs"

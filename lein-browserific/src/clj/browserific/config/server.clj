@@ -1,10 +1,10 @@
-(ns leiningen.browserific.config.server
+(ns browserific.config.server
     (:require [compojure.handler :as handler]
               [compojure.route :as route]
               [compojure.core :refer [GET POST defroutes]]
               [ring.util.response :as resp]
               [ring.middleware.edn :refer [wrap-edn-params]]
-              [woot.test :as t]
+              [browserific.config.file :as f]
               [clojure.java.io :as io]))
 
 (def config-state
@@ -22,8 +22,8 @@
 
 ;; Should we eliminate the extra :config map stuff?
 (defn init []
-  (reset! config-state (read-string (slurp "resources/public/data/config.edn")))
-  (reset! om-state t/test-data)
+  (reset! config-state (read-string (slurp "resources/public/config.edn")))
+  (reset! om-state f/test-data)
   (edn-response @om-state))
 
 (defn send-config []
@@ -33,7 +33,7 @@
 ;; TODO: write this to disk
 (defn save-config [{:keys [k v]}]
   (swap! config-state #(assoc-in % [k] v))
-  (spit "resources/public/data/test-data.edn" @om-state))
+  (spit "resources/public/test-data.edn" @om-state))
 
 (defroutes app-routes
   (GET "/" [] (resp/redirect "/index.html"))

@@ -1,4 +1,4 @@
-(ns leiningen.browserific.helpers.plist
+(ns browserific.helpers.plist
   "Helper file for converting a Clojure map to a plist"
   (:require [clojure.string :as s]))
 

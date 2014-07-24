@@ -1,9 +1,10 @@
-(ns leiningen.browserific.config
+(ns browserific.config
   "Generates config files from config.edn"
-  (:require [leiningen.browserific.helpers.plist :as p]
+  (:require [browserific.helpers.plist :as p]
             [cheshire.core :as js]
             [clojure.data.xml :as xml]
-            [clojure.string :as st]))
+            [clojure.string :as st]
+            [clojure.java.io :as io]))
 
 ;; TODO: Certain build options must be injected at compile time. Generate
 ;; a data file somewhere (dot file?) to keep track of what needs injecting.
@@ -25,17 +26,10 @@
                                   (or env "src/config.edn")))]
     (get-in config-file coll)))
 
-(defn- name-get
-  "Helper fn for finding the project's name"
-  []
-  (second (read-string (slurp "project.clj"))))
-
-
 (def systems
   {:browsers (get-config [:extensions :platforms])
    :mobile (get-config [:mobile :platforms])
    :desktop (get-config [:desktop :platforms])})
-
 
 (defn- config-check
   "Validates whether the config file has proper platforms listed"
@@ -115,16 +109,14 @@ linux, osx, windows\033[0m"))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Config Builders
-;;; FIXME: I'm including full paths for common options so I can edit config.edn names
-;;;  without having the system break (otherwise it won't output correct JSON names).
-;;;  Eventually we should take lots of ! nesting out to make this more succinct.
 
 ;; NOTE: :key isn't really necessary so we'll leave it out for now (chrome + opera)
-;; we're omitting :plugins because that is being phased out
+;;   and we're omitting :plugins because that is being phased out
 ;; FIXME: use js/write (or something better) instead so output is readable
 (defn- chrome-config
   "Creates the chrome extension config file using config.edn"
   []
+  (io/make-parents "resources/extension/chrome/manifest.json")
   (spit "resources/extension/chrome/manifest.json"
         (js/generate-string
          (config-reader
@@ -184,6 +176,7 @@ linux, osx, windows\033[0m"))))))
 (defn- firefox-config
   "Creates the firefox config file using config.edn"
   []
+  (io/make-parents "resources/extension/firefox/package.json")
   (spit "resources/extension/firefox/package.json"
         (js/generate-string
          (config-reader
@@ -212,6 +205,7 @@ linux, osx, windows\033[0m"))))))
 (defn- opera-config
   "Creates the opera config file using config.edn"
   []
+  (io/make-parents "resources/extension/opera/manifest.json")
   (spit "resources/extension/opera/manifest.json"
         (js/generate-string
          (config-reader
@@ -246,6 +240,7 @@ linux, osx, windows\033[0m"))))))
 (defn- safari-config
   "Creates the safari config file using config.edn"
   []
+  (io/make-parents "resources/extension/safari/Info.plist")
   (let [doctype "<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">"]
     (spit "resources/extension/safari/Info.plist"
           (st/replace
@@ -284,7 +279,8 @@ linux, osx, windows\033[0m"))))))
 (defn- mobile-config
   "Outputs the mobile config file from the config.edn data"
   []
-  (spit (str "resources/mobile/config.xml")
+  (io/make-parents "resources/mobile/config.xml")
+  (spit "resources/mobile/config.xml"
         (xml/indent-str (xml/sexp-as-element
                          [:widget {:id (get-config [:mobile :id])
                                    :version (get-config [:version])
@@ -301,6 +297,7 @@ linux, osx, windows\033[0m"))))))
 (defn- desktop-config
   "Generates the node-webkit config file using config.edn"
   [platform]
+  (io/make-parents (str "resources/desktop/deploy/" platform "/package.json"))
   (spit (str "resources/desktop/deploy/" platform "/package.json")
         (js/generate-string
          (config-reader

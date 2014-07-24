@@ -11,8 +11,7 @@
   :plugins [[lein-cljsbuild "1.0.3"]
             [com.cemerick/clojurescript.test "0.3.0"]
             [lein-pdo "0.1.1"]
-            ;FIXME: Add the lein plugin here after it's done
-            ]
+            [lein-browserific "0.1.0"]]
 
   :aliases {"dev" ["pdo" "cljsbuild" "auto" "dev," "browserific" "auto"]
             "release" ["pdo" "cljsbuild" "auto" "release," "browserific" "auto"]}

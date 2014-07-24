@@ -1,4 +1,4 @@
-(defproject lein-browserific "0.1.0-SNAPSHOT"
+(defproject lein-browserific "0.1.0"
   :description "Pre-processor to convert browserific code to API code"
   :url "http://example.com/FIXME"
   :license {:name "Eclipse Public License"
@@ -8,15 +8,17 @@
                  [org.clojure/data.xml "0.0.7"]
                  [cheshire "5.3.1"]
                  [instaparse "1.3.2"]
+                 [clojure-watch "0.1.9"]
+                 [me.raynes/fs "1.4.4"]
                  [ring "1.3.0-RC1"]
                  [fogus/ring-edn "0.2.0"]
                  [compojure "1.1.8"]
                  [org.clojure/core.async "0.1.303.0-886421-alpha"]
-                 [clojure-watch "0.1.9"]
                  ;; CLJS
                  [org.clojure/clojurescript "0.0-2197"]
                  [sablono "0.2.17"]
-                 [om "0.5.3"]]
+                 [om "0.5.3"]
+                 [om-sync "0.1.1"]]
 
 
   :plugins [[lein-cljsbuild "1.0.3"]
@@ -32,7 +34,7 @@
 
   ;; TODO: delete the example :browserific when finished
   :browserific {:config "test/test-config.edn"
-                :source-paths ["src/cljs"]}
+                :source-paths "test"}
 
   :source-paths ["src/clj"]
 

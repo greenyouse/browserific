@@ -3,8 +3,14 @@
  :version "0.1.0-SNAPSHOT"
  :description "FIXME: write this!"
  :extension {
-             :browsers ["chrome" "firefox" "opera" "safari"]
+             :browsers []
              :activations []
              :content {}
              :access {}
-             :update-url []}}
+             :update-url []}
+ :mobile {
+          :platforms []
+          }
+ :desktop {
+           :platforms []
+           }}
