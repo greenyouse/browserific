@@ -1,21 +1,45 @@
-{:name "tester"
+;; This is an annotated reference of the browserific options for browser
+;; extensions. It is a fairly contrived example that covers all possible
+;; options. The values for various fields were arbitrarily picked; for
+;; more information on extension configurations see the official
+;; documentations at:
+;; chrome -- https://developer.chrome.com/extensions/manifest
+;; firefox -- https://developer.mozilla.org/en-US/Add-ons
+;; opera -- http://dev.opera.com/extensions/
+;; safari -- https://developer.apple.com/library/safari/documentation/UserExperience/Reference/SafariExtensionsReference/_index.html
+
+{;; The name of your application
+ :name "tester"
+
+ ;; The author information
  :author {:author-name "me"
           :author-id "me.woot.corp"
           :email "woot@tester.com"
           :url "http://www.testme.com"
           :contributors ["the lambda monster"
                          "a super-community"]}
+
+ ;; The app's version
  :version "0.1.0-SNAPSHOT"
+
+ ;; The project's license
  :license ""
+
+ ;; A concise description of the project
  :description "FIXME: write this!"
+
+ ;; The default langauge of your app
  :default-locale "en"
+
  :extensions {
+
+              ;; The platforms to deploy to. Options are:
+              ;; chrome, firefox, opera, safari
               :platforms ["firefox" "chrome" "opera" "safari"]
 
-              ;; different url addresses can load different namespaces of the app
-              :activations [{:urls ["https://www.example.com/*"
-                                    "http://www.example.com/*"]
-                             :scripts ["example-code.js"]}]
+              ;; Controls whether the app can run in private mode
+              ;; (aka incognito) and interact with private windows
+              ;; and objects.
               :private true
 
               :action {:type "browser" ; Either browser or page
@@ -30,7 +54,6 @@
               :background {:scripts ["background.js"]
                            :persistent false}
 
-              ;; For firefox use inject pageMod at compile time
               :content {:matches ["http*www.woot.com"]
                         :exclude ["*bad-stuff*"]
                         :css ["mystyles.css"]

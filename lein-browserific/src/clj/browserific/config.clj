@@ -275,7 +275,6 @@ linux, osx, windows\033[0m"))))))
 
 ;; NOTE: deleted (name-get) from the file path, line 288
 ;; FIXME: problem with multiple content + access
-;; FIXME: add manifest.webapp file?
 (defn- mobile-config
   "Outputs the mobile config file from the config.edn data"
   []
@@ -291,6 +290,32 @@ linux, osx, windows\033[0m"))))))
                           [:author {:email (get-config [:author :email])
                                     :href (get-config [:author :url])}
                            (get-config [:author :author-name])]
+                          [:content {:src (get-config [:mobile :content])}]
+                          [:access {:origin (get-config [:access :permissions])}]]))))
+
+(defmacro mobile-config
+  "Outputs the mobile config file from the config.edn data"
+  []
+  (io/make-parents "resources/mobile/config.xml")
+  `(spit "resources/mobile/config.xml"
+        (xml/indent-str (xml/sexp-as-element
+                         [:widget {:id (get-config [:mobile :id])
+                                   :version (get-config [:version])
+                                   :xmlns "http://www.w3.org/ns/widgets"
+                                   :xmlns:cdv "http://cordova.apache.org/ns/1.0"}
+                          [:name (get-config [:name])]
+                          [:description (get-config [:description])]
+                          [:author {:email (get-config [:author :email])
+                                    :href (get-config [:author :url])}
+                           (get-config [:author :author-name])]
+                          ~@(reduce #(conj %1 [:preference %2])
+                                    [] (get-config [:mobile :preferences]))
+                          ~@(reduce #(conj %1 [:cdv:plugin %2])
+                                    [] (get-config [:mobile :plugins]))
+                          ~@(reduce #(conj %1 [:icon %2])
+                                    [] (get-config [:mobile :icons]))
+                          ~@(reduce #(conj %1 [:splash %2])
+                                    [] (get-config [:mobile :splash]))
                           [:content {:src (get-config [:mobile :content])}]
                           [:access {:origin (get-config [:access :permissions])}]]))))
 

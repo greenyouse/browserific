@@ -181,11 +181,93 @@
               }
 
  :mobile {
+
+          ;; A unique identifier for your app
           :id "com.example.tester"
 
+          ;; The platforms to deploy to. Options are:
+          ;; amazon-fire, android, blackberry, firefox-os, ios, ubuntu,
+          ;; wp7, wp8, tizen, webos
           :platforms ["ios" "android" "firefox-os" "wp8" "ubuntu"
-                    "blackberry"]
+                      "blackberry"]
 
+
+          ;; FIXME: look up a few things here and fill these out better
+
+          ;; These are various phonegap preferences
+          :preferences [{:name "phonegap-version" :value "3.5.0"}
+                        {:name "orientation" :value "default"}
+                        {:name "target-device" :value "universal"}
+                        {:name "fullscreen" :value "true"}
+                        {:name "webviewbounce" :value "true"}
+                        {:name "prerendered-icon" :value "true"}
+                        {:name "stay-in-webview" :value "false"}
+                        {:name "ios-statusbarstyle" :value "black-opaque"}
+                        {:name "detect-data-types" :value "true"}
+                        {:name "exit-on-suspend" :value "false"}
+                        {:name "show-splash-screen-spinner" :value "true"}
+                        {:name "auto-hide-splash-screen" :value "true"}
+                        {:name "disable-cursor" :value "false"}
+                        {:name "android-minSdkVersion" :value "7"}
+                        {:name "android-installLocation" :value "auto"}]
+
+          ;; Here is a list of all the core cordova plugins. More
+          ;; thrid-party are available at:
+          ;;
+          :plugins [{:name "org.apache.cordova.battery-status"}
+                    {:name "org.apache.cordova.camera"}
+                    {:name "org.apache.cordova.media-capture"}
+                    {:name "org.apache.cordova.console"}
+                    {:name "org.apache.cordova.contacts"}
+                    {:name "org.apache.cordova.device"}
+                    {:name "org.apache.cordova.device-motion"}
+                    {:name "org.apache.cordova.device-orientation"}
+                    {:name "org.apache.cordova.dialogs"}
+                    {:name "org.apache.cordova.file"}
+                    {:name "org.apache.cordova.file-transfer"}
+                    {:name "org.apache.cordova.geolocation"}
+                    {:name "org.apache.cordova.globalization"}
+                    {:name "org.apache.cordova.inappbrowser"}
+                    {:name "org.apache.cordova.media"}
+                    {:name "org.apache.cordova.network-information"}
+                    {:name "org.apache.cordova.splashscreen"}
+                    {:name "org.apache.cordova.vibration"}]
+
+          ;; Icon files tend vary for each platform. This is a list of
+          ;; all necessary formats:
+          :icons [{:src "icon.png"}
+                  {:src "res/icon/android/icon-36-ldpi.png" :platform "android" :qualifier "ldpi"}
+                  {:src "res/icon/android/icon-48-mdpi.png" :platform "android" :qualifier "mdpi"}
+                  {:src "res/icon/android/icon-72-hdpi.png" :platform "andoird" :qualifier "hdpi"}
+                  {:src "res/icon/android/icon-96-xhdpi.png" :platform "andoird" :qualifier "xhdpi"}
+                  {:src "src/icon/ios/icon-57.png" :platform "ios" :width "54" :height "54"}
+                  {:src "src/icon/ios/icon-72.png" :platform "ios" :width "72" :height "72"}
+                  {:src "src/icon/ios/icon-57-2x.png" :platform "ios" :width "114" :height "114"}
+                  {:src "src/icon/ios/icon-72-2x.png" :platform "ios" :width "144" :height "144"}
+                  {:src "res/icon/blackberry/icon-80.png" :platform "blackberry"}
+                  {:src "res/icon/blackberry/icon-80.png" :platform "blackberry" :state "hover"}
+                  {:src "res/icon/webos/icon-64.png" :platform "webos"}
+                  {:src "res/icon/windows-phone/icon-48.png" :platform "winphone"}
+                  {:src "res/icon/windows-phone/icon-173.png" :platform "winphone" :role "background"}]
+
+          ;; Some platforms take a few seconds to load. For those, a splash
+          ;; screen can be used.
+          :splash [{:src "res/screen/android/screen-ldpi-portrait.png" :platform "android" :qualifier "port-ldpi"}
+                   {:src "res/screen/android/screen-mdpi-portrait.png" :platform "android" :qualifier "port-mdpi"}
+                   {:src "res/screen/android/screen-hdpi-portrait.png" :platform "android" :qualifier "port-hdpi"}
+                   {:src "res/screen/android/screen-xhdpi-portrait.png" :platform "android" :qualifier "port-xhdpi"}
+                   {:src "res/screen/blackberry/screen-225.png" :platform "blackberry"}
+                   {:src "res/screen/ios/screen-iphone-portrait.png" :platform "ios" :width "320" :height "480"}
+                   {:src "res/screen/ios/screen-iphone-portrait-2x.png" :platform "ios" :width "640" :height "960"}
+                   {:src "res/screen/ios/screen-iphone-portrait-568h-2x.png" :platform "ios" :width "640" :height "1136"}
+                   {:src "res/screen/ios/screen-ipad-portrait.png" :platform "ios" :width "768" :height "1024"}
+                   {:src "res/screen/ios/screen-ipad-landscape.png" :platform "ios" :width "1024" :height "768"}
+                   {:src "res/screen/windows-phone/screen-portrait.jpg" :platform "winphone"}]
+
+
+          ;; The icon files for your app. Each device tends to have
+          ;; slighly different requirements, so check the necessary
+          ;; specs before hand.
           :icons [:firefox []
                   :ios ["ios/icon-57-2x.png"
                         "ios/icon-57.png"
@@ -197,21 +279,67 @@
                             "android/icon-96-xhdpi.png"]
                   :wp8 []]
 
+          ;; Whitelist of domains that can connect with your app.
           :permissions ["https://www.wahoo.com/"
                         "https://www.yoogle.com/"]
 
-          :preferences {:Fullscreen "false"
+          :preferences {;;Fullscreen allows you to hide the status bar
+                        ;; at the top of the screen. The default value is false.
+                        :Fullscreen "false"
+
+                        ;; Orientation allows you to lock orientation
+                        ;; and prevent the interface from rotating in
+                        ;; response to changes in orientation. Possible
+                        ;; values are default, landscape, or portrait.
+                        ;;
+                        ;; NOTE: The default value means both landscape
+                        ;; and portrait orientations are enabled. If you
+                        ;; want to use each platform's default settings
+                        ;; (usually portrait-only), leave this tag out
+                        ;; of the config.edn file.
                         :Orientation "default"
+
+                        ;; DisallowOverscroll (boolean, defaults to false):
+                        ;; set to true if you don't want the interface to
+                        ;; display any feedback when users scroll past the
+                        ;; beginning or end of content.
+                        ;;
+                        ;; Applies to Android and iOS. On iOS, overscroll
+                        ;; gestures cause content to bounce back to its
+                        ;; original position. On Android, they produce a
+                        ;; more subtle glowing effect along the top or
+                        ;; bottom edge of the content.
                         :DisallowOverscroll "false"
+
+                        ;; BackgroundColor: Set the app's background color.
+                        ;; Supports a four-byte hex value, with the first
+                        ;; byte representing the alpha channel, and
+                        ;; standard RGB values for the following three
+                        ;; bytes.
+                        ;;
+                        ;; Applies to Android and BlackBerry. Overrides
+                        ;; CSS otherwise available across all platforms.
                         :BackgroundColor "0xff0000ff"
+
+                        ;; HideKeyboardFormAccessoryBar (boolean,
+                        ;; defaults to false): set to true to hide the
+                        ;; additional toolbar that appears above the
+                        ;; keyboard, helping users navigate from one form
+                        ;; input to another.
+                        ;;
+                        ;; Applies to iOS and BlackBerry.
                         :HideKeyboardAcessoryBar "false"}
 
-          :content ["index.html"]
+          ;; The optional <content> element defines the app's starting
+          ;; page in the top-level web assets directory. The default
+          ;; value is index.html, which customarily appears in a project's
+          ;; top-level www directory.
+          :content ["app-file.html"]
           }
 
  :desktop {
            :platforms ["osx" "windows" "linux"]
-           :main "init.js"
+           :main "init.html"
            :nodejs "true"
            :node-main "core/nodejs.js"
            :single-instance true

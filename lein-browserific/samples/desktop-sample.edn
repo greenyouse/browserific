@@ -1,59 +1,182 @@
-{:name "tester"
+;; This is an annotated reference of the browserific options for desktop
+;; platforms. It is a fairly contrived example that covers all possible
+;; options. The values for various fields were arbitrarily picked; for
+;; more information on desktop configurations see the official
+;; node-webkit documentation at: https://github.com/rogerwang/node-webkit/wiki
+
+{;; The name of your application
+ :name "tester"
+
+ ;; The author information
  :author {:author-name "me"
           :author-id "me.woot.corp"
           :email "woot@tester.com"
           :url "http://www.testme.com"
           :contributors ["the lambda monster"
                          "a super-community"]}
+
+ ;; The app's version
  :version "0.1.0-SNAPSHOT"
+
+ ;; The project's license
  :license ""
+
+ ;; A concise description of the project
  :description "FIXME: write this!"
+
+ ;; The default langauge of your app
  :default-locale "en"
+
  :desktop {
+
+           ;; The platforms to deploy to. Options are:
+           ;; linux, osx, windows
            :platforms ["osx" "windows" "linux"]
-           :main "init.js"
+
+           ;; The app's starting page.
+           :main "init.html"
+
+           ;; A boolean, setting this to false will disable Node support
+           ;; in WebKit.
            :nodejs "true"
+
+           ;; Specifies the path to a node.js script file which gets
+           ;; loaded before the DOM.
            :node-main "core/nodejs.js"
+
+           ;; By default node-webkit only allows one instance of your
+           ;; app if your app is a standalone package, if you want to
+           ;; allow multiple instances of your app running at the same
+           ;; time, make this false.
            :single-instance true
+
+           ;; Overrides the User-Agent header in HTTP requests made from
+           ;; the application. For more info on User-Agent values see:
+           ;; https://en.wikipedia.org/wiki/User_agent_string
            :user-agent {:name "openbsd"
                         :ver "5.5"
                         :nwver "1.0"
                         :webkit-ver "20.0"
                         :osinfo "??"}
+
+           ;; Whitelist of domains that can connect with your app.
            :permissions ["foobar.com", "*foobar.com"]
+
+           ;; Chromium command line arguments for custom settings (e.g.
+           ;; disabling GPU or enable smooth scrooling). A full list of
+           ;; chromium args is available here:
+           ;; http://src.chromium.org/svn/trunk/src/content/public/common/content_switches.cc
            :chromium-args "--disable-threaded-compositing --enable-smooth-scrolling"
+
+           ;; Flags to pass to the v8 JavaScript engine (e.g. turn on
+           ;; Harmon Proxies and Collections).
            :js-flags "--harmony_proxies --harmony_collections"
+
+           ;; The injected JavaScript code is to be executed after any
+           ;; files from css, but before any other DOM is constructed or
+           ;; any other script is run
            :inject-js-start "core.pre-load.js"
+
+           ;; The injecting JavaScript code is to be executed after the
+           ;; document object is loaded, before onload event is fired.
            :inject-js-end "core.post-load.js"
+
+           ;; EXPERIMENTAL -- Loads a snapshot file that has been compiled
+           ;; down to native code. For more infomation see:
+           ;; https://github.com/rogerwang/node-webkit/wiki/Protect-JavaScript-source-code-with-v8-snapshot
            :snapshot "new/snapshot-8.js"
+
+           ;; Number of mega bytes for the quota of the DOM storage. The
+           ;; suggestion is to put double the value you want.
            :dom-storage-quota 10
+
+           ;; SOON TO BE DEPRECATED -- Whether the default Edit menu
+           ;; should be disabled on Mac. The default value is false. Only
+           ;; effective on Mac.
            :no-edit-menu true
+
+           ;; An array of keywords to assist users searching for the
+           ;; package in catalogs.
            :keywords ["so fun", "way cool", "wow", "totally app"]
+
+           ;; URL for submitting bugs. Can be mailto or http.
            :bugs "http://my.bug-report.com"
+
+           ;; Array of repositories where the package can be located.
+           ;; Each repository is a hash with properties for the :type
+           ;; and :url location of the repository to clone/checkout the
+           ;; package. A :path property may also be specified to locate
+           ;; the package in the repository if it does not reside at the
+           ;; root.
            :repositories [{:type "git"
                            :url "http://github.com/example.git"
                            :path "packages/mypackage"}]
 
-           :window {:title "my app"
+           :window {;; The default title of window created by node-webkit,
+                    ;; it's very useful if you want to show your own title
+                    ;; when the app is starting.
+                    :title "my app"
+
+                    ;; the initial width/height of the main window.
                     :width 800
                     :height 500
+
+                    ;; should the navigation toolbar be shown.
                     :toolbar true
+
+                    ;; path to window's icon
                     :icon "core/misc/icon.png"
+
+                    ;; be null or center or mouse, controls where window
+                    ;; will be put
                     :position "mouse"
+
+                    ;; minimum width/height of window
                     :min-width 400
                     :min-height 200
+
+                    ;; maximum width/height of window
                     :max-width 800
                     :max-height 600
+
+                    ;; show as desktop background window under X11 environment
                     :as-desktop true
+
+                    ;; whether window is resizable
                     :resizable true
+
+                    ;; whether the window should always stay on top of
+                    ;; other windows
                     :always-on-top false
+
+                    ;; whether the window is fullscreen
                     :fullscreen true
+
+                    ;; whether the window is shown in taskbar or dock.
+                    ;; The default is true.
                     :show-in-taskbar true
+
+                    ;; Make this false to have a frameless window
                     :frame true
+
+                    ;; Make this false if you want your app to be hidden
+                    ;; on startup
                     :show true
+
+                    ;; Whether to use Kiosk mode. In Kiosk mode, the app
+                    ;; will be fullscreen and try to prevent users from
+                    ;; leaving the app, so you should remember to provide
+                    ;; a way in app to leave Kiosk mode. This mode is
+                    ;; mainly used for presentation on public displays
                     :kiosk false}
 
-           :webkit {:plugin false
+           :webkit {;; Whether to load external browser plugins like Flash,
+                    ;; default to false.
+                    :plugin false
+
+                    ;; Whether to load Java applets, default to false.
                     :java true
+
+                    ;; Whether to enable page cache, default to false.
                     :page-cache false}}
  }

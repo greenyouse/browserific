@@ -12,10 +12,6 @@
  :extensions {
               :platforms ["firefox" "chrome" "opera" "safari"]
 
-              ;; different url addresses can load different namespaces of the app
-              :activations [{:urls ["https://www.example.com/*"
-                                    "http://www.example.com/*"]
-                             :scripts ["example-code.js"]}]
               :private true
 
               :action {:type "browser" ; Either browser or page
@@ -184,33 +180,77 @@
           :platforms ["ios" "android" "firefox-os" "wp8" "ubuntu"
                       "blackberry"]
 
-          :icons [:firefox []
-                  :ios ["ios/icon-57-2x.png"
-                        "ios/icon-57.png"
-                        "ios/icon-72-2x.png"
-                        "ios/icon-72.png"]
-                  :android ["android/icon-36-ldpi.png"
-                            "android/icon-48-mdpi.png"
-                            "android/icon-72-hdpi.png"
-                            "android/icon-96-xhdpi.png"]
-                  :wp8 []]
+          :preferences [{:name "phonegap-version" :value "3.5.0"}
+                        {:name "orientation" :value "default"}
+                        {:name "target-device" :value "universal"}
+                        {:name "fullscreen" :value "true"}
+                        {:name "webviewbounce" :value "true"}
+                        {:name "prerendered-icon" :value "true"}
+                        {:name "stay-in-webview" :value "false"}
+                        {:name "ios-statusbarstyle" :value "black-opaque"}
+                        {:name "detect-data-types" :value "true"}
+                        {:name "exit-on-suspend" :value "false"}
+                        {:name "show-splash-screen-spinner" :value "true"}
+                        {:name "auto-hide-splash-screen" :value "true"}
+                        {:name "disable-cursor" :value "false"}
+                        {:name "android-minSdkVersion" :value "7"}
+                        {:name "android-installLocation" :value "auto"}]
+
+          :plugins [{:name "org.apache.cordova.battery-status"}
+                    {:name "org.apache.cordova.camera"}
+                    {:name "org.apache.cordova.media-capture"}
+                    {:name "org.apache.cordova.console"}
+                    {:name "org.apache.cordova.contacts"}
+                    {:name "org.apache.cordova.device"}
+                    {:name "org.apache.cordova.device-motion"}
+                    {:name "org.apache.cordova.device-orientation"}
+                    {:name "org.apache.cordova.dialogs"}
+                    {:name "org.apache.cordova.file"}
+                    {:name "org.apache.cordova.file-transfer"}
+                    {:name "org.apache.cordova.geolocation"}
+                    {:name "org.apache.cordova.globalization"}
+                    {:name "org.apache.cordova.inappbrowser"}
+                    {:name "org.apache.cordova.media"}
+                    {:name "org.apache.cordova.network-information"}
+                    {:name "org.apache.cordova.splashscreen"}
+                    {:name "org.apache.cordova.vibration"}]
+
+          :icons [{:src "icon.png"}
+                  {:src "res/icon/android/icon-36-ldpi.png" :platform "android" :qualifier "ldpi"}
+                  {:src "res/icon/android/icon-48-mdpi.png" :platform "android" :qualifier "mdpi"}
+                  {:src "res/icon/android/icon-72-hdpi.png" :platform "andoird" :qualifier "hdpi"}
+                  {:src "res/icon/android/icon-96-xhdpi.png" :platform "andoird" :qualifier "xhdpi"}
+                  {:src "src/icon/ios/icon-57.png" :platform "ios" :width "54" :height "54"}
+                  {:src "src/icon/ios/icon-72.png" :platform "ios" :width "72" :height "72"}
+                  {:src "src/icon/ios/icon-57-2x.png" :platform "ios" :width "114" :height "114"}
+                  {:src "src/icon/ios/icon-72-2x.png" :platform "ios" :width "144" :height "144"}
+                  {:src "res/icon/blackberry/icon-80.png" :platform "blackberry"}
+                  {:src "res/icon/blackberry/icon-80.png" :platform "blackberry" :state "hover"}
+                  {:src "res/icon/webos/icon-64.png" :platform "webos"}
+                  {:src "res/icon/windows-phone/icon-48.png" :platform "winphone"}
+                  {:src "res/icon/windows-phone/icon-173.png" :platform "winphone" :role "background"}]
+
+          :splash [{:src "res/screen/android/screen-ldpi-portrait.png" :platform "android" :qualifier "port-ldpi"}
+                   {:src "res/screen/android/screen-mdpi-portrait.png" :platform "android" :qualifier "port-mdpi"}
+                   {:src "res/screen/android/screen-hdpi-portrait.png" :platform "android" :qualifier "port-hdpi"}
+                   {:src "res/screen/android/screen-xhdpi-portrait.png" :platform "android" :qualifier "port-xhdpi"}
+                   {:src "res/screen/blackberry/screen-225.png" :platform "blackberry"}
+                   {:src "res/screen/ios/screen-iphone-portrait.png" :platform "ios" :width "320" :height "480"}
+                   {:src "res/screen/ios/screen-iphone-portrait-2x.png" :platform "ios" :width "640" :height "960"}
+                   {:src "res/screen/ios/screen-iphone-portrait-568h-2x.png" :platform "ios" :width "640" :height "1136"}
+                   {:src "res/screen/ios/screen-ipad-portrait.png" :platform "ios" :width "768" :height "1024"}
+                   {:src "res/screen/ios/screen-ipad-landscape.png" :platform "ios" :width "1024" :height "768"}
+                   {:src "res/screen/windows-phone/screen-portrait.jpg" :platform "winphone"}]
 
           :permissions ["https://www.wahoo.com/"
                         "https://www.yoogle.com/"]
 
-          :preferences {:Fullscreen "false"
-                        :Orientation "default"
-                        :DisallowOverscroll "false"
-                        :BackgroundColor "0xff0000ff"
-                        :HideKeyboardAcessoryBar "false"}
-
-                                        ; TODO: feature/plugin part
           :content ["index.html"]
           }
 
  :desktop {
            :platforms ["osx" "windows" "linux"]
-           :main "init.js"
+           :main "init.html"
            :nodejs "true"
            :node-main "core/nodejs.js"
            :single-instance true
@@ -254,8 +294,7 @@
 
            :webkit {:plugin false
                     :java true
-                    :page-cache false}}
- }
+                    :page-cache false}}}
 
 
 ;; http://stackoverflow.com/questions/11853046/how-to-exclude-sites-in-a-firefox-addon-contentscript-using-pagemod
