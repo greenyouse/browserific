@@ -2,15 +2,32 @@
  :author {:author-name "" :email "" :url ""}
  :version "0.1.0-SNAPSHOT"
  :description "FIXME: write this!"
+
  :extension {
              :browsers []
              :activations []
              :content {}
              :access {}
              :update-url []}
+
  :mobile {
+          :id "your.id.here"
           :platforms []
-          }
+          :permissions []
+          :preferences []
+          :plugins []
+          :icons []
+          :splash []
+          :content []}
+
  :desktop {
            :platforms []
+           :main []
+           :permissions []
+           :keywords []
+           :window {}
+           :bugs "http://your.bug-report.com"
+           :repositories [{:type "" ;; e.g. git or Hg
+                           :url "http://example.com/FIXME"
+                           :path "your/app.js"}]
            }}

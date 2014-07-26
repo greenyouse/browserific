@@ -1,4 +1,4 @@
-(defproject lein-browserific "0.1.0"
+(defproject lein-browserific "0.1.0-SNAPSHOT"
   :description "Pre-processor to convert browserific code to API code"
   :url "http://example.com/FIXME"
   :license {:name "Eclipse Public License"
@@ -32,7 +32,6 @@
 
   :ring {:handler leiningen.browserific.config.server/app}
 
-  ;; TODO: delete the example :browserific when finished
   :browserific {:config "test/test-config.edn"
                 :source-paths "test"}
 

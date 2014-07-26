@@ -86,7 +86,7 @@
            ;; https://github.com/rogerwang/node-webkit/wiki/Protect-JavaScript-source-code-with-v8-snapshot
            :snapshot "new/snapshot-8.js"
 
-           ;; Number of mega bytes for the quota of the DOM storage. The
+           ;; Number of megabytes for the quota of the DOM storage. The
            ;; suggestion is to put double the value you want.
            :dom-storage-quota 10
 

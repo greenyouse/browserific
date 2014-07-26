@@ -20,84 +20,166 @@
               :builds [
                        ;; Chrome
                        {:id "dev"
-                        :source-paths ["src/{{sanitized}}/chrome/background"]
-                        :compiler {:output-to "resources/chrome/src/background.js"
+                        :source-paths ["intermediate/chrome/background"]
+                        :compiler {:output-to "resources/extension/chrome/src/background.js"
                                    :optimizations :simple}}
                        {:id "dev"
-                        :source-paths ["dev" "src/{{sanitized}}/chrome/content"]
-                        :compiler {:output-to "resources/chrome/src/content.js"
+                        :source-paths ["dev" "intermediate/chrome/content"]
+                        :compiler {:output-to "resources/extension/chrome/src/content.js"
                                    :optimizations :simple}}
 
                        ;; Firefox
                        {:id "dev"
-                        :source-paths ["src/{{sanitized}}/firefox/background"]
+                        :source-paths ["intermediate/firefox/background"]
                          :compiler {
-                                    :output-to "resources/firefox/lib/background.js"
+                                    :output-to "resources/extension/firefox/lib/background.js"
                                     :optimizations :simple}}
                         {:id "dev"
-                         :source-paths ["dev" "src/{{sanitized}}/firefox/content"]
-                         :compiler {:output-to "resources/firefox/data/content.js"
+                         :source-paths ["dev" "intermediate/firefox/content"]
+                         :compiler {:output-to "resources/extension/firefox/data/content.js"
                                     :optimizations :simple}}
 
                        ;; Opera
                        {:id "dev"
-                        :source-paths ["src/{{sanitized}}/opera/background"]
-                        :compiler {:output-to "resources/opera/src/background.js"
+                        :source-paths ["intermediate/opera/background"]
+                        :compiler {:output-to "resources/extension/opera/src/background.js"
                                    :optimizations :simple}}
                        {:id "dev"
-                        :source-paths ["dev" "src/{{sanitized}}/opera/content"]
-                        :compiler {:output-to "resources/opera/src/content.js"
+                        :source-paths ["dev" "intermediate/opera/content"]
+                        :compiler {:output-to "resources/extension/opera/src/content.js"
                                    :optimizations :simple}}
 
                        ;; Safari
                        {:id "dev"
-                        :source-paths ["src/{{sanitized}}/safari/background"]
-                        :compiler {:output-to "resources/safari/src/background.js"
+                        :source-paths ["intermediate/safari/background"]
+                        :compiler {:output-to "resources/extension/safari/src/background.js"
                                    :optimizations :simple}}
                        {:id "dev"
-                        :source-paths ["dev" "src/{{sanitized}}/safari/background"]
-                        :compiler {:output-to "resources/safari/src/content.js"
+                        :source-paths ["dev" "intermediate/safari/content"]
+                        :compiler {:output-to "resources/extension/safari/src/content.js"
+                                   :optimizations :simple}}
+
+                       ;; Mobile
+                       {:id "dev"
+                        :source ["intermediate/mobile/background"]
+                        :compiler {:output-to "resources/mobile/{{sanitized}}/www/background.js"
+                                   :optimizations :simple}}
+                       {:id "dev"
+                        :source  ["dev" "intermediate/mobile/content"]
+                        :compiler {:output-to "resources/mobile/{{sanitized}}/www/content.js"
+                                   :optimizations :simple}}
+
+                       ;; Linux
+                       {:id "dev"
+                        :source ["intermediate/linux/background"]
+                        :compiler {:output-to "resources/desktop/deploy/linux/background.js"
+                                   :optimizations :simple}}
+                       {:id "dev"
+                        :source  ["dev" "intermediate/linux/content"]
+                        :compiler {:output-to "resources/desktop/deploy/linux/content.js"
+                                   :optimizations :simple}}
+
+                       ;; OSX
+                       {:id "dev"
+                        :source ["intermediate/osx/background"]
+                        :compiler {:output-to "resources/desktop/deploy/osx/background.js"
+                                   :optimizations :simple}}
+                       {:id "dev"
+                        :source  ["dev" "intermediate/osx/content"]
+                        :compiler {:output-to "resources/desktop/deploy/osx/content.js"
+                                   :optimizations :simple}}
+
+                       ;; Windows
+                       {:id "dev"
+                        :source ["intermediate/windows/background"]
+                        :compiler {:output-to "resources/desktop/deploy/windows/background.js"
+                                   :optimizations :simple}}
+                       {:id "dev"
+                        :source  ["dev" "intermediate/windows/content"]
+                        :compiler {:output-to "resources/desktop/deploy/windows/content.js"
                                    :optimizations :simple}}
 
 
                        ;;;;;;;;;;;;;;;;;;;;;; Production Mode
                        ;; Chrome
                        {:id "release"
-                        :source-paths ["src/{{sanitized}}/chrome/background"]
-                        :compiler {:output-to "resources/chrome/src/background.js"
+                        :source-paths ["intermediate/chrome/background"]
+                        :compiler {:output-to "resources/extension/chrome/src/background.js"
                                    :optimizations :advanced}}
                        {:id "release"
-                        :source-paths ["src/{{sanitized}}/chrome/content"]
-                        :compiler {:output-to "resources/chrome/src/content.js"
+                        :source-paths ["intermediate/chrome/content"]
+                        :compiler {:output-to "resources/extension/chrome/src/content.js"
                                    :optimizations :advanced}}
 
                        ;; Firefox
                        {:id "release"
-                        :source-paths ["src/{{sanitized}}/firefox/background"]
+                        :source-paths ["intermediate/firefox/background"]
                         :compiler {
-                                   :output-to "resources/firefox/lib/background.js"
+                                   :output-to "resources/extension/firefox/lib/background.js"
                                    :optimizations :advanced}}
                        {:id "release"
-                        :source-paths ["src/{{sanitized}}/firefox/content"]
-                        :compiler {:output-to "resources/firefox/data/content.js"
+                        :source-paths ["intermediate/firefox/content"]
+                        :compiler {:output-to "resources/extension/firefox/data/content.js"
                                    :optimizations :advanced}}
 
                        ;; Opera
                        {:id "release"
-                        :source-paths ["src/{{sanitized}}/opera/background"]
-                        :compiler {:output-to "resources/opera/src/background.js"
+                        :source-paths ["intermediate/opera/background"]
+                        :compiler {:output-to "resources/extension/opera/src/background.js"
                                    :optimizations :advanced}}
                        {:id "release"
-                        :source-paths ["src/{{sanitized}}/opera/content"]
-                        :compiler {:output-to "resources/opera/src/content.js"
+                        :source-paths ["intermediate/opera/content"]
+                        :compiler {:output-to "resources/extension/opera/src/content.js"
                                    :optimizations :advanced}}
 
                        ;; Safari
                        {:id "release"
-                        :source-paths ["src/{{sanitized}}/safari/background"]
-                        :compiler {:output-to "resources/safari/src/background.js"
+                        :source-paths ["intermediate/safari/background"]
+                        :compiler {:output-to "resources/extension/safari/src/background.js"
                                    :optimizations :advanced}}
                        {:id "release"
-                        :source-paths ["src/{{sanitized}}/safari/background"]
-                        :compiler {:output-to "resources/safari/src/content.js"
-                                   :optimizations :advanced}}]})
+                        :source-paths ["intermediate/safari/content"]
+                        :compiler {:output-to "resources/extension/safari/src/content.js"
+                                   :optimizations :advanced}}
+
+                       ;; Mobile
+                       {:id "release"
+                        :source ["intermediate/mobile/background"]
+                        :compiler {:output-to "resources/mobile/{{sanitized}}/www/background.js"
+                                   :optimizations :advanced}}
+                       {:id "release"
+                        :source  ["intermediate/mobile/content"]
+                        :compiler {:output-to "resources/mobile/{{sanitized}}/www/content.js"
+                                   :optimizations :advanced}}
+
+                       ;; Linux
+                       {:id "release"
+                        :source ["intermediate/linux/background"]
+                        :compiler {:output-to "resources/desktop/deploy/linux/background.js"
+                                   :optimizations :advanced}}
+                       {:id "release"
+                        :source  ["intermediate/linux/content"]
+                        :compiler {:output-to "resources/desktop/deploy/linux/content.js"
+                                   :optimizations :advanced}}
+
+                       ;; OSX
+                       {:id "release"
+                        :source ["intermediate/osx/background"]
+                        :compiler {:output-to "resources/desktop/deploy/osx/background.js"
+                                   :optimizations :advanced}}
+                       {:id "release"
+                        :source  ["intermediate/osx/content"]
+                        :compiler {:output-to "resources/desktop/deploy/osx/content.js"
+                                   :optimizations :advanced}}
+
+                       ;; Windows
+                       {:id "release"
+                        :source ["intermediate/windows/background"]
+                        :compiler {:output-to "resources/desktop/deploy/windows/background.js"
+                                   :optimizations :advanced}}
+                       {:id "release"
+                        :source  ["intermediate/windows/content"]
+                        :compiler {:output-to "resources/desktop/deploy/windows/content.js"
+                                   :optimizations :advanced}}
+
+                       ]})

@@ -20,9 +20,4 @@
               (render "content.cljs" data)]
              ["test/test.clj" (render "test.cljs" data)]
              ["dev/brepl.cljs" (render "brepl.cljs" data)]
-             "release"
-             "resources"
-             "intermediates")))
-
-;; FIXME: add the library to :require in content.cljs + background.cljs
-;; once everything is finished
+             "resources")))

@@ -54,11 +54,8 @@ FE = SPACE* Pred <SPACE*> Platforms <SPACE*> SEXP
 Or = '!+'
 Neg = '!-'
 <Platforms> = <'['> Env <']'>
-<Env> = Browser <SPACE*> Env* | Mobile <SPACE*> Env* | Meta <SPACE*> Env*
- | Desktop <SPACE*> Env*
+<Env> = Browser <SPACE*> Env* | Desktop <SPACE*> Env* |  Meta <SPACE*> Env*
 Browser = 'chrome' | 'firefox' | 'opera' | 'safari'
-Mobile = 'amazon-fire' | 'android' | 'blackberry' | 'firefox-os' | 'ios' |
-   'ubuntu' | 'wp7' | 'wp8' | 'webos' | 'tizen'
 Desktop = 'linux' | 'osx' | 'windows'
 (* Denotes all browsers, all mobile, or all desktop *)
 Meta = 'b' | 'm' | 'd'
@@ -73,13 +70,13 @@ SEXP = #'\u6D3B\u6CC9.*?\u6D3B\u6CC9'
 
 (def ^:private platforms
   `[~@(:browsers conf/systems)
-    ~@(:mobile conf/systems)
+    "mobile"
     ~@(:desktop conf/systems)])
 
 (defn- transform-meta [node]
   (case node
     "b" (:browsers conf/systems)
-    "m" (:mobile conf/systems)
+    "m" ["mobile"]
     "d" (:desktop conf/systems)))
 
 (def ^:private transfom
@@ -87,7 +84,6 @@ SEXP = #'\u6D3B\u6CC9.*?\u6D3B\u6CC9'
    :Neg identity
    :Or identity
    :Browser #(vector (identity %))
-   :Mobile #(vector (identity %))
    :Desktop #(vector (identity %))
    :Meta #(transform-meta %)
    :SEXP #(-> %
@@ -145,9 +141,7 @@ SEXP = #'\u6D3B\u6CC9.*?\u6D3B\u6CC9'
                   (io/make-parents dest)
                   (spit dest contents)))))]
     (map #(process expr % filename) ["chrome" "firefox" "opera" "safari"
-                                     "amazon-fire" "android" "blackberry"
-                                     "firefox-os" "ios" "ubuntu" "wp7" "wp8"
-                                     "webos" "tizen" "linux" "osx" "windows"])))
+                                     "mobile" "linux" "osx" "windows"])))
 
 (defn parse-files [files]
   (letfn [(get-file [filename]
@@ -159,4 +153,4 @@ SEXP = #'\u6D3B\u6CC9.*?\u6D3B\u6CC9'
                   (recur (read rdr false :end) (conj acc (parse (str c) filename)))))))]
     (map get-file files)))
 (comment (fs.core/delete-dir "intermediate")
-         (parse-file "test/fake-input.cljs"))
+         (parse-files ["test/fake-input.cljs"]))
