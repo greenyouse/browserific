@@ -27,9 +27,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Widgets
 
-;; Style: blue i icon for help, red ellipse with "close" for close
-;;   separate background, section, item colors
-;;   tabs for the pages at the top
 (defn help-view
   "Displays the relevant help information for a config option"
   [app owner]
@@ -386,7 +383,6 @@
                (om/build-all widget current ;render the selected page
                              {:key :id})])))))
 
-;; TODO: write err-msg usl
 (defn app-view [app owner]
   (reify
     om/IWillUpdate
@@ -409,7 +405,7 @@
                                  (fn [err tx-data]
                                    (reset! app-state (:old-state tx-data))
                                    (om/set-state! owner :err-msg
-                                                  "Uh-oh, something went wrong!\n\nIf this problem persists, let me know by filing an issue here: [url]"))}})
+                                                  "Uh-oh, something went wrong!\n\nIf this problem persists, let me know by filing an issue here: https://github.com/greenyouse/browserific/issues"))}})
                (when err-msg
                  (html [:div err-msg]))))))
 

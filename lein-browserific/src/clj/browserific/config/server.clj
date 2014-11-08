@@ -48,7 +48,3 @@
   (-> app-routes
       (handler/api)
       wrap-edn-params))
-
-
-(comment (GET "/config" [] (send-om-state))
-         (POST "/config" {params :edn-params} (update-config params)))

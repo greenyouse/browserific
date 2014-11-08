@@ -1,0 +1,41 @@
+/* Basic style for the config gui */
+
+body {
+    background-color:  #ecf0f1;
+}
+
+section {
+    background-color:  #BDC3C7;
+    -moz-border-radius: 0.5em;
+    border-radius: 0.5em;
+    margin-right: 2em;
+}
+
+h4,input,button,div {
+    margin-left: 1em;
+}
+
+#page-select {
+    background-color: #42526C;
+    color: #E0EEEE;
+    -moz-border-radius: 0.3em;
+    border-radius: 0.3em;
+    padding: 1em;
+    height: 2em;
+}
+
+#page-select li {
+    float: left;
+    padding-left: 1em;
+    padding-bottom: 0.5em;
+}
+
+#page-select li:hover {
+    color: #60AFFE;
+    cursor: hand;
+    cursor: pointer;
+}
+
+ul {
+    list-style: none;
+}

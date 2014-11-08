@@ -114,10 +114,8 @@
                      (let [[{:keys [path new-value new-state] :as tx-data} _] v]
                        (when (and (subpath? coll-path path)
                                   (or (nil? filter) (filter tx-data)))
-                         (println (str "sec1  " new-value))
                          (let [[tag edn] (tag-and-edn coll-path path tag-fn id-key tx-data edn-hander-fn)
                                tx-data (assoc tx-data ::tag tag)]
-                           (println (str "sec3 " url " -- " tag " -- " edn))
                            (if-not (nil? sync-chan)
                              (>! sync-chan
                                  {:url url :tag tag :edn edn
