@@ -1,8 +1,6 @@
 (ns leiningen.browserific
   (:require [leiningen.help :as lhelp]
             [leiningen.core.main :as lmain]
-            [leiningen.core.eval :refer (eval-in-project)]
-            [leiningen.core.project :as project]
             [clojure-watch.core :refer [start-watch]]
             [clojure.java.io :as io]
             [fs.core :as fs]
@@ -76,7 +74,6 @@ Returns a sequence of File objects, in breadth-first sort order."
   [])
 
 
-;; TODO: add more specific commands like test, package, etc.
 (defn browserific
   "Run lein-browserific"
   {:help-arglists '([once auto clean sample config])

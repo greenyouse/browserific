@@ -295,7 +295,7 @@
                   {:src "res/icon/windows-phone/icon-173.png" :platform "winphone" :role "background"}]
 
           ;; Some platforms take a few seconds to load. For those, a splash
-          ;; screen can be used.
+          ;; screen can be useful.
           :splash [{:src "res/screen/android/screen-ldpi-portrait.png" :platform "android" :qualifier "port-ldpi"}
                    {:src "res/screen/android/screen-mdpi-portrait.png" :platform "android" :qualifier "port-mdpi"}
                    {:src "res/screen/android/screen-hdpi-portrait.png" :platform "android" :qualifier "port-hdpi"}

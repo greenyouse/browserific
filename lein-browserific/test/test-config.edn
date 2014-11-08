@@ -266,7 +266,6 @@
            :inject-js-end "core.post-load.js"
            :snapshot "new/snapshot-8.js"
            :dom-storage-quota 10
-           :no-edit-menu true
            :keywords ["so fun", "way cool", "wow", "totally app"]
            :bugs "http://my.bug-report.com"
            :repositories [{:type "git"

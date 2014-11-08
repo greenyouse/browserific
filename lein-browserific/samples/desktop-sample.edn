@@ -90,11 +90,6 @@
            ;; suggestion is to put double the value you want.
            :dom-storage-quota 10
 
-           ;; SOON TO BE DEPRECATED -- Whether the default Edit menu
-           ;; should be disabled on Mac. The default value is false. Only
-           ;; effective on Mac.
-           :no-edit-menu true
-
            ;; An array of keywords to assist users searching for the
            ;; package in catalogs.
            :keywords ["so fun", "way cool", "wow", "totally app"]

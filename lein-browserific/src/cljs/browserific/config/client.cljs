@@ -1,20 +1,18 @@
 (ns browserific.config.client
-    (:require-macros [cljs.core.async.macros :refer [go alt!]])
-    (:require [goog.events :as events]
-              [goog.dom :as gdom]
-              [cljs.core.async :as async :refer [put! <! >! chan timeout]]
-              [sablono.core :as sa :refer-macros [html]]
-              [om.core :as om :include-macros true]
-              [om.dom :as dom :include-macros true]
-              [om-sync.core :refer [om-sync]]
-              [om-sync.util :refer [tx-tag edn-xhr]]))
+  "General and Cordova widgets constructed with Om views and
+  om-sync support."
+  (:require-macros [cljs.core.async.macros :refer [go go-loop]])
+  (:require [browserific.config.sync :as sync]
+            [cljs.core.async :as async :refer [put! <! >! chan]]
+            [sablono.core :as sa :refer-macros [html]]
+            [om.core :as om :include-macros true]
+            [om.dom :as dom :include-macros true]
+            [om-sync.util :refer [edn-xhr tx-tag]]))
 
 (enable-console-print!)
 
-
 (def app-state
   (atom {}))
-
 
 (defn display
   "hide/show an element using inline css"
@@ -23,198 +21,410 @@
     #js {}
     #js {:display "none"}))
 
-(defn on-edit
-  "Send the change back to the server"
-  [id title]
-  (edn-xhr
-    {:method :put
-     :url (str "class/" id "/update")
-     :data {:class/title title}
-     :on-complete
-     (fn [res]
-       (println "server response:" res))}))
+(defn member? [i coll]
+  (some #(= i %) coll))
 
-(defn uuid [] (rand 100000))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Widgets
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; Render Dispatch fns
-
-(defn help-view [app owner]
+;; Style: blue i icon for help, red ellipse with "close" for close
+;;   separate background, section, item colors
+;;   tabs for the pages at the top
+(defn help-view
+  "Displays the relevant help information for a config option"
+  [app owner]
   (reify
     om/IInitState
     (init-state [_]
-                {:helper false})
+      {:helper false})
     om/IRenderState
-    (render-state [_ helper]
-                  (html [:div
-                         [:button {:onClick #(om/set-state! owner :helper true)}
-                          "?"]
-                         [:div {:class "help"
-                                :style (display (:helper helper))}
-                          [:button {:class "close-btn"
-                                    :onClick #(om/set-state! owner :helper false)}
-                           "xclosex"]
-                          [:p (str (:help-text app))]
-                          [:br]
-                          (if-not (nil? (:help-url app))
-                            (html [:p (str "For more information go here: ")
-                                   [:a (:help-url app)]]))]]))))
+    (render-state [_ {:keys [helper]}]
+      (html [:div
+             [:div [:button {:onClick #(om/set-state! owner :helper true)} "?"]
+              [:button {:class "close-btn"
+                        :style (display helper)
+                        :onClick #(om/set-state! owner :helper false)}
+               "xclosex"]]
+             [:div {:class "help"
+                    :style (display helper)}
+              [:p (str (:help-text app))]
+              [:br]
+              (if-not (nil? (:help-url app))
+                (html [:p (str "For more information go here: \n")
+                       [:a {:href (:help-url app) :target "_blank"}
+                        (:help-url app)]]))]]))))
 
-(defn name-commit-change
-  "Re-render a widget with some new state"
-  [app e owner]
-  (let [name-el (om/get-node owner "name")]
-    (om/set-state! owner :text js/e.target.value)
-    (om/update! app :value js/e.target.value :update)
-    (set! (.-value name-el) "")))
 
-;; DOM dispatcher
-;; FIXME: make an input button (this is a pain because the cursor cannot be pased to commit-change)
-(defn name-view [app owner]
+(defmulti widget :dom-type)
+
+(defmethod widget :name [app owner]
   (reify
     om/IInitState
     (init-state [_]
-                {:text (:value app)})
+      {:text (:value app)
+       :actions (chan)})
+    om/IWillMount
+    (will-mount [_]
+      (let [actions (om/get-state owner :actions)]
+        (go-loop []
+          (let [[tag edn] (<! actions)]
+            (case tag
+              :add (do (om/set-state! owner :text edn)
+                       (om/transact! app :value #(identity edn) :update))
+              :rm (do (om/set-state! owner :text "")
+                      (om/transact! app :value #(str "") :delete))
+              :num (do (om/set-state! owner :text edn)
+                       (om/transact! app :value #(int edn) :update)))
+            (recur)))))
     om/IRenderState
-    (render-state [_ state]
-            (html [:section
-                   [:h4 (:label app)]
-                   [:p (:text state)]
-                   [:input {:type "text"
-                            :ref "name"
-                            :onKeyPress (fn [e]
-                                          (when (== 13 js/e.keyCode)
-                                            (name-commit-change app e owner)))}]
-                   (om/build help-view app)]))))
+    (render-state [_ {:keys [text actions]}]
+      (html [:section
+             [:h4 (:label app)]
+             (if-not (or (nil? text) (= "" text))
+               [:div [:span text]
+                [:button {:onClick #(put! actions [:rm app])} "x"]])
+             [:input {:type "text"
+                      :ref "name"
+                      :onKeyDown  (fn [e] (when (== 13 js/e.keyCode)
+                                           (let [el (om/get-node owner "name")
+                                                 v (.-value el)]
+                                             (if (:number @app)
+                                               (put! actions [:num v])
+                                               (put! actions [:add v]))
+                                             (set! (.-value el) ""))))}
+              [:button {:onClick  #(let [el (om/get-node owner "name")
+                                         v (.-value el)]
+                                     (put! actions [:add v])
+                                     (set! (.-value el) ""))} "Add"]]
+             (om/build help-view app)]))))
 
-(defn list-commit-change [app e state owner]
-  (let [list-el (om/get-node owner "list")]
-    (om/set-state! owner :items (conj (:value @app) js/e.target.value))
-    (om/transact! app :value #(conj % js/e.target.value) :update)
-    (set! (.-value list-el) "")))
-
-(defn list-view [app owner]
+(defmethod widget :list [app owner]
   (reify
     om/IInitState
     (init-state [_]
-                {:items (:value app)})
+      {:items (:value app)
+       :actions (chan)})
+    om/IWillMount
+    (will-mount [_]
+      (let [actions (om/get-state owner :actions)]
+        (go-loop []
+          (let [[tag edn] (<! actions)]
+            (if (= :add tag)
+              (do (om/set-state! owner :items (vec (conj (:value @app) edn)))
+                  (om/transact! app :value (fn [xs] (vec (conj xs edn))) :update))
+              (do  (om/set-state! owner :items (vec (remove #(= % edn) (:value @app))))
+                   (om/transact! app :value
+                                 (fn [xs] (vec (remove #(= % edn) xs))) :delete)))
+            (recur)))))
     om/IRenderState
-    (render-state [_ state]
-                  (html [:section
-                         [:div
-                          [:h4 (:label app)]
-                          (apply dom/ul nil
-                                 (map #(dom/li nil %) (:items state)))]
-                         [:input {:type "text"
-                                  :ref "list"
-                                  :onKeyPress (fn [e]
-                                                (when (== 13 js/e.keyCode)
-                                                  (list-commit-change app e state owner)))}]
-                         (om/build help-view app)]))))
+    (render-state [_ {:keys [items actions]}]
+      (html [:section
+             [:h4 (:label app)]
+             (reduce (fn [acc x]
+                       (conj acc
+                             [:li [:span x]
+                              [:button {:onClick #(put! actions [:rm x])} "x"]]))
+                     [:ul] items)
+             [:input {:type "text"
+                      :ref "list"
+                      :onKeyDown (fn [e] (when (== 13 js/e.keyCode)
+                                          (let [el (om/get-node owner "list")
+                                                v (.-value el)]
+                                            (put! actions [:add v])
+                                            (set! (.-value el) ""))))}
+              [:button {:onClick #(let [el (om/get-node owner "list")
+                                        v (.-value el)]
+                                    (put! actions [:add v])
+                                    (set! (.-value el) ""))}
+               "Add"]]
+             (om/build help-view app)]))))
 
-(defn checkbox-view [app owner]
-  (reify om/IRender
-    (render [_]
-            (html [:section
-                   [:input {:type "checkbox"
-                            :id (:id app)}
-                    (:value app)]
-                   [:div [:p (:help-text app)]
-                    [:a (:help-url app)]]]))))
+(defmethod widget :checkbox [app owner]
+  (reify
+    om/IInitState
+    (init-state [_]
+      {:value (:value app)
+       :marking (chan)})
+    om/IWillMount
+    (will-mount [_]
+      (let [marking (om/get-state owner :marking)]
+        (go-loop []
+          (let [x (<! marking)]
+            (om/set-state! owner :value x)
+            (om/transact! app :value #(identity x) :update)
+            (recur)))))
+    om/IRenderState
+    (render-state [_ {:keys [value marking]}]
+      (html [:section
+             [:h4 (:label app)]
+             [:input {:type "checkbox" ;handling nil is annoying for checkboxes
+                      :checked (if (true? value) "checked" false)
+                      :onClick #(put! marking (if (or (false? value) (nil? value))
+                                                true false))}]
+             (om/build help-view app)]))))
 
-(defn radio-view [app owner]
-  (reify om/IRender
-    (render [_]
-            (html [:section
-                   [:input {:type "radio"
-                            :id (:id app)}
-                    (:value app)]
-                   [:div [:p (:help-text app)]
-                    [:a (:help-url app)]]]))))
+(defmethod widget :checkbox-list [app owner]
+  (reify
+    om/IInitState
+    (init-state [_]
+      {:items (:value app)
+       :boxes (:boxes app)
+       :marking (chan)})
+    om/IWillMount
+    (will-mount [_]
+      (let [marking (om/get-state owner :marking)]
+        (go-loop []
+          (let [[tag edn] (<! marking)]
+            (if (= :add tag)
+              (do (om/set-state! owner :items (vec (conj (:value @app) edn)))
+                  (om/transact! app :value (fn [xs] (vec (conj xs edn))) :update))
+              (do (om/set-state! owner :items (vec (remove #(= % edn) (:value @app))))
+                  (om/transact! app :value (fn [xs] (vec (remove #(= % edn) xs))) :delete)))
+            (recur)))))
+    om/IRenderState
+    (render-state [_ {:keys [items boxes marking]}]
+      (html [:section
+             [:h4 (:label app)]
+             (reduce (fn [acc x]
+                       (conj acc
+                             [:input {:type "checkbox" :checked (member? x items)
+                                      :onClick #(put! marking (if (member? x items)
+                                                                [:rm x] [:add x]))}
+                              x][:br]))
+                     [:div] boxes)
+             (om/build help-view app)]))))
 
-(defn file-view [app owner]
-  (reify om/IRender
-    (render [_]
-            (html [:section
-                   [:input {:type "file"
-                            :id (:id app)}
-                    (:value app)]
-                   [:div [:p (:help-text app)]
-                    [:a (:help-url app)]]]))))
+(defmethod widget :file [app owner]
+  (om/component
+   (html [:section
+          [:h4 (:label app)]
+          [:input {:type "file"
+                   :ref "filename"
+                   :onChange (fn [e]
+                               (om/transact! app :value #(identity js/e.target.value) :update))}
+           (:value app)
+           [:button {:onClick (fn [e]
+                                (let [el (om/get-node owner "filename")]
+                                  (om/transact! app :value #(str "") :update)
+                                  (set! (.-value el) "")))}
+            "x"]]
+          (om/build help-view app)])))
 
 
-(defmulti content-type :dom-type)
+(defmethod widget :cordova-pref [app owner]
+  (reify
+    om/IInitState
+    (init-state [_]
+      {:items (:value app)
+       :actions (chan)})
+    om/IWillMount
+    (will-mount [_]
+      (let [actions (om/get-state owner :actions)]
+        (go-loop []
+          (let [[tag edn] (<! actions)]
+            (if (= tag :add)
+              (do (om/set-state! owner :items (vec (conj (:value @app) edn)))
+                  (om/transact! app :value (fn [items] (vec (conj items edn))) :update))
+              (do (om/set-state! owner :items (vec (remove #(= % edn) (:value @app))))
+                  (om/transact! app :value (fn [items] (vec (remove #(= % edn) items))) :delete)))
+            (recur)))))
+    om/IRenderState
+    (render-state [_ {:keys [items actions]}]
+      (html [:section
+             [:h4 (:label app)]
+             (reduce (fn [acc x]
+                       (conj acc
+                             [:li [:span (str x)]
+                              [:button {:onClick #(put! actions [:rm x])} "x"]]))
+                     [:ul] items)
+             [:div
+              [:p "name: " [:input {:type "text" :ref "pref1"}]]
+              [:p "value: " [:input {:type "text" :ref "pref2"
+                                     :onKeyDown  (fn [e] (when (== 13 js/e.keyCode)
+                                                          (let [el1 (om/get-node owner "pref1")
+                                                                el2 (om/get-node owner "pref2")
+                                                                val1 (.-value el1)
+                                                                val2 (.-value el2)]
+                                                            (put! actions [:add {:name val1 :value val2}])
+                                                            (set! (.-value el1) "") (set! (.-value el2) ""))))}]]
+              [:button {:onClick #(let [el1 (om/get-node owner "pref1")
+                                        el2 (om/get-node owner "pref2")
+                                        val1 (.-value el1)
+                                        val2 (.-value el2)]
+                                    (put! actions [:add {:name val1 :value val2}])
+                                    (set! (.-value el1) "") (set! (.-value el2) ""))}
+               "Add"]]
+             (om/build help-view app)]))))
 
-(defmethod content-type :name-entry
-    [app owner] (name-view app owner))
+(defmethod widget :cordova-plugin [app owner]
+  (reify
+    om/IInitState
+    (init-state [_]
+      {:items (:value app)
+       :customs (reduce (fn [acc x]
+                          (if-not  (member? x (:boxes app)) (conj acc x)))
+                        [] (:value app))
+       :boxes (:boxes app)
+       :actions (chan)})
+    om/IWillMount
+    (will-mount [_]
+      (let [actions (om/get-state owner :actions)]
+        (go-loop []
+          (let [[tag edn] (<! actions)]
+            (case tag
+              :add (do (om/set-state! owner :items (vec (conj (:value @app) {:name edn})))
+                       (om/transact! app :value (fn [items] (vec (conj items {:name edn}))) :update))
+              :rm (do (om/set-state! owner :items (vec (remove #(= % {:name edn}) (:value @app))))
+                      (om/set-state! owner :customs (vec (remove #(= % edn) (om/get-state owner :customs))))
+                      (om/transact! app :value (fn [items] (vec (remove #(= % {:name edn}) items))) :delete))
+              :cust (do (om/set-state! owner :items (vec (conj (:value @app) edn)))
+                        (om/set-state! owner :customs (vec (conj (om/get-state owner :customs) edn)))
+                        (om/transact! app :value (fn [items] (vec (conj items {:name edn}))) :update)))
+            (recur)))))
+    om/IRenderState
+    (render-state [_ {:keys [items customs boxes actions]}]
+      (println customs)
+      (html [:section
+             [:h4 (:label app)]
+             (reduce (fn [acc x]
+                       (conj acc
+                             [:input {:type "checkbox" :checked (member? {:name x} items)
+                                      :onClick #(put! actions (if (member? {:name x} items)
+                                                                [:rm x] [:add x]))}
+                              x][:br]))
+                     [:div] boxes)
+             (reduce (fn [acc x]
+                       (conj acc
+                             [:li [:span (str x)]
+                              [:button {:onClick #(put! actions [:rm x])} "x"]]))
+                     [:ul] customs)
+             [:input {:type "text" :ref "plugin"
+                      :onKeyDown  (fn [e] (when (== 13 js/e.keyCode)
+                                           (let [el (om/get-node owner "plugin")
+                                                 v (.-value el)]
+                                             (put! actions [:cust v])
+                                             (set! (.-value el) ""))))}
+              [:button {:onClick #(let [el (om/get-node owner "plugin")
+                                        v (.-value el)]
+                                    (put! actions [:cust v])
+                                    (set! (.-value el) ""))}
+               "Add"]]
+             (om/build help-view app)]))))
 
-(defmethod content-type :list
-  [app owner] (list-view app owner))
+(defmethod widget :cordova-logos [app owner]
+  (reify
+    om/IInitState
+    (init-state [_]
+      {:items (:value app)
+       :actions (chan)})
+    om/IWillMount
+    (will-mount [_]
+      (let [actions (om/get-state owner :actions)]
+        (go-loop []
+          (let [[tag edn] (<! actions)]
+            (if (= tag :add)
+              (do (om/set-state! owner :items (vec (conj (:value @app) edn)))
+                  (om/transact! app :value (fn [items] (vec (conj items edn))) :update))
+              (do (om/set-state! owner :items (vec (remove #(= % edn) (:value @app))))
+                  (om/transact! app :value (fn [items] (vec (remove #(= % edn) items))) :delete)))
+            (recur)))))
+    om/IRenderState
+    (render-state [_ {:keys [items actions]}]
+      (html [:section
+             [:h4 (:label app)]
+             (reduce (fn [acc x]
+                       (conj acc
+                             [:li [:span (str x)]
+                              [:button {:onClick #(put! actions [:rm x])} "x"]]))
+                     [:ul] items)
+             [:div
+              [:p "location: " [:input {:type "text" :ref "logo1"}]]
+              [:p "width: " [:input {:type "text" :ref "logo2"}]]
+              [:p "height: " [:input {:type "text" :ref "logo3"}]]
+              [:p "platform: " [:input {:type "text" :ref "logo4"}]]
+              [:p "density: " [:input {:type "text" :ref "logo5"}]]
+              [:button {:onClick #(let [el1 (om/get-node owner "logo1")
+                                        el2 (om/get-node owner "logo2")
+                                        el3 (om/get-node owner "logo3")
+                                        el4 (om/get-node owner "logo4")
+                                        el5 (om/get-node owner "logo5")
+                                        val1 (.-value el1)
+                                        val2 (.-value el2)
+                                        val3 (.-value el3)
+                                        val4 (.-value el4)
+                                        val5 (.-value el5)]
+                                    (put! actions [:add {:location val1 :width val2 :height val3
+                                                         :platform val4 :density val5}])
+                                    (set! (.-value el1) "") (set! (.-value el2) "")
+                                    (set! (.-value el3) "") (set! (.-value el4) "")
+                                    (set! (.-value el5) ""))}
+               "Add"]]
+             (om/build help-view app)]))))
 
-(defmethod content-type :checkbox
-    [app owner] (checkbox-view app owner))
 
-(defmethod content-type :radio
-    [app owner] (radio-view app owner))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Main Views
 
-(defmethod content-type :file-input
-    [app owner] (file-view app owner))
+(defn current-page-view [{:keys [general desktop mobile]} owner]
+  (reify
+    om/IInitState
+    (init-state [_]
+      {:showing :general})
+    om/IRenderState
+    (render-state [_ {:keys [showing]}]
+      (let [current (case showing ;cursor of the currently rendered page
+                      :general general
+                      :desktop desktop
+                      :mobile mobile)]
+        (html [:div
+               (reduce (fn [ul page]
+                         (if (= page showing)
+                           (conj ul [:li {:class "showing"} (drop 1 (str page))])
+                           (conj ul [:li {:onClick #(om/set-state! owner :showing page)}
+                                     (drop 1 (str page))])))
+                       [:ul {:id "page-select"}] [:general :desktop :mobile])
+               (om/build-all widget current ;render the selected page
+                             {:key :id})])))))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; Root and General fns
+;; TODO: write err-msg usl
+(defn app-view [app owner]
+  (reify
+    om/IWillUpdate
+    (will-update [_ next-props next-state]
+      (when (:err-msg next-state)
+        (js/alert (:err-msg next-state))
+        (js/setTimeout #(om/set-state! owner :err-msg nil) 5000)))
+    om/IRenderState
+    (render-state [_ {:keys [err-msg]}]
+      (dom/div nil
+               (om/build sync/om-sync  app
+                         {:opts {:view current-page-view
+                                 :filter (comp #{:create :update :delete} tx-tag)
+                                 :id-key :path-id
+                                 :edn-hander-fn (fn [_ path _ tx-data]
+                                                  (assoc {} :path (into [] (rest path))
+                                                         :value (:new-value tx-data)))
+                                 :on-success (fn [res tx-data] (println res))
+                                 :on-error
+                                 (fn [err tx-data]
+                                   (reset! app-state (:old-state tx-data))
+                                   (om/set-state! owner :err-msg
+                                                  "Uh-oh, something went wrong!\n\nIf this problem persists, let me know by filing an issue here: [url]"))}})
+               (when err-msg
+                 (html [:div err-msg]))))))
 
-;; app-state -> page-dispatch -> build-all -> dom dispatcher
-;; onclick handler -> id dispatch -> dispatch fns -> update dom
-;; Embed the page dispatcher here!
-(defn config-app [app owner]
-  (html [:div
-         [:h2 "woot woot"]
-         (map #(om/build content-type %) (:general app))]))
 
 (let [tx-chan (chan)
       tx-pub-chan (async/pub tx-chan (fn [_] :txs))]
   (edn-xhr
-    {:method :get
-     :url "/init"
-     :on-complete
-     (fn [res]
-       (reset! app-state res)
-       (swap! app-state assoc :showing :general) ;load general page when starting
-       (om/root config-app app-state
-         {:target (gdom/getElementByClass "content")
-          :shared {:tx-chan tx-pub-chan}
-          :tx-listen
-          (fn [tx-data root-cursor]
-            (put! tx-chan [tx-data root-cursor]))}))}))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; Hacking/Dev section (deleteme)
-
-(comment
-  (def dump
-    {:general
-     [{:id :name :value "woot" :dom-type :text-box :help-text "The name of your app" :help-url nil}
-      {:id :author:author-name :value "me" :dom-type :text-box :help-text "Your name." :help-url nil}
-      {:id :author:author-id :value "me.woot.corp" :dom-type :text-box :help-text "Your id or company id." :help-url nil}
-      {:id :author:email :value "g@gmail.com" :dom-type :text-box :help-text "Your email address." :help-url nil}
-      {:id :author:url :value "wootwoot.com" :dom-type :text-box :help-text "Your website." :help-url nil}
-      {:id :author:contributors :value ["lambda" "fns"] :dom-type :text-box :help-text "Any contributors on the project." :help-url nil}]}
-    ))
-
-
-;; this isn't working with cursors
-(comment
-  ;; TODO: fill in the dispaches here
-  (defn click-dispatcher [e]
-    (cond
-     (not= "" js/e.target.id) (om/transact! app-state )
-     js/e.target.dataset.help (println (str "help -- " js/e.target.dataset.help))
-     js/e.target.dataset.page (println (str "page -- " js/e.target.dataset.page))))
-
-  (println (str "id -- " js/e.target.id))
-  ;; Set a DOM level 4 event listener
-  (events/listen (gdom/getDocument) "click" click-dispatcher)
-
-  ;; a little clunky but oh well
-  (def schema
-  {:author:email (first (om/transact! app-state ))}))
+   {:method :get
+    :url "/init"
+    :on-complete
+    (fn [res]
+      (reset! app-state res)
+      (om/root app-view app-state
+               {:target (.getElementById js/document "content")
+                :shared {:tx-chan tx-pub-chan}
+                :tx-listen
+                (fn [tx-data root-cursor]
+                  (put! tx-chan [tx-data root-cursor]))}))}))

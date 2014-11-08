@@ -31,6 +31,9 @@
    :mobile (get-config [:mobile :platforms])
    :desktop (get-config [:desktop :platforms])})
 
+;; TODO: Use red-text here to make the messages more readable
+(defn red-text [msg] (str "\033[31m" msg "\033[0m"))
+
 (defn- config-check
   "Validates whether the config file has proper platforms listed"
   [browsers mobiles desktops]
@@ -38,8 +41,8 @@
     (if-not (contains? #{"chrome" "firefox" "opera" "safari"}
                        browser)
       (do
-        (println (str "\033[31mERROR: browser " browser " not supported, options are:
-firefox, chrome, opera, safari\033[0m"))
+        (println (red-text "ERROR: browser " browser " not supported, options are:
+firefox, chrome, opera, safari"))
         false)))
   (doseq [mobile mobiles]
     (if-not (contains?
@@ -47,16 +50,15 @@ firefox, chrome, opera, safari\033[0m"))
                "ubuntu" "wp7" "wp8" "tizen" "webos"}
              mobile)
       (do
-        (println (str "\033[31mERROR: mobile system " mobile " not supported, options are:
- amazon-fire, android, blackberry, firefox-os, ios, ubuntu, wp7, wp8, webos, tizen\033[0m"))
+        (println (red-text "ERROR: mobile system " mobile " not supported, options are:
+ amazon-fire, android, blackberry, firefox-os, ios, ubuntu, wp7, wp8, webos, tizen"))
         false)))
   (doseq [desktop desktops]
     (if-not (contains?
              #{"linux" "osx" "windows"}
              desktop)
-      (do
-        (println (str "\033[31mERROR: desktop system" desktop " not supported, options are:
-linux, osx, windows\033[0m"))))))
+      (println (red-text "ERROR: desktop system " desktop " not supported, options are:
+linux, osx, windows")))))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -343,7 +345,6 @@ linux, osx, windows\033[0m"))))))
            :inject-js-end [:desktop :inject-js-end]
            :snapshot [:desktop :snapshot]
            :dom_storage_quota [:desktop :dom-storage-quota]
-           :no_edit_menu [:desktop :no-edit-menu]
            :keywords [:desktop :keywords]
            :bugs [:desktop :bugs]
            :repositories!type [:desktop :repositories :type]
