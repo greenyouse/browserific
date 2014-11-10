@@ -3,9 +3,11 @@
             [leiningen.core.main :as lmain]
             [clojure-watch.core :refer [start-watch]]
             [clojure.java.io :as io]
-            [fs.core :as fs]
+            [me.raynes.fs :as fs]
             [browserific.config :as conf]
-            [browserific.parser :as parse])
+            [browserific.parser :as parse]
+            [browserific.config.server :as server]
+            [clojure.java.browse :as b])
   (:import java.io.File))
 
 
@@ -70,8 +72,11 @@ Returns a sequence of File objects, in breadth-first sort order."
     (-> (io/resource "samples/all-samples.edn") slurp println)))
 
 (defn- config
-  "Launch a server over port 4242 that has a GUI for building a config.edn file"
-  [])
+  "Launch a server over port 50000 that has a GUI for building a config.edn file"
+  []
+  (println "\033[31mStarting a new server, hang on...\033[0m \n")
+  (b/browse-url "http://localhost:50000")
+  (server/config-server))
 
 
 (defn browserific
@@ -88,7 +93,7 @@ Returns a sequence of File objects, in breadth-first sort order."
        "auto" (auto project)
        "clean" (clean)
        "sample" (apply sample args)
-       "config" (println "not done yet...")
+       "config" (config)
        (do
          (println
           "\033[31mERROR: Subtask " (str subtask ) " not found.\033[0m"

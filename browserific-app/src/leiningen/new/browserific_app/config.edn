@@ -27,7 +27,7 @@
            :keywords []
            :window {}
            :bugs "http://your.bug-report.com"
-           :repositories [{:type "" ;; e.g. git or Hg
+           :repositories [{:type ""
                            :url "http://example.com/FIXME"
                            :path "your/app.js"}]
            }}

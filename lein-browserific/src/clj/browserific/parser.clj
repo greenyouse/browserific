@@ -2,7 +2,7 @@
   "Parser for processing Feature Expressions"
   (:require [instaparse.core :as insta]
             [clojure.string :as st]
-            [browserific.config :as conf]
+            [browserific.helpers.utils :as u]
             [clojure.java.io :as io]))
 
 ;;; Parse Files
@@ -69,15 +69,15 @@ SEXP = #'\u6D3B\u6CC9.*?\u6D3B\u6CC9'
 ;;;  Transform fns
 
 (def ^:private platforms
-  `[~@(:browsers conf/systems)
+  `[~@(:browsers u/systems)
     "mobile"
-    ~@(:desktop conf/systems)])
+    ~@(:desktop u/systems)])
 
 (defn- transform-meta [node]
   (case node
-    "b" (:browsers conf/systems)
+    "b" (:browsers u/systems)
     "m" ["mobile"]
-    "d" (:desktop conf/systems)))
+    "d" (:desktop u/systems)))
 
 (def ^:private transfom
   {:FE (comp vector)

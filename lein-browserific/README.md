@@ -4,10 +4,12 @@ A Leiningen plugin for ClojureScript app developement.
 
 ## Status
 
-A first draft of the pre-processor has been done but there are some
-issues with it still.
+The pre-processor is done, however there are a few issues with it
+still. A configuration GUI has been added to help with writing lengthy
+config.edn files.
 
-The next major item is a GUI for writing project config files.
+After a little more tweaking and testing, I'll push out the first
+version. 
 
 ## Installation
 
@@ -63,7 +65,9 @@ process. To turn this tool on, do:
 ```sh
 $ lein browserific config
 ```
-and then navigate to http://localhost:4242 with a web browser.
+and then navigate to http://localhost:50000 with a web browser. The
+framework tries to auto-load the page, however, it has a problem 
+and requires reloading the webpage by hand. 
 
 ## License
 

@@ -1,9 +1,9 @@
 (ns browserific.config.client
   "General and Cordova widgets constructed with Om views and
   om-sync support."
-  (:require-macros [cljs.core.async.macros :refer [go go-loop]])
+  (:require-macros [cljs.core.async.macros :refer [go-loop]])
   (:require [browserific.config.sync :as sync]
-            [cljs.core.async :as async :refer [put! <! >! chan]]
+            [cljs.core.async :as async :refer [put! <! chan]]
             [sablono.core :as sa :refer-macros [html]]
             [om.core :as om :include-macros true]
             [om.dom :as dom :include-macros true]
@@ -23,6 +23,12 @@
 
 (defn member? [i coll]
   (some #(= i %) coll))
+
+;; TODO: delete this and follow the Om idioms properly
+(defn cursor-hack
+  "This is a cringeworthy hack to convert cursors into clj"
+  [cursor]
+  (map pr-str (vec cursor)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Widgets
@@ -160,11 +166,12 @@
                                                 true false))}]
              (om/build help-view app)]))))
 
+;; TODO: don't forget to fix this cursor too
 (defmethod widget :checkbox-list [app owner]
   (reify
     om/IInitState
     (init-state [_]
-      {:items (:value app)
+      {:items (vec (:value app))
        :boxes (:boxes app)
        :marking (chan)})
     om/IWillMount
@@ -187,9 +194,9 @@
                              [:input {:type "checkbox" :checked (member? x items)
                                       :onClick #(put! marking (if (member? x items)
                                                                 [:rm x] [:add x]))}
-                              x][:br]))
+                              x] [:br]))
                      [:div] boxes)
-             (om/build help-view app)]))))
+                 (om/build help-view app)]))))
 
 (defmethod widget :file [app owner]
   (om/component
@@ -207,12 +214,11 @@
             "x"]]
           (om/build help-view app)])))
 
-
 (defmethod widget :cordova-pref [app owner]
   (reify
     om/IInitState
     (init-state [_]
-      {:items (:value app)
+      {:items (cursor-hack (:value app))
        :actions (chan)})
     om/IWillMount
     (will-mount [_]
@@ -253,15 +259,17 @@
                "Add"]]
              (om/build help-view app)]))))
 
+;; TODO: This also works for now but feels very dirty
 (defmethod widget :cordova-plugin [app owner]
   (reify
     om/IInitState
     (init-state [_]
-      {:items (:value app)
+      {:items (vec (:value app))
        :customs (reduce (fn [acc x]
-                          (if-not  (member? x (:boxes app)) (conj acc x)))
-                        [] (:value app))
-       :boxes (:boxes app)
+                          (if-not  (member? (:name x) (vec (:boxes app)))
+                            (conj acc (pr-str x))))
+                        [] (vec (:value app)))
+       :boxes (vec (:boxes app))
        :actions (chan)})
     om/IWillMount
     (will-mount [_]
@@ -269,24 +277,24 @@
         (go-loop []
           (let [[tag edn] (<! actions)]
             (case tag
-              :add (do (om/set-state! owner :items (vec (conj (:value @app) {:name edn})))
-                       (om/transact! app :value (fn [items] (vec (conj items {:name edn}))) :update))
-              :rm (do (om/set-state! owner :items (vec (remove #(= % {:name edn}) (:value @app))))
+              :add (do (om/set-state! owner :items (vec (conj (:value @app) {:name edn :value true})))
+                       (om/transact! app :value (fn [items] (vec (conj items {:name edn :value true}))) :update))
+              :rm (do (om/set-state! owner :items (vec (remove #(= % {:name edn :value true}) (:value @app))))
                       (om/set-state! owner :customs (vec (remove #(= % edn) (om/get-state owner :customs))))
-                      (om/transact! app :value (fn [items] (vec (remove #(= % {:name edn}) items))) :delete))
-              :cust (do (om/set-state! owner :items (vec (conj (:value @app) edn)))
+                      (om/transact! app :value (fn [items] (vec (remove #(= % {:name edn :value true}) items))) :delete))
+              :cust (do (om/set-state! owner :items (vec (conj (:value @app) {:name edn :value true})))
                         (om/set-state! owner :customs (vec (conj (om/get-state owner :customs) edn)))
-                        (om/transact! app :value (fn [items] (vec (conj items {:name edn}))) :update)))
+                        (om/transact! app :value (fn [items] (vec (conj items {:name edn :value true}))) :update)))
             (recur)))))
     om/IRenderState
     (render-state [_ {:keys [items customs boxes actions]}]
-      (println customs)
+      (println (type customs))
       (html [:section
              [:h4 (:label app)]
              (reduce (fn [acc x]
                        (conj acc
-                             [:input {:type "checkbox" :checked (member? {:name x} items)
-                                      :onClick #(put! actions (if (member? {:name x} items)
+                             [:input {:type "checkbox" :checked (member? {:name x :value true} items)
+                                      :onClick #(put! actions (if (member? {:name x :value true} items)
                                                                 [:rm x] [:add x]))}
                               x][:br]))
                      [:div] boxes)
@@ -312,7 +320,7 @@
   (reify
     om/IInitState
     (init-state [_]
-      {:items (:value app)
+      {:items (map pr-str (vec (:value app)))
        :actions (chan)})
     om/IWillMount
     (will-mount [_]

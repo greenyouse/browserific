@@ -1,7 +1,7 @@
 (ns leiningen.test.browserific.config
   (:require [clojure.java.io :as f]
             [clojure.java.shell :as sh]
-            [leiningen.browserific.config :refer :all]
+            [browserific.config :refer :all]
             [clojure.test :refer :all]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

@@ -1,6 +1,7 @@
 (ns browserific.config
   "Generates config files from config.edn"
   (:require [browserific.helpers.plist :as p]
+            [browserific.helpers.utils :refer [get-config systems red-text]]
             [cheshire.core :as js]
             [clojure.data.xml :as xml]
             [clojure.string :as st]
@@ -12,27 +13,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Helper Fns
-
-(def ^:private options
-  "Map of browserific options"
-  (reduce #(into %1 [(into [] %2)])
-          {} (partition 2 (nthrest (read-string (slurp "project.clj")) 3))))
-
-(defn- get-config
-  "Helper fn for getting data from the config-file"
-  [coll]
-  (let [env (:config (:browserific options))
-        config-file (read-string (slurp
-                                  (or env "src/config.edn")))]
-    (get-in config-file coll)))
-
-(def systems
-  {:browsers (get-config [:extensions :platforms])
-   :mobile (get-config [:mobile :platforms])
-   :desktop (get-config [:desktop :platforms])})
-
-;; TODO: Use red-text here to make the messages more readable
-(defn red-text [msg] (str "\033[31m" msg "\033[0m"))
 
 (defn- config-check
   "Validates whether the config file has proper platforms listed"
@@ -114,7 +94,6 @@ linux, osx, windows")))))
 
 ;; NOTE: :key isn't really necessary so we'll leave it out for now (chrome + opera)
 ;;   and we're omitting :plugins because that is being phased out
-;; FIXME: use js/write (or something better) instead so output is readable
 (defn- chrome-config
   "Creates the chrome extension config file using config.edn"
   []
