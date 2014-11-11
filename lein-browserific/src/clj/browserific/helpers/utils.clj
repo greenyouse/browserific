@@ -18,6 +18,7 @@
   (let [conf (-> config-file slurp read-string)]
     (get-in conf coll)))
 
+(defn yellow-text [msg] (str "\033[33m" msg "\033[0m"))
 (defn red-text [msg] (str "\033[31m" msg "\033[0m"))
 
 (defn config-warning [e]

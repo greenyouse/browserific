@@ -249,7 +249,7 @@
           }
 
  :desktop {
-           :platforms ["osx" "windows" "linux"]
+           :platforms ["osx32" "osx64" "windows" "linux32" "linux64"]
            :main "init.html"
            :nodejs "true"
            :node-main "core/nodejs.js"

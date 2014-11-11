@@ -1,6 +1,6 @@
-{:name {{name}}
+{:name "{{name}}"
  :author {:author-name "" :email "" :url ""}
- :version "0.1.0-SNAPSHOT"
+ :version "0.1.0"
  :description "FIXME: write this!"
 
  :extension {
@@ -18,16 +18,16 @@
           :plugins []
           :icons []
           :splash []
-          :content []}
+          :content ""}
 
  :desktop {
            :platforms []
-           :main []
+           :main ""
            :permissions []
            :keywords []
            :window {}
            :bugs "http://your.bug-report.com"
            :repositories [{:type ""
-                           :url "http://example.com/FIXME"
-                           :path "your/app.js"}]
+                           :url ""
+                           :path ""}]
            }}

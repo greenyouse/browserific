@@ -5,7 +5,8 @@
             [cheshire.core :as js]
             [clojure.data.xml :as xml]
             [clojure.string :as st]
-            [clojure.java.io :as io]))
+            [clojure.java.io :as io]
+            [leiningen.core.main :as l]))
 
 ;; TODO: Certain build options must be injected at compile time. Generate
 ;; a data file somewhere (dot file?) to keep track of what needs injecting.
@@ -17,27 +18,21 @@
 (defn- config-check
   "Validates whether the config file has proper platforms listed"
   [browsers mobiles desktops]
-  (doseq [browser browsers]
-    (if-not (contains? #{"chrome" "firefox" "opera" "safari"}
-                       browser)
-      (do
-        (println (red-text "ERROR: browser " browser " not supported, options are:
-firefox, chrome, opera, safari"))
-        false)))
-  (doseq [mobile mobiles]
-    (if-not (contains?
-             #{"amazon-fire" "android" "blackberry" "firefox-os" "ios"
-               "ubuntu" "wp7" "wp8" "tizen" "webos"}
-             mobile)
-      (do
-        (println (red-text "ERROR: mobile system " mobile " not supported, options are:
- amazon-fire, android, blackberry, firefox-os, ios, ubuntu, wp7, wp8, webos, tizen"))
-        false)))
-  (doseq [desktop desktops]
-    (if-not (contains?
-             #{"linux" "osx" "windows"}
-             desktop)
-      (println (red-text "ERROR: desktop system " desktop " not supported, options are:
+  (letfn [(checker [platform platform-types err]
+            (if-not (contains? platform-types platform)
+              (do (l/warn (red-text err)) false)))]
+    (doseq [browser browsers]
+      (checker browser #{"chrome" "firefox" "opera" "safari"}
+                (str "ERROR: browser " browser " not supported, options are:
+firefox, chrome, opera, safari")))
+    (doseq [mobile mobiles]
+      (checker mobile #{"amazon-fire" "android" "blackberry" "firefox-os" "ios"
+                        "ubuntu" "wp7" "wp8" "tizen" "webos"}
+               (str "ERROR: mobile system " mobile " not supported, options are:
+ amazon-fire, android, blackberry, firefox-os, ios, ubuntu, wp7, wp8, webos, tizen")))
+    (doseq [desktop desktops]
+      (checker desktop #{"linux32" "linux64" "osx32" "osx64" "windows"}
+               (str "ERROR: desktop system " desktop " not supported, options are:
 linux, osx, windows")))))
 
 
@@ -376,6 +371,6 @@ linux, osx, windows")))))
      (mobile-config))
     (doseq [vendor desktops]
       (cond
-       (= vendor "linux") (desktop-config "linux")
-       (= vendor "osx") (desktop-config "osx")
+       (= vendor (or "linux32" "linux64")) (desktop-config "linux")
+       (= vendor (or "osx32" "osx64")) (desktop-config "osx")
        (= vendor "windows") (desktop-config "windows")))))

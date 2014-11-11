@@ -288,7 +288,6 @@
             (recur)))))
     om/IRenderState
     (render-state [_ {:keys [items customs boxes actions]}]
-      (println (type customs))
       (html [:section
              [:h4 (:label app)]
              (reduce (fn [acc x]

@@ -5,13 +5,6 @@
             [browserific.helpers.utils :as u]
             [clojure.java.io :as io]))
 
-;;; Parse Files
-;; x 1. Finish transform fn
-;; x 2. Merge output with platforms and dump result into prefixed files
-;; x 3. Add file reading to parse and test with a sparse, example file
-;; 4. Write a few tests for these new fns
-;; x 5. Rig this to work with the main browserific.clj
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Tokenization
 
@@ -56,7 +49,9 @@ Neg = '!-'
 <Platforms> = <'['> Env <']'>
 <Env> = Browser <SPACE*> Env* | Desktop <SPACE*> Env* |  Meta <SPACE*> Env*
 Browser = 'chrome' | 'firefox' | 'opera' | 'safari'
-Desktop = 'linux' | 'osx' | 'windows'
+Desktop = Linux | OSX | 'windows'
+Linux = 'linux32' | 'linux64' | 'linux'
+OSX = 'osx32' | 'osx64' | 'osx'
 (* Denotes all browsers, all mobile, or all desktop *)
 Meta = 'b' | 'm' | 'd'
 
@@ -77,14 +72,19 @@ SEXP = #'\u6D3B\u6CC9.*?\u6D3B\u6CC9'
   (case node
     "b" (:browsers u/systems)
     "m" ["mobile"]
-    "d" (:desktop u/systems)))
+    "d" (:desktop u/systems)
+    "linux" ["linux32" "linux64"]
+    "osx" ["osx32" "osx64"]
+    node))
 
 (def ^:private transfom
   {:FE (comp vector)
    :Neg identity
    :Or identity
    :Browser #(vector (identity %))
-   :Desktop #(vector (identity %))
+   :Desktop #(transform-meta %)
+   :Linux #(transform-meta %)
+   :OSX #(transform-meta %)
    :Meta #(transform-meta %)
    :SEXP #(-> %
               (st/replace-first
@@ -126,7 +126,8 @@ SEXP = #'\u6D3B\u6CC9.*?\u6D3B\u6CC9'
                           sexp (last done)]
                       (post-parse [plats sexp])))))
 (comment (parse "(+ 1 1)" "woot")
-         (parse "[!- [firefox m] (+ 1 1)]" "woot"))
+         (parse "[!+ [osx d firefox m] (+ 1 1)]" "woot")
+         (parse "[!- [linux32 firefox m] (+ 1 1)]" "woot"))
 
 (defn- write-files [expr filename]
   (letfn [(process [fes plat loc]
@@ -140,8 +141,8 @@ SEXP = #'\u6D3B\u6CC9.*?\u6D3B\u6CC9'
                 (do
                   (io/make-parents dest)
                   (spit dest contents)))))]
-    (map #(process expr % filename) ["chrome" "firefox" "opera" "safari"
-                                     "mobile" "linux" "osx" "windows"])))
+    (map #(process expr % filename) ["chrome" "firefox" "opera" "safari" "mobile"
+                                     "linux32" "linux64" "osx32" "osx64" "windows"])))
 
 (defn parse-files [files]
   (letfn [(get-file [filename]

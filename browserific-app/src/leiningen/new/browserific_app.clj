@@ -9,7 +9,7 @@
   [name]
   (let [data {:name name
               :sanitized (name-to-path name)}]
-    (main/info "Cooking up a fresh browserific project...")
+    (main/info "\033[33mCooking up a fresh browserific project...\n\033[0m")
     (->files data
              [".gitignore" (render "gitignore" data)]
              ["project.clj" (render "project.clj" data)]

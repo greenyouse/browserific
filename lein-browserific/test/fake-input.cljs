@@ -6,3 +6,5 @@
 [!+ [m d]
  (defn logger [e]
    (js/console.log e))]
+
+(js/console "woot")

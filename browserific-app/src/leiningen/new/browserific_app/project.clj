@@ -4,14 +4,13 @@
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies [[org.clojure/clojure "1.6.0"]
-                 [org.clojure/clojurescript "0.0-2199"] ; update before relase :)
-                 ;FIXME: Add the SDK wrapper here after it's done
-                 ]
+                 [org.clojure/clojurescript "0.0-2371"]
+                 [weasel "0.4.2"]]
 
   :plugins [[lein-cljsbuild "1.0.3"]
-            [com.cemerick/clojurescript.test "0.3.0"]
+            [com.cemerick/clojurescript.test "0.3.1"]
             [lein-pdo "0.1.1"]
-            [lein-browserific "0.1.0"]]
+            [lein-browserific "0.1.0-SNAPSHOT"]]
 
   :aliases {"dev" ["pdo" "cljsbuild" "auto" "dev," "browserific" "auto"]
             "release" ["pdo" "cljsbuild" "auto" "release," "browserific" "auto"]}

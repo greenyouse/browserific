@@ -192,7 +192,7 @@
                       "blackberry"]
 
 
-          ;; These are various phonegap preferences
+          ;; These are various cordova preferences
           :preferences [;; the current phonegap version
                         {:name "phonegap-version" :value "3.5.0"}
 
@@ -280,10 +280,10 @@
           ;; Icon files tend vary for each platform. This is a list of
           ;; all necessary formats:
           :icons [{:src "icon.png"}
-                  {:src "res/icon/android/icon-36-ldpi.png" :platform "android" :qualifier "ldpi"}
-                  {:src "res/icon/android/icon-48-mdpi.png" :platform "android" :qualifier "mdpi"}
-                  {:src "res/icon/android/icon-72-hdpi.png" :platform "andoird" :qualifier "hdpi"}
-                  {:src "res/icon/android/icon-96-xhdpi.png" :platform "andoird" :qualifier "xhdpi"}
+                  {:src "res/icon/android/icon-36-ldpi.png" :platform "android" :density "ldpi"}
+                  {:src "res/icon/android/icon-48-mdpi.png" :platform "android" :density "mdpi"}
+                  {:src "res/icon/android/icon-72-hdpi.png" :platform "andoird" :density "hdpi"}
+                  {:src "res/icon/android/icon-96-xhdpi.png" :platform "andoird" :density "xhdpi"}
                   {:src "src/icon/ios/icon-57.png" :platform "ios" :width "54" :height "54"}
                   {:src "src/icon/ios/icon-72.png" :platform "ios" :width "72" :height "72"}
                   {:src "src/icon/ios/icon-57-2x.png" :platform "ios" :width "114" :height "114"}
@@ -291,141 +291,179 @@
                   {:src "res/icon/blackberry/icon-80.png" :platform "blackberry"}
                   {:src "res/icon/blackberry/icon-80.png" :platform "blackberry" :state "hover"}
                   {:src "res/icon/webos/icon-64.png" :platform "webos"}
-                  {:src "res/icon/windows-phone/icon-48.png" :platform "winphone"}
-                  {:src "res/icon/windows-phone/icon-173.png" :platform "winphone" :role "background"}]
+                  {:src "res/icon/windows-phone/icon-48.png" :platform "wp8"}
+                  {:src "res/icon/windows-phone/icon-173.png" :platform "wp8"}]
 
           ;; Some platforms take a few seconds to load. For those, a splash
-          ;; screen can be useful.
-          :splash [{:src "res/screen/android/screen-ldpi-portrait.png" :platform "android" :qualifier "port-ldpi"}
-                   {:src "res/screen/android/screen-mdpi-portrait.png" :platform "android" :qualifier "port-mdpi"}
-                   {:src "res/screen/android/screen-hdpi-portrait.png" :platform "android" :qualifier "port-hdpi"}
-                   {:src "res/screen/android/screen-xhdpi-portrait.png" :platform "android" :qualifier "port-xhdpi"}
+          ;; screen can be used.
+          :splash [{:src "res/screen/android/screen-ldpi-portrait.png" :platform "android" :density "ldpi"}
+                   {:src "res/screen/android/screen-mdpi-portrait.png" :platform "android" :density "mdpi"}
+                   {:src "res/screen/android/screen-hdpi-portrait.png" :platform "android" :densitry "hdpi"}
+                   {:src "res/screen/android/screen-xhdpi-portrait.png" :platform "android" :density "xhdpi"}
                    {:src "res/screen/blackberry/screen-225.png" :platform "blackberry"}
                    {:src "res/screen/ios/screen-iphone-portrait.png" :platform "ios" :width "320" :height "480"}
                    {:src "res/screen/ios/screen-iphone-portrait-2x.png" :platform "ios" :width "640" :height "960"}
                    {:src "res/screen/ios/screen-iphone-portrait-568h-2x.png" :platform "ios" :width "640" :height "1136"}
                    {:src "res/screen/ios/screen-ipad-portrait.png" :platform "ios" :width "768" :height "1024"}
                    {:src "res/screen/ios/screen-ipad-landscape.png" :platform "ios" :width "1024" :height "768"}
-                   {:src "res/screen/windows-phone/screen-portrait.jpg" :platform "winphone"}]
-
-
-          ;; The icon files for your app. Each device tends to have
-          ;; slighly different requirements, so check the necessary
-          ;; specs before hand.
-          :icons [:firefox []
-                  :ios ["ios/icon-57-2x.png"
-                        "ios/icon-57.png"
-                        "ios/icon-72-2x.png"
-                        "ios/icon-72.png"]
-                  :android ["android/icon-36-ldpi.png"
-                            "android/icon-48-mdpi.png"
-                            "android/icon-72-hdpi.png"
-                            "android/icon-96-xhdpi.png"]
-                  :wp8 []]
+                   {:src "res/screen/windows-phone/screen-portrait.jpg" :platform "wp8" :width "99" :height "99"}]
 
           ;; Whitelist of domains that can connect with your app.
           :permissions ["https://www.wahoo.com/"
                         "https://www.yoogle.com/"]
 
-          :preferences {;;Fullscreen allows you to hide the status bar
-                        ;; at the top of the screen. The default value is false.
-                        :Fullscreen "false"
-
-                        ;; Orientation allows you to lock orientation
-                        ;; and prevent the interface from rotating in
-                        ;; response to changes in orientation. Possible
-                        ;; values are default, landscape, or portrait.
-                        ;;
-                        ;; NOTE: The default value means both landscape
-                        ;; and portrait orientations are enabled. If you
-                        ;; want to use each platform's default settings
-                        ;; (usually portrait-only), leave this tag out
-                        ;; of the config.edn file.
-                        :Orientation "default"
-
-                        ;; DisallowOverscroll (boolean, defaults to false):
-                        ;; set to true if you don't want the interface to
-                        ;; display any feedback when users scroll past the
-                        ;; beginning or end of content.
-                        ;;
-                        ;; Applies to Android and iOS. On iOS, overscroll
-                        ;; gestures cause content to bounce back to its
-                        ;; original position. On Android, they produce a
-                        ;; more subtle glowing effect along the top or
-                        ;; bottom edge of the content.
-                        :DisallowOverscroll "false"
-
-                        ;; BackgroundColor: Set the app's background color.
-                        ;; Supports a four-byte hex value, with the first
-                        ;; byte representing the alpha channel, and
-                        ;; standard RGB values for the following three
-                        ;; bytes.
-                        ;;
-                        ;; Applies to Android and BlackBerry. Overrides
-                        ;; CSS otherwise available across all platforms.
-                        :BackgroundColor "0xff0000ff"
-
-                        ;; HideKeyboardFormAccessoryBar (boolean,
-                        ;; defaults to false): set to true to hide the
-                        ;; additional toolbar that appears above the
-                        ;; keyboard, helping users navigate from one form
-                        ;; input to another.
-                        ;;
-                        ;; Applies to iOS and BlackBerry.
-                        :HideKeyboardAcessoryBar "false"}
-
           ;; The optional <content> element defines the app's starting
           ;; page in the top-level web assets directory. The default
           ;; value is index.html, which customarily appears in a project's
           ;; top-level www directory.
-          :content ["app-file.html"]
+          :content "app-file.html"
           }
 
  :desktop {
-           :platforms ["osx" "windows" "linux"]
+
+           ;; The platforms to deploy to. Options are:
+           ;; linux, osx, windows
+           :platforms ["linux32" "linux64" "osx32" "osx64" "windows" ]
+
+           ;; The app's starting page.
            :main "init.html"
+
+           ;; A boolean, setting this to false will disable Node support
+           ;; in WebKit.
            :nodejs "true"
+
+           ;; Specifies the path to a node.js script file which gets
+           ;; loaded before the DOM.
            :node-main "core/nodejs.js"
+
+           ;; By default node-webkit only allows one instance of your
+           ;; app if your app is a standalone package, if you want to
+           ;; allow multiple instances of your app running at the same
+           ;; time, make this false.
            :single-instance true
+
+           ;; Overrides the User-Agent header in HTTP requests made from
+           ;; the application. For more info on User-Agent values see:
+           ;; https://en.wikipedia.org/wiki/User_agent_string
            :user-agent {:name "openbsd"
                         :ver "5.5"
                         :nwver "1.0"
                         :webkit-ver "20.0"
                         :osinfo "??"}
+
+           ;; Whitelist of domains that can connect with your app.
            :permissions ["foobar.com", "*foobar.com"]
+
+           ;; Chromium command line arguments for custom settings (e.g.
+           ;; disabling GPU or enable smooth scrooling). A full list of
+           ;; chromium args is available here:
+           ;; http://src.chromium.org/svn/trunk/src/content/public/common/content_switches.cc
            :chromium-args "--disable-threaded-compositing --enable-smooth-scrolling"
+
+           ;; Flags to pass to the v8 JavaScript engine (e.g. turn on
+           ;; Harmon Proxies and Collections).
            :js-flags "--harmony_proxies --harmony_collections"
+
+           ;; The injected JavaScript code is to be executed after any
+           ;; files from css, but before any other DOM is constructed or
+           ;; any other script is run
            :inject-js-start "core.pre-load.js"
+
+           ;; The injecting JavaScript code is to be executed after the
+           ;; document object is loaded, before onload event is fired.
            :inject-js-end "core.post-load.js"
+
+           ;; EXPERIMENTAL -- Loads a snapshot file that has been compiled
+           ;; down to native code. For more infomation see:
+           ;; https://github.com/rogerwang/node-webkit/wiki/Protect-JavaScript-source-code-with-v8-snapshot
            :snapshot "new/snapshot-8.js"
+
+           ;; Number of megabytes for the quota of the DOM storage. The
+           ;; suggestion is to put double the value you want.
            :dom-storage-quota 10
-           :no-edit-menu true
+
+           ;; An array of keywords to assist users searching for the
+           ;; package in catalogs.
            :keywords ["so fun", "way cool", "wow", "totally app"]
+
+           ;; URL for submitting bugs. Can be mailto or http.
            :bugs "http://my.bug-report.com"
+
+           ;; Array of repositories where the package can be located.
+           ;; Each repository is a hash with properties for the :type
+           ;; and :url location of the repository to clone/checkout the
+           ;; package. A :path property may also be specified to locate
+           ;; the package in the repository if it does not reside at the
+           ;; root.
            :repositories [{:type "git"
                            :url "http://github.com/example.git"
                            :path "packages/mypackage"}]
 
-           :window {:title "my app"
+           :window {;; The default title of window created by node-webkit,
+                    ;; it's very useful if you want to show your own title
+                    ;; when the app is starting.
+                    :title "my app"
+
+                    ;; the initial width/height of the main window.
                     :width 800
                     :height 500
+
+                    ;; should the navigation toolbar be shown.
                     :toolbar true
+
+                    ;; path to window's icon
                     :icon "core/misc/icon.png"
+
+                    ;; be null or center or mouse, controls where window
+                    ;; will be put
                     :position "mouse"
+
+                    ;; minimum width/height of window
                     :min-width 400
                     :min-height 200
+
+                    ;; maximum width/height of window
                     :max-width 800
                     :max-height 600
+
+                    ;; show as desktop background window under X11 environment
                     :as-desktop true
+
+                    ;; whether window is resizable
                     :resizable true
+
+                    ;; whether the window should always stay on top of
+                    ;; other windows
                     :always-on-top false
+
+                    ;; whether the window is fullscreen
                     :fullscreen true
+
+                    ;; whether the window is shown in taskbar or dock.
+                    ;; The default is true.
                     :show-in-taskbar true
+
+                    ;; Make this false to have a frameless window
                     :frame true
+
+                    ;; Make this false if you want your app to be hidden
+                    ;; on startup
                     :show true
+
+                    ;; Whether to use Kiosk mode. In Kiosk mode, the app
+                    ;; will be fullscreen and try to prevent users from
+                    ;; leaving the app, so you should remember to provide
+                    ;; a way in app to leave Kiosk mode. This mode is
+                    ;; mainly used for presentation on public displays
                     :kiosk false}
 
-           :webkit {:plugin false
+           :webkit {;; Whether to load external browser plugins like Flash,
+                    ;; default to false.
+                    :plugin false
+
+                    ;; Whether to load Java applets, default to false.
                     :java true
+
+                    ;; Whether to enable page cache, default to false.
                     :page-cache false}}
  }
