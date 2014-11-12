@@ -3,7 +3,9 @@
   (:require [instaparse.core :as insta]
             [clojure.string :as st]
             [browserific.helpers.utils :as u]
-            [clojure.java.io :as io]))
+            [me.raynes.fs :as fs]
+            [clojure.java.io :as io])
+  (:import java.io.File))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Tokenization
@@ -131,7 +133,8 @@ SEXP = #'\u6D3B\u6CC9.*?\u6D3B\u6CC9'
 
 (defn- write-files [expr filename]
   (letfn [(process [fes plat loc]
-            (let [dest (str "intermediate/" plat "/" loc)
+            (let [fname (u/sub-file-location (str loc))
+                  dest (str "intermediate/" plat "/" fname)
                   contents (reduce (fn [acc fe]
                                      (if (some #(= plat %) (first fe))
                                        (str acc "\n\n" (second fe))
@@ -141,17 +144,23 @@ SEXP = #'\u6D3B\u6CC9.*?\u6D3B\u6CC9'
                 (do
                   (io/make-parents dest)
                   (spit dest contents)))))]
-    (map #(process expr % filename) ["chrome" "firefox" "opera" "safari" "mobile"
-                                     "linux32" "linux64" "osx32" "osx64" "windows"])))
+    (doseq [plat #{"chrome" "firefox" "opera" "safari" "mobile"
+                   "linux32" "linux64" "osx32" "osx64" "windows"}]
+      (process expr plat filename))))
+
+(defn get-file
+  "Opens a file, parses its contents, and then passes the
+  output to write-files."
+  [filename]
+  (with-open
+      [rdr (java.io.PushbackReader. (io/reader filename))]
+    (loop [c (read rdr false :end) acc []]
+      (if (= :end c)
+        (write-files acc filename)
+        (recur (read rdr false :end) (conj acc (parse (str c) filename)))))))
 
 (defn parse-files [files]
-  (letfn [(get-file [filename]
-            (with-open
-                [rdr (java.io.PushbackReader. (io/reader filename))]
-              (loop [c (read rdr false :end) acc []]
-                (if (= :end c)
-                  (write-files acc filename)
-                  (recur (read rdr false :end) (conj acc (parse (str c) filename)))))))]
-    (map get-file files)))
-(comment (fs.core/delete-dir "intermediate")
-         (parse-files ["test/fake-input.cljs"]))
+  (doseq [f files]
+    (get-file f)))
+(comment (fs/delete-dir "intermediate")
+         (parse-files ["test/background/fake-input.cljs"]))

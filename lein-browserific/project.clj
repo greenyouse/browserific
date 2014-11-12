@@ -32,7 +32,7 @@
   :ring {:handler browserific.config.server/app}
 
   :browserific {:config "test/test-config.edn"
-                :source-paths "test"}
+                :source-paths "test/fake-src"}
 
   :source-paths ["src/clj"]
 

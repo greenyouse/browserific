@@ -1,5 +1,10 @@
 (ns browserific.helpers.utils
-  (:require [leiningen.core.main :as l]))
+  (:require [leiningen.core.main :as l]
+            [me.raynes.fs :as fs]
+            [clojure.string :as st]))
+
+(defn member? [i coll]
+  (some #(= i %) coll))
 
 (def ^:private options
   "Map of browserific options"
@@ -28,3 +33,21 @@
   {:browsers (try (get-config [:extensions :platforms]) (catch Exception e (config-warning e)))
    :mobile (try (get-config [:mobile :platforms]) (catch Exception e (config-warning e)))
    :desktop (try (get-config [:desktop :platforms]) (catch Exception e (config-warning e)))})
+
+(defn sub-file-location
+  "Gives the base name of a file and the path from
+  the background or content directory. This helps
+  lein-cljsbuild parse files correctly."
+  [file]
+  (cond
+   (not-empty (re-seq #"background/" file)) (->> (.indexOf file "background/")
+                                                 (subs file))
+   (not-empty (re-seq #"content/" file)) (->> (.indexOf file "content")
+                                              (subs file))
+   :default
+   (l/abort (red-text (str "Could not compile file: " file
+                           "\n\nBrowserific source files must be in either the background or content directores.\n")))))
+
+;; use this for debugging
+(comment (throw (Error. (red-text (str "Could not compile file: " file
+                           "\n\nBrowserific source files must be in either the background or content directores.\n")))))

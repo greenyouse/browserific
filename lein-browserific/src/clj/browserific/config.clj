@@ -33,7 +33,7 @@ firefox, chrome, opera, safari")))
     (doseq [desktop desktops]
       (checker desktop #{"linux32" "linux64" "osx32" "osx64" "windows"}
                (str "ERROR: desktop system " desktop " not supported, options are:
-linux, osx, windows")))))
+linux32, linux64, osx32, osx64, windows")))))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -371,6 +371,8 @@ linux, osx, windows")))))
      (mobile-config))
     (doseq [vendor desktops]
       (cond
-       (= vendor (or "linux32" "linux64")) (desktop-config "linux")
-       (= vendor (or "osx32" "osx64")) (desktop-config "osx")
+       (= vendor "linux32" ) (desktop-config "linux32")
+       (= vendor "linux64" ) (desktop-config "linux64")
+       (= vendor "osx32") (desktop-config "osx32")
+       (= vendor "osx64") (desktop-config "osx64")
        (= vendor "windows") (desktop-config "windows")))))
