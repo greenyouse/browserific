@@ -17,11 +17,12 @@
 ;;; Helper fns
 
 (defn- write-dirs []
-  (map #(let [loc (File. (str "intermediate/" %))]
-          (if-not (.isDirectory loc)
-            (.mkdirs loc)))
-       ["chrome" "firefox" "opera" "safari" "mobile"
-        "linux32" "linux64" "osx32" "osx64" "windows"]))
+  (doseq [plat #{"chrome" "firefox" "opera" "safari" "mobile"
+                 "linux32" "linux64" "osx32" "osx64" "windows"}]
+    (let [loc (File. (str "intermediate/" plat))]
+      (if-not (.isDirectory loc)
+        (do (.mkdirs (File. (str loc "/content")))
+            (.mkdirs (File. (str loc "/background"))))))))
 
 (defn get-source-files
   "Finds any clojure or clojurescript source files
@@ -39,7 +40,7 @@
   When called without arguments, both Node-Webkit and Cordova will
   be built.
 
-  init options are: *blank*, node, cordova"
+  init options are: node, cordova, or *blank*"
   [project & args]
   (letfn [(display [msg] (lmain/info (yellow-text "Building " msg)))
           (build [b]
@@ -60,11 +61,11 @@
   [project]
   (lmain/info (yellow-text "Compiling Browserific files.\n"))
   (fs/delete-dir "intermediate")
+  (write-dirs)
   (conf/build-configs)
   (let [src (or (get-in project [:browserific :source-paths]) "src")
         files (vec (get-source-files src))]
-    (parse/parse-files files))
-  (write-dirs))
+    (parse/parse-files files)))
 
 (defn- auto
   "Automatically recompile browserific files when they are changed"
@@ -92,6 +93,7 @@
     "desktop" (-> (io/resource "samples/desktop-sample.edn") slurp lmain/info)
     (-> (io/resource "samples/all-samples.edn") slurp lmain/info)))
 
+;; FIXME: should load the webpage without needing to manually reload!
 (defn- config
   "Launch a server over port 50000 that has a GUI for building a config.edn file"
   []

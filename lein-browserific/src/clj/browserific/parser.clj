@@ -65,11 +65,6 @@ SEXP = #'\u6D3B\u6CC9.*?\u6D3B\u6CC9'
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;  Transform fns
 
-(def ^:private platforms
-  `[~@(:browsers u/systems)
-    "mobile"
-    ~@(:desktop u/systems)])
-
 (defn- transform-meta [node]
   (case node
     "b" (:browsers u/systems)
@@ -101,7 +96,7 @@ SEXP = #'\u6D3B\u6CC9.*?\u6D3B\u6CC9'
         p (set (flatten plats))]
     (cond
      (= "!+" pred) p
-     (= "!-" pred) (reduce disj (set platforms) p))))
+     (= "!-" pred) (reduce disj (set u/platforms) p))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Parse + io fns
@@ -119,7 +114,7 @@ SEXP = #'\u6D3B\u6CC9.*?\u6D3B\u6CC9'
                   (first))]
     (cond
      ;; normal sexp
-     (string? done) [platforms done]
+     (string? done) [u/platforms done]
      ;; parse error
      (insta/failure? intermed) (throw (Error. (str "Browserific Error: Invalid expression in file: " loc)))
      ;; browserific features expression

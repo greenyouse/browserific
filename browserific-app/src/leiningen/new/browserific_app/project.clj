@@ -15,6 +15,8 @@
   :aliases {"dev" ["pdo" "cljsbuild" "auto" "dev," "browserific" "auto"]
             "release" ["pdo" "cljsbuild" "auto" "release," "browserific" "auto"]}
 
+
+  ;; erase unused platforms below to speed up lein-cljsbuild compilation
   :cljsbuild {
               :builds [
                        ;; Chrome

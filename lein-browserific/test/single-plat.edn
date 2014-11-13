@@ -1,0 +1,295 @@
+{:name "tester"
+ :author {:author-name "me"
+          :author-id "me.woot.corp"
+          :email "woot@tester.com"
+          :url "http://www.testme.com"
+          :contributors ["the lambda monster"
+                         "a super-community"]}
+ :version "0.1.0-SNAPSHOT"
+ :license ""
+ :description "FIXME: write this!"
+ :default-locale "en"
+ :extensions {
+              :platforms ["opera"]
+
+              :private true
+
+              :action {:type "browser" ; Either browser or page
+                       :default-icon {:chrome {:19"my-chrome-icon19.png"}
+                                      :firefox {:38 "my-firefox-icon38.png"}
+                                      :opera {:19 "my-opera-icon19.png"
+                                              :38 "my-opera-icon38.png"}
+                                      :safari {:19 "my-safari-icon19.png"}}
+                       :default-title "example title"
+                       :default-popup "popup.html"}
+
+              :background {:scripts ["background.js"]
+                           :persistent false}
+
+              ;; For firefox use inject pageMod at compile time
+              :content {:matches ["http*www.woot.com"]
+                        :exclude ["*bad-stuff*"]
+                        :css ["mystyles.css"]
+                        :js ["special-script.js" "myscript.js"]}
+
+              :icons {:chrome {:48 "my-chrome-icon48.png"}
+                      :firefox {:48 "my-firefox-icon48.png"
+                                :64 "my-firefox-icon64.png"}
+                      :opera {:16 "my-opera-icon16.png"
+                              :48 "my-opera-icon48.png"
+                              :128 "my-opera-icon128.png"}
+                      :safari {:128 "my-safari-icon128.png"}}
+
+              :homepage "https://www.my-cool-site.com"
+
+              :options-page "options.html"
+
+              :permissions ["tabs"
+                            "https://www.wahoo.com/"
+                            "https://www.yoogle.com/"]
+
+              :update-url {:chrome "https://your-repo.com/somewhere/chrome"
+                           :firefox "https://your-repo.com/somewhere/firefox"
+                           :opera "https://your-repo.com/somewhere/opera"
+                           :safari "https://your-repo.com/somewhere/safari"}
+
+              :web-accessible-resources ["https://www.my.server.com/stuff.js"
+                                         "https://www.another-server.com/woot.img"]
+
+              :extra {:chrome
+                      {:chrome-ui-overrides {:bookmark-ui
+                                             {:remove-button "true"
+                                              :remove-bookmark-shortuct "true"}}
+                       :chrome-settings-overrides {:homepage "http://www.homepage.com"
+                                                   :startup-pages ["http://www.startup.com"
+                                                                   "https://www.kittehs.com"]
+                                                   :search-provider {:name "name.__MSG_url_domain__"
+                                                                     :keyword "keyword.__MSG_url_domain__"
+                                                                     :search-url "http://www.foo.__MSG_url_domain__/s?q={searchTerms}"
+                                                                     :favicon-url "http://www.foo.__MSG_url_domain__/favicon.ico"
+                                                                     :suggest-url "http://www.foo.__MSG_url_domain__/suggest?q={searchTerms}"
+                                                                     :instant-url "http://www.foo.__MSG_url_domain__/instant?q={searchTerms}"
+                                                                     :image-url "http://www.foo.__MSG_url_domain__/image?q={searchTerms}"
+                                                                     :search-url-post-params "search_lang=__MSG_url_domain__"
+                                                                     :suggest-url-post-params "suggest_lang=__MSG_url_domain__"
+                                                                     :instant-url-post-params "instant_lang=__MSG_url_domain__"
+                                                                     :image-url-post-params "image_lang=__MSG_url_domain__"
+                                                                     :alternate-urls ["http://www.moo.__MSG_url_domain__/s?q={searchTerms}"
+                                                                                      "http://www.noo.__MSG_url_domain__/s?q={searchTerms}"]
+                                                                     :encoding "UTF-8"
+                                                                     :is-default true}}
+                       :chrome-url-overrides {:some-builtin-page "my-bookmarks.html"}
+                       :commands {:do-something {:suggested-key "Ctrl+Shift+d"
+                                                 :description "does something"}}
+                       :current-locale "en_US"
+                       :devtools_page "new-devtool.html"
+                       :externally-connectable {:ids ["aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+                                                      "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"]
+                                                :matches ["https://*.google.com/*"
+                                                          "*://*.chromium.org/*"]
+                                                :accepts_tls_channel_id false}
+                       :file-browser-handlers [{:id "upload"
+                                                :default-title "Save to Gallery"
+                                                :file-filters ["filesystem://*.jpg"
+                                                               "filesystem://*.png"]}]
+                       :import "" ; TODO: find what :import does
+                       :input-components {:name "My IME" ;; A user visible name.
+                                          :type "ime"  ;; The type of input component.
+                                          :id "my_ime"   ;; The id that will be passed to callbacks
+                                          :description "My Input method for Japanese"  ;; A user visible description
+                                          :language "ja" ;; The primary language this IME is used for
+                                          ;; FIXME: is vector the correct thing for layouts?
+                                          :layouts ["jp::jpn" "us:dvorak:eng"]}  ;; The supported keyboard layouts for this IME,
+                       :minimum-chrome-version "15.0"
+                       :nacl-modules [{:path "OpenOfficeViewer.nmf"
+                                       :mime-type "application/vnd.oasis.opendocument.spreadsheet"}]
+                       :oauth2 {:client-id "665859454684.apps.googleusercontent.com"
+                                :scopes ["https://www.googleapis.com/auth/drive"]}
+                       :offline-enabled true
+                       :omnibox {:keyword "woots"}
+                       :optional-permissions ["https://www.google.com"]
+                       :platforms [] ; TODO: find what :platforms does
+                       :script-badge "" ; TODO: find what :script-badge does
+                       :short-name "test"
+                       :signature "" ; TODO: find what :signature does
+                       :spellcheck true ; TODO: find what :spellcheck does (or how to implement it)
+                       :storage {:managed-schema "schema.json"}
+                       :system-indicator {} ; TODO: find what :system-indicator does
+                       :tts-engine {:voice-name "Hanz"
+                                    :lange "no"
+                                    :gender "male"
+                                    :event-types ["start" "end" "error"]}}
+
+                      :firefox {:dependencies ["jquery" "D3"]
+                                :lib "some-dir/woot"
+                                :main "not/main"
+                                :name "noSpacesOrPeriods"
+                                :packages "cool/packages"
+                                ;; FIXME: redo the permissions so this isn't so clunky
+                                :permissions ["https://www.wahoo.com/"
+                                              "https://www.yoogle.com/"]
+                                :preferences [{:name "some pref"
+                                               :title "pref title"
+                                               :description "this is a description"
+                                               :type "string"
+                                               :value "woot woot, I'm a default string"}]
+                                :preferences-branch "some/alt/prefs" ; TODO: make sure this is correct (probly not)
+                                :tests "tests"
+                                :title "even moar titles"
+                                :translators ["frank-the-translator"
+                                              "jennie-the-translita"]}
+
+                      ;; FIXME: we can't require users to enter tokens like -.- redo safari later
+                      :safari {:bars [{:Filename "bar.html"
+                                       :Identifier "some bar id"
+                                       :Label "some bar label"}]
+                               :context-items [{:Command "console.log(\"woohoo it's context!\");"
+                                                :Identifier "some wooting context id"
+                                                :Title "I show up on hover"}]
+                               :menus [{:Identifier "my cool menu"  ; FIXME: check other menu options!
+                                        :Menu-.-Items [{:Command "yourCommand.menu.here();"
+                                                        :Disabled true
+                                                        :Identifier "my little menu item"
+                                                        :Title "menu item woot"}]}]
+                               :popovers [{:Filename "popover.html"
+                                           :Height 200
+                                           :Width 200
+                                           :Identifier "super neat popover"}]
+                               :toolbar [{:Command "someToolbar.command();" ; tokenize "Toolbar Items"
+                                          :Identifier "woot.toolbar"
+                                          :Image "toolbar.png"
+                                          :Label "some-label"
+                                          :Menu "my cool menu"
+                                          :Pallete "my cool tool"
+                                          :Popover "super neat popover"
+                                          :Tool-.-tip "hover to see this"}] ; tokenize "Tool Tip"
+                               :database-quota 1048576 ;tokenize "Database Quota"
+                               :start-script "adblocker.js" ;fired before dom is loaded, usually to block unwanted content (ads)
+                               :access-level "Some" ; None/Some/All
+                               }
+
+                      :shared {:requirements {:3D {:features ["webgl"]}}
+                               :sandbox {:page ["page1.html"
+                                                "some-dir/page2.html"]
+                                         :content-security-policy "sandbox allow-scripts; script-src https://www.google.com"}}}
+              }
+
+ :mobile {
+          :id "com.example.tester"
+
+          :platforms ["ubuntu"]
+
+          :preferences [{:name "phonegap-version" :value "3.5.0"}
+                        {:name "orientation" :value "default"}
+                        {:name "target-device" :value "universal"}
+                        {:name "fullscreen" :value "true"}
+                        {:name "webviewbounce" :value "true"}
+                        {:name "prerendered-icon" :value "true"}
+                        {:name "stay-in-webview" :value "false"}
+                        {:name "ios-statusbarstyle" :value "black-opaque"}
+                        {:name "detect-data-types" :value "true"}
+                        {:name "exit-on-suspend" :value "false"}
+                        {:name "show-splash-screen-spinner" :value "true"}
+                        {:name "auto-hide-splash-screen" :value "true"}
+                        {:name "disable-cursor" :value "false"}
+                        {:name "android-minSdkVersion" :value "7"}
+                        {:name "android-installLocation" :value "auto"}]
+
+          :plugins [{:name "org.apache.cordova.battery-status" :value true}
+                    {:name "org.apache.cordova.camera" :value true}
+                    {:name "org.apache.cordova.media-capture" :value true}
+                    {:name "org.apache.cordova.console" :value true}
+                    {:name "org.apache.cordova.contacts" :value true}
+                    {:name "org.apache.cordova.device" :value true}
+                    {:name "org.apache.cordova.device-motion" :value true}
+                    {:name "org.apache.cordova.device-orientation" :value true}
+                    {:name "org.apache.cordova.dialogs" :value true}
+                    {:name "org.apache.cordova.file" :value true}
+                    {:name "org.apache.cordova.file-transfer" :value true}
+                    {:name "org.apache.cordova.geolocation" :value true}
+                    {:name "org.apache.cordova.globalization" :value true}
+                    {:name "org.apache.cordova.inappbrowser" :value true}
+                    {:name "org.apache.cordova.media" :value true}
+                    {:name "org.apache.cordova.network-information" :value true}
+                    {:name "org.apache.cordova.splashscreen" :value true}
+                    {:name "org.apache.cordova.vibration" :value true}]
+
+          :icons [{:src "icon.png"}
+                  {:src "res/icon/android/icon-36-ldpi.png" :platform "android" :density "ldpi"}
+                  {:src "res/icon/android/icon-48-mdpi.png" :platform "android" :density "mdpi"}
+                  {:src "res/icon/android/icon-72-hdpi.png" :platform "andoird" :density "hdpi"}
+                  {:src "res/icon/android/icon-96-xhdpi.png" :platform "andoird" :density "xhdpi"}
+                  {:src "src/icon/ios/icon-57.png" :platform "ios" :width "54" :height "54"}
+                  {:src "src/icon/ios/icon-72.png" :platform "ios" :width "72" :height "72"}
+                  {:src "src/icon/ios/icon-57-2x.png" :platform "ios" :width "114" :height "114"}
+                  {:src "src/icon/ios/icon-72-2x.png" :platform "ios" :width "144" :height "144"}
+                  {:src "res/icon/blackberry/icon-80.png" :platform "blackberry"}
+                  {:src "res/icon/blackberry/icon-80.png" :platform "blackberry"}
+                  {:src "res/icon/webos/icon-64.png" :platform "webos"}
+                  {:src "res/icon/windows-phone/icon-48.png" :platform "wp8"}
+                  {:src "res/icon/windows-phone/icon-173.png" :platform "wp8"}]
+
+          :splash [{:src "res/screen/android/screen-ldpi-portrait.png" :platform "android" :density "port-ldpi"}
+                   {:src "res/screen/android/screen-mdpi-portrait.png" :platform "android" :density "port-mdpi"}
+                   {:src "res/screen/android/screen-hdpi-portrait.png" :platform "android" :density "port-hdpi"}
+                   {:src "res/screen/android/screen-xhdpi-portrait.png" :platform "android" :density "port-xhdpi"}
+                   {:src "res/screen/blackberry/screen-225.png" :platform "blackberry"}
+                   {:src "res/screen/ios/screen-iphone-portrait.png" :platform "ios" :width "320" :height "480"}
+                   {:src "res/screen/ios/screen-iphone-portrait-2x.png" :platform "ios" :width "640" :height "960"}
+                   {:src "res/screen/ios/screen-iphone-portrait-568h-2x.png" :platform "ios" :width "640" :height "1136"}
+                   {:src "res/screen/ios/screen-ipad-portrait.png" :platform "ios" :width "768" :height "1024"}
+                   {:src "res/screen/ios/screen-ipad-landscape.png" :platform "ios" :width "1024" :height "768"}
+                   {:src "res/screen/windows-phone/screen-portrait.jpg" :platform "winphone"}]
+
+          :permissions ["https://www.wahoo.com/"
+                        "https://www.yoogle.com/"]
+
+          :content "index.html"
+          }
+
+ :desktop {
+           :platforms ["linux32"]
+           :main "init.html"
+           :nodejs "true"
+           :node-main "core/nodejs.js"
+           :single-instance true
+           :user-agent {:name "openbsd"
+                        :ver "5.5"
+                        :nwver "1.0"
+                        :webkit-ver "20.0"
+                        :osinfo "??"}
+           :permissions ["foobar.com", "*foobar.com"]
+           :chromium-args "--disable-threaded-compositing --enable-smooth-scrolling"
+           :js-flags "--harmony_proxies --harmony_collections"
+           :inject-js-start "core.pre-load.js"
+           :inject-js-end "core.post-load.js"
+           :snapshot "new/snapshot-8.js"
+           :dom-storage-quota 10
+           :keywords ["so fun", "way cool", "wow", "totally app"]
+           :bugs "http://my.bug-report.com"
+           :repositories [{:type "git"
+                           :url "http://github.com/example.git"
+                           :path "packages/mypackage"}]
+
+           :window {:title "my app"
+                    :width 800
+                    :height 500
+                    :toolbar true
+                    :icon "core/misc/icon.png"
+                    :position "mouse"
+                    :min-width 400
+                    :min-height 200
+                    :max-width 800
+                    :max-height 600
+                    :as-desktop true
+                    :resizable true
+                    :always-on-top false
+                    :fullscreen true
+                    :show-in-taskbar true
+                    :frame true
+                    :show true
+                    :kiosk false}
+
+           :webkit {:plugin false
+                    :java true
+                    :page-cache false}}}

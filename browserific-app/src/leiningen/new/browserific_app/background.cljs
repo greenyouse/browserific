@@ -1,4 +1,4 @@
 (ns {{name}}.background)
 
 
-(console/log "Do something cool!")
+(js/console.log "Do something cool!")
