@@ -1,7 +1,6 @@
 (ns leiningen.browserific
   (:require [leiningen.help :as lhelp]
             [leiningen.core.main :as lmain]
-            [clojure-watch.core :refer [start-watch]]
             [clojure.java.io :as io]
             [me.raynes.fs :as fs]
             [browserific.config :as conf]
@@ -20,16 +19,16 @@
   (doseq [plat #{"chrome" "firefox" "opera" "safari" "mobile"
                  "linux32" "linux64" "osx32" "osx64" "windows"}]
     (let [loc (File. (str "intermediate/" plat))]
-      (if-not (.isDirectory loc)
-        (do (.mkdirs (File. (str loc "/content")))
-            (.mkdirs (File. (str loc "/background"))))))))
+      (.mkdirs (File. (str loc "/content")))
+      (.mkdirs (File. (str loc "/background"))))))
 
 (defn get-source-files
   "Finds any clojure or clojurescript source files
    in a directory. Returns a seq strings."
   [dir]
-  (filter #(u/member? (fs/extension %) [".clj" ".cljs"])
-          (map str (file-seq (File. dir)))))
+  (filter #(re-find #"^(?:(?!#).)*\.(clj|cljs)$" (str %))
+        (file-seq (File. dir))))
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Leiningen fns
@@ -56,8 +55,8 @@
         (build (do (display " Cordova and Node-Webkit projects")
                    (sh/sh mobile) (sh/sh desktop))))))))
 
-(defn- once
-  "Compile the browserific files once "
+(defn- build
+  "Compile the browserific files"
   [project]
   (lmain/info (yellow-text "Compiling Browserific files.\n"))
   (fs/delete-dir "intermediate")
@@ -67,13 +66,6 @@
         files (vec (get-source-files src))]
     (parse/parse-files files)))
 
-(defn- auto
-  "Automatically recompile browserific files when they are changed"
-  [project]
-  (start-watch [{:path (or (get-in project [:browserific :source-paths]) "src")
-                 :event-types [:create :modify :delete]
-                 :callback (fn [e f] (once project))
-                 :options {:recursive true}}]))
 
 ;; FIXME: should this clean each lein-cjlsbuild file too?
 (defn- clean
@@ -104,16 +96,15 @@
 
 (defn browserific
   "Run lein-browserific"
-  {:help-arglists '([once auto clean sample config])
-   :subtasks [#'once #'auto #'clean #'sample #'config]}
+  {:help-arglists '([build clean sample config])
+   :subtasks [#'build #'clean #'sample #'config]}
   ([project]
      (lmain/info
       (lhelp/help-for "browserific"))
      (lmain/abort))
   ([project subtask & args]
      (case subtask
-       "once" (once project)
-       "auto" (auto project)
+       "build" (build project)
        "clean" (clean)
        "sample" (apply sample args)
        "config" (config)

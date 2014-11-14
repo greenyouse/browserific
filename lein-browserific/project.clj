@@ -7,31 +7,27 @@
                  [org.clojure/data.xml "0.0.8"]
                  [cheshire "5.3.1"]
                  [instaparse "1.3.4"]
-                 [clojure-watch "0.1.10"]
                  [me.raynes/fs "1.4.6"]
                  [ring "1.3.1"]
                  [fogus/ring-edn "0.2.0"]
                  [compojure "1.2.1"]
                  [org.clojure/core.async "0.1.346.0-17112a-alpha"]
-                 ;; CLJS
+                 ;; cljs
                  [org.clojure/clojurescript "0.0-2371"]
                  [sablono "0.2.22"]
                  [om "0.8.0-alpha1"]
                  [om-sync "0.1.1"]]
 
 
-  ;; NOTE: lein ring server-headless
-
   :eval-in-leiningen true
 
   :profiles {:dev {:dependencies [[javax.servlet/servlet-api "2.5"]]
-                   :plugins [[com.cemerick/austin "0.1.5"]
-                             [lein-cljsbuild "1.0.3"]
+                   :plugins [[lein-cljsbuild "1.0.3"]
                              [lein-ring "0.8.7"]]}}
 
   :ring {:handler browserific.config.server/app}
 
-  :browserific {:config "test/test-config"
+  :browserific {:config "test/test-config.edn"
                 :source-paths "test/fake-src"}
 
   :source-paths ["src/clj"]

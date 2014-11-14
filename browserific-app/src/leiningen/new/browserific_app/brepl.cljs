@@ -1,4 +1,4 @@
 (ns brepl
-  (:require [clojure.browser.repl :as repl]))
+  (:require [weasel.repl :as ws-repl]))
 
-(repl/connect "http://localhost:9000/repl")
+(ws-repl/connect "http://localhost:9001/repl")
