@@ -6,18 +6,27 @@
 (def render (renderer "browserific-app"))
 
 (defn member? [i coll]
+  (println i " -- " coll)
   (some #(= i %) coll))
 
+(defn parse-opts [opts]
+  (reduce (fn [acc i]
+            (cond
+             (re-find #":sablono" i) (conj acc :sablono)
+             (re-find #":kioo" i) (conj acc :kioo)
+             (re-find #":secretary" i) (conj acc :secretary)))
+          [] opts))
+
 (defn browserific-app
-  ([name] (browserific-app name []))
-  ([name opt-vec]
+  ([name & args]
      (main/info "\033[33mCooking up a fresh browserific project...\n\033[0m")
-     (let [opts (read-string opt-vec)
+     (let [opts (parse-opts args)
            data {:name name
                  :sanitized (name-to-path name)
                  :sablono (member? :sablono opts)
                  :kioo (member? :kioo opts)
                  :secretary (member? :secretary opts)}]
+       (println opts " -- " data)
        (->files data
                 [".gitignore" (render "gitignore" data)]
                 ["project.clj" (render "project.clj" data)]
