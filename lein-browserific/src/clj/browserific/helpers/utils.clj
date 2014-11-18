@@ -36,7 +36,7 @@
 
 (def platforms
   `[~@(:browsers systems)
-    "mobile"
+    ~@(:mobile systems)
     ~@(:desktop systems)])
 
 (defn sub-file-location

@@ -1,5 +1,3 @@
-Not really an API anything yet... just helpful notes for now.
-
 * Mission
 
   Make app development more sane by abstracting away the differences
@@ -44,7 +42,7 @@ Not really an API anything yet... just helpful notes for now.
      cover the least common denominator of the five APIs. These functions
      will be part of a DSL, so developers use them like normal library functions
      but the pre-processor translates them into their respective vendor-specific
-     JS code. Fox example, a dev would use (get-bookmark "exmpale-bookmark) and
+     JS code. Fox example, the developer would use (get-bookmark "exmpale-bookmark) and
      that would be translated accordingly by the pre-processor so it works in
      all four browsers.
    - Wrap more specific functions, that only apply to one or two
@@ -56,18 +54,15 @@ Not really an API anything yet... just helpful notes for now.
    - Allow the process to be environment agnostic by using the
      pre-processor and a custom set of transformation fns. Target
      browser extensions and mobile apps first but allow for future
-     extensions like Qt, Node-Webkit, Smart TV SDKs, etc.
+     extensions like Smart TV SDKs, etc.
 
 
 * What we're not doing!
 
-** Making any UI decisions
-  - There are already 101 UI libraries so devs should pick their own
-    poison.
 ** Forcing X app type
-  - This framework can be used for building whatever kind of app a dev
-    wants. Someone could build a one page browser extension and mobile
-    app, a browser extension to extend the native browser dev tools, a
-    Greasemonkey style extension for site-specific tweaking, a mobile
-    game app, another content blocking/privacy filter for the
+  - This framework can be used for building whatever kind of app a
+    developer wants. Someone could build a one page browser extension
+    and mobile app, a browser extension to extend the native browser dev
+    tools, a Greasemonkey style extension for site-specific tweaking, a
+    mobile game app, another content blocking/privacy filter for the
     browser, etc. Whatever you want to build is up to you...

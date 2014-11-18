@@ -177,8 +177,8 @@
  :mobile {
           :id "com.example.tester"
 
-          :platforms ["ios" "android" "firefox-os" "wp8" "ubuntu"
-                      "blackberry"]
+          :platforms ["amazon-fire" "android" "blackberry" "firefox-os" "ios"
+                      "ubuntu" "wp7" "wp8" "tizen" "webos"]
 
           :preferences [{:name "phonegap-version" :value "3.5.0"}
                         {:name "orientation" :value "default"}

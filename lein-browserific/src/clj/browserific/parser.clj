@@ -49,13 +49,16 @@ FE = SPACE* Pred <SPACE*> Platforms <SPACE*> SEXP
 Or = '!+'
 Neg = '!-'
 <Platforms> = <'['> Env <']'>
-<Env> = Browser <SPACE*> Env* | Desktop <SPACE*> Env* |  Meta <SPACE*> Env*
+<Env> = Browser <SPACE*> Env* | Desktop <SPACE*> Env* |  Mobile <SPACE*> Env* |
+        Meta <SPACE*> Env*
 Browser = 'chrome' | 'firefox' | 'opera' | 'safari'
 Desktop = Linux | OSX | 'windows'
 Linux = 'linux32' | 'linux64' | 'linux'
 OSX = 'osx32' | 'osx64' | 'osx'
+Mobile = 'amazon-fire' | 'android' | 'blackberry' | 'firefox-os' | 'ios' |
+         'ubuntu' | 'wp7' | 'wp8' | 'tizen' | 'webos'
 (* Denotes all browsers, all mobile, or all desktop *)
-Meta = 'b' | 'm' | 'd'
+Meta = 'b' | 'm' | 'd' | 'mobile' | 'dekstop' | 'browser'
 
 (* let's just skip parsing cljs and leave that to the actual compiler :) *)
 SEXP = #'\u6D3B\u6CC9.*?\u6D3B\u6CC9'
@@ -68,13 +71,16 @@ SEXP = #'\u6D3B\u6CC9.*?\u6D3B\u6CC9'
 (defn- transform-meta [node]
   (case node
     "b" (:browsers u/systems)
-    "m" ["mobile"]
+    "browser" (:browsers u/systems)
+    "m" (:mobile u/systems)
+    "mobile" (:mobile u/systems)
     "d" (:desktop u/systems)
+    "desktop" (:desktop u/systems)
     "linux" ["linux32" "linux64"]
     "osx" ["osx32" "osx64"]
     node))
 
-(def ^:private transfom
+(def ^:private transform
   {:FE (comp vector)
    :Neg identity
    :Or identity
@@ -82,6 +88,7 @@ SEXP = #'\u6D3B\u6CC9.*?\u6D3B\u6CC9'
    :Desktop #(transform-meta %)
    :Linux #(transform-meta %)
    :OSX #(transform-meta %)
+   :Mobile #(transform-meta %)
    :Meta #(transform-meta %)
    :SEXP #(-> %
               (st/replace-first
@@ -110,7 +117,7 @@ SEXP = #'\u6D3B\u6CC9.*?\u6D3B\u6CC9'
                      (sexp-check loc)
                      (parser))
         done (->> intermed
-                  (insta/transform transfom)
+                  (insta/transform transform)
                   (first))]
     (cond
      ;; normal sexp
@@ -124,7 +131,9 @@ SEXP = #'\u6D3B\u6CC9.*?\u6D3B\u6CC9'
                       (post-parse [plats sexp])))))
 (comment (parse "(+ 1 1)" "woot")
          (parse "[!+ [osx d firefox m] (+ 1 1)]" "woot")
-         (parse "[!- [linux32 firefox m] (+ 1 1)]" "woot"))
+         (parse "[!- [linux32 firefox m] (+ 1 1)]" "woot")
+         (parse "[!+ [ios firefox-os] (+ 1 1)]" "woot")
+         (parse "[!- [mobile ios android safari] (+ 1 1)]" "woot"))
 
 (defn- write-files [expr filename]
   (letfn [(process [fes plat loc]
@@ -139,8 +148,9 @@ SEXP = #'\u6D3B\u6CC9.*?\u6D3B\u6CC9'
                 (do
                   (io/make-parents dest)
                   (spit dest contents)))))]
-    (doseq [plat #{"chrome" "firefox" "opera" "safari" "mobile"
-                   "linux32" "linux64" "osx32" "osx64" "windows"}]
+    (doseq [plat #{"chrome" "firefox" "opera" "safari" "ubuntu" "wp7" "wp8"
+                   "amazon-fire" "android" "blackberry" "firefox-os" "ios"
+                   "tizen" "webos" "linux32" "linux64" "osx32" "osx64" "windows"}]
       (process expr plat filename))))
 
 (defn get-file
@@ -158,4 +168,4 @@ SEXP = #'\u6D3B\u6CC9.*?\u6D3B\u6CC9'
   (doseq [f files]
     (get-file f)))
 (comment (fs/delete-dir "intermediate")
-         (parse-files ["test/background/fake-input.cljs"]))
+         (parse-files ["test/fake-src/background/fake-input.cljs"]))

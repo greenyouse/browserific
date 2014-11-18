@@ -6,6 +6,7 @@
   :dependencies [[org.clojure/clojure "1.6.0"]
                  [org.clojure/clojurescript "0.0-2371"]
                  [weasel "0.4.2"]
+                 [org.clojure/core.async "0.1.346.0-17112a-alpha"]
                  [om "0.8.0-alpha2"]{{#sablono}}
                  [sablono "0.2.22"]{{/sablono}}{{^sablono}}{{/sablono}}{{#kioo}}
                  [kioo "0.4.0"]{{/kioo}}{{^kioo}}{{/kioo}}{{#secretary}}
@@ -13,14 +14,8 @@
 
   :plugins [[lein-cljsbuild "1.0.3"]
             [com.cemerick/clojurescript.test "0.3.1"]
-            [lein-pdo "0.1.1"]
             [lein-browserific "0.1.0-SNAPSHOT"]
             [lein-auto "0.1.1"]]
-
-  ;; FIXME: get rid of pdo?
-  :aliases {"dev" ["pdo" "cljsbuild" "auto" "dev," "browserific" "auto"]
-            "release" ["pdo" "cljsbuild" "auto" "release," "browserific" "auto"]}
-
 
   ;; erase unused platforms below to speed up lein-cljsbuild compilation
   :cljsbuild {
@@ -181,7 +176,7 @@
                        ;; Linux32
                        {:id "release"
                         :source-paths ["intermediate/linux32"]
-                        :compiler {:output-to "resources/desktop/deploy/linux32/app.js"
+                        :compiler {:output-to "resources/desktop/deploy/linux32/js/app.js"
                                    :source-map "resources/desktop/deploy/linux32/js/client.js.map"
                                    :optimizations :advanced
                                    :pretty-print false
@@ -191,7 +186,7 @@
                        ;; Linux64
                        {:id "release"
                         :source-paths ["intermediate/linux64"]
-                        :compiler {:output-to "resources/desktop/deploy/linux64/app.js"
+                        :compiler {:output-to "resources/desktop/deploy/linux64/js/app.js"
                                    :source-map "resources/desktop/deploy/linux64/js/client.js.map"
                                    :optimizations :advanced
                                    :pretty-print false
@@ -201,7 +196,7 @@
                        ;; OSX
                        {:id "release"
                         :source-paths ["intermediate/osx32"]
-                        :compiler {:output-to "resources/desktop/deploy/osx32/app.js"
+                        :compiler {:output-to "resources/desktop/deploy/osx32/js/app.js"
                                    :source-map "resources/desktop/deploy/osx32/js/client.js.map"
                                    :optimizations :advanced
                                    :pretty-print false
@@ -211,7 +206,7 @@
                        ;; OSX64
                        {:id "release"
                         :source-paths ["intermediate/osx64"]
-                        :compiler {:output-to "resources/desktop/deploy/osx64/app.js"
+                        :compiler {:output-to "resources/desktop/deploy/osx64/js/app.js"
                                    :source-map "resources/desktop/deploy/osx64/js/client.js.map"
                                    :optimizations :advanced
                                    :pretty-print false
@@ -221,7 +216,7 @@
                        ;; Windows
                        {:id "release"
                         :source-paths ["intermediate/windows"]
-                        :compiler {:output-to "resources/desktop/deploy/windows/app.js"
+                        :compiler {:output-to "resources/desktop/deploy/windows/js/app.js"
                                    :source-map "resources/desktop/deploy/windows/js/client.js.map"
                                    :optimizations :advanced
                                    :pretty-print false
