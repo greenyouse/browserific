@@ -1,6 +1,5 @@
 (ns browserific.helpers.utils
   (:require [leiningen.core.main :as l]
-            [me.raynes.fs :as fs]
             [clojure.string :as st]))
 
 (defn member? [i coll]
@@ -39,6 +38,15 @@
     ~@(:mobile systems)
     ~@(:desktop systems)])
 
+(def project-file
+  (-> "project.clj" slurp))
+
+;; HACK: matches the project name using this crappy regex, works OK
+(def project-name
+  (-> (re-find #"\(defproject [A-Za-z1-9-_/.]+" project-file)
+      (st/split #" ")
+      (second)))
+
 (defn sub-file-location
   "Gives the base name of a file and the path from
   the background or content directory. This helps
@@ -50,9 +58,5 @@
    (not-empty (re-seq #"content/" file)) (->> (.indexOf file "content")
                                               (subs file))
    :default
-   (l/abort (red-text (str "Could not compile file: " file
-                           "\n\nBrowserific source files must be in either the background or content directores.\n")))))
-
-;; use this for debugging
-(comment (throw (Error. (red-text (str "Could not compile file: " file
+   (l/abort (red-text (str "Browserific Error: Could not compile file: " file
                            "\n\nBrowserific source files must be in either the background or content directores.\n")))))

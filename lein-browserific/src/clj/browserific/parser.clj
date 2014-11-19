@@ -76,8 +76,8 @@ SEXP = #'\u6D3B\u6CC9.*?\u6D3B\u6CC9'
     "mobile" (:mobile u/systems)
     "d" (:desktop u/systems)
     "desktop" (:desktop u/systems)
-    "linux" ["linux32" "linux64"]
-    "osx" ["osx32" "osx64"]
+    "linux" ["linux32" "linux64"] ;FIXME: should linux/osx be constrained by config.edn?
+    "osx" ["osx32" "osx64"] ;
     node))
 
 (def ^:private transform

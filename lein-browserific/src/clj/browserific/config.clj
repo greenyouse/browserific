@@ -1,7 +1,7 @@
 (ns browserific.config
   "Generates config files from config.edn"
   (:require [browserific.helpers.plist :as p]
-            [browserific.helpers.utils :refer [get-config systems red-text]]
+            [browserific.helpers.utils :refer [get-config systems red-text project-name]]
             [cheshire.core :as js]
             [clojure.data.xml :as xml]
             [clojure.string :as st]
@@ -20,19 +20,19 @@
   [browsers mobiles desktops]
   (letfn [(checker [platform platform-types err]
             (if-not (contains? platform-types platform)
-              (do (l/warn (red-text err)) false)))]
+              (l/abort (red-text err))))]
     (doseq [browser browsers]
       (checker browser #{"chrome" "firefox" "opera" "safari"}
-                (str "ERROR: browser " browser " not supported, options are:
+                (str "Browserific Error: browser " browser " not supported, options are:
 firefox, chrome, opera, safari")))
     (doseq [mobile mobiles]
       (checker mobile #{"amazon-fire" "android" "blackberry" "firefox-os" "ios"
                         "ubuntu" "wp7" "wp8" "tizen" "webos"}
-               (str "ERROR: mobile system " mobile " not supported, options are:
+               (str "Browserific Error: mobile system " mobile " not supported, options are:
  amazon-fire, android, blackberry, firefox-os, ios, ubuntu, wp7, wp8, webos, tizen")))
     (doseq [desktop desktops]
       (checker desktop #{"linux32" "linux64" "osx32" "osx64" "windows"}
-               (str "ERROR: desktop system " desktop " not supported, options are:
+               (str "Browserific Error: desktop system " desktop " not supported, options are:
 linux32, linux64, osx32, osx64, windows")))))
 
 
@@ -254,8 +254,7 @@ linux32, linux64, osx32, osx64, windows")))))
 (defn- mobile-config
   "Outputs the mobile config file from the config.edn data"
   []
-  (let [project-name (-> "project.clj" slurp read-string second)
-        loc (str "resources/mobile/" project-name "/config.xml")]
+  (let [loc (str "resources/mobile/" project-name "/config.xml")]
     (io/make-parents loc)
     (spit loc
           (xml/indent-str (xml/sexp-as-element
