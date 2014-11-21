@@ -35,7 +35,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Leiningen fns
 
-(defn- builds
+(defn- build
   "Write lein-cljsbuilds for all relevant platforms"
   ([]
      (lmain/info (yellow-text "Writing a new lein-cljsbuild configuration.\nDon't forget to change your project.clj!\n"))
@@ -89,15 +89,15 @@
 
 (defn browserific
   "Run lein-browserific"
-  {:help-arglists '([builds compile clean sample config])
-   :subtasks [#'builds #'compile #'clean #'sample #'config]}
+  {:help-arglists '([build compile clean sample config])
+   :subtasks [#'build #'compile #'clean #'sample #'config]}
   ([project]
      (lmain/info
       (lhelp/help-for "browserific"))
      (lmain/abort))
   ([project subtask & args]
      (case subtask
-       "builds" (if args (apply builds args) (builds))
+       "build" (if args (apply build args) (build))
        "compile" (compile project)
        "clean" (clean)
        "sample" (apply sample args)

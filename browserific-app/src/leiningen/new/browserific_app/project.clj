@@ -1,5 +1,5 @@
 ;; lein-cljsbuild options stored here
-;(def builds (-> "builds.clj" slurp read-string))
+(def builds (-> "builds.clj" slurp read-string))
 
 (defproject {{name}} "0.1.0-SNAPSHOT"
   :description "FIXME: write description"
@@ -14,7 +14,7 @@
                  [figwheel "0.1.5-SNAPSHOT"]{{#sablono}}
                  [sablono "0.2.22"]{{/sablono}}{{^sablono}}{{/sablono}}{{#kioo}}
                  [kioo "0.4.0"]{{/kioo}}{{^kioo}}{{/kioo}}{{#secretary}}
-                 [secretary "1.2.1"]{{/secretary}}{{#secretary}}{{/secretary}}]
+                 [secretary "1.2.1"]{{/secretary}}{{^secretary}}{{/secretary}}]
 
   :plugins [[lein-cljsbuild "1.0.3"]
             [com.cemerick/clojurescript.test "0.3.1"]
@@ -26,7 +26,4 @@
   ;; write your cljsbuild configuration here or use lein browserific builds
   ;;
   ;; build-ids: draft, browser-dev, mobile-dev, desktop-dev, release
-
-  ;; uncomment builds and the line below after running browserific builds
-  ;:cljsbuild ~builds
-  )
+  :cljsbuild ~builds)
