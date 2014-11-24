@@ -1,0 +1,82 @@
+/* - items in the app must have fully qualified paths (/root-dir/item)
+   - extenal paths must be fully qualified too (https://myapp.mysite.com/item)
+   - REQUIRED: name, description, launch_path, icons (1 128x128 + 1 512x512), developer,
+     default locale, type (priviledge)
+
+docs: https://developer.mozilla.org/en-US/Apps/Build/Manifest
+*/
+{ // These parts are required for the firefox marketplace
+ "name": "My App",
+ "description": My elevator pitch goes here",
+ "launch_path": "/index.html", //must be full path from root-dir
+ "icons": {
+    "512": "/img/icon-512.png", //there are guidelines, check 'em: https://www.mozilla.org/en-US/styleguide/products/firefox-os/icons/
+    "128": "/img/icon-128.png"
+  },
+  "developer": {
+    "name": "Your name or organization",
+    "url": "http://your-homepage-here.org"
+  },
+  "default_locale": "en",
+  "type": "privileged"  // web, privileged, certified
+
+  // These parts are optional
+  "activities": {
+    "share": {}
+},
+  "appcache_path": "/cache.manifest",
+  "chrome": { "navigation": true },
+  "csp" : "default-src *; script-src 'self'; object-src 'none'; style-src 'self' 'unsafe-inline'",
+  "datastores-owned": {
+  "myData": {
+    "access": "readwrite",
+    "description": "my data store"
+  }
+},
+  "datastores-access": {
+  "myData": {
+    "access": "readwrite",
+    "description": "Read and modify my data store"
+  }
+},
+  "fullscreen": "true",
+  "installs_allowed_from": [
+  "https://marketplace.firefox.com"
+],
+  "locales": {
+    "it": {
+        "name": "L'Open Web",
+        "description": "Eccitante azione di sviluppo web open!"
+    },
+    "de": {
+        "name": "Der Open Web",
+        "description": "Spannende offene Web-Entwicklung-Action!"
+    }
+},
+  "messages": [
+  { "telephony-new-call": "/dialer/index.html#keyboard-view" }
+],
+  "moz-firefox-accounts": {},
+  "orientation": [ "landscape-primary" ],
+  "origin": "app://mywebapp.com", //priveledged/certified apps only
+  "permissions": { //permissions fields are needed (APIs will fail without them)
+  "contacts": {
+    "description": "Required for autocompletion in the share screen",
+    "access": "readcreate"
+    },
+  "alarms": {
+    "description": "Required to schedule notifications"
+  }
+},
+  "precompile": [ //only for asm.js code, speeds up startup time on devices
+  "game.js",
+  "database.js"
+],
+  "redirects": [
+  {"from": "http://facebook.com/authentication/success.html",
+    "to": "/app/main_interface.html"}
+],
+  "role": "system",
+  "version": "2.1",
+
+}

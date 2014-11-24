@@ -26,10 +26,10 @@
                 (str "Browserific Error: browser " browser " not supported, options are:
 firefox, chrome, opera, safari")))
     (doseq [mobile mobiles]
-      (checker mobile #{"amazon-fire" "android" "blackberry" "firefox-os" "ios"
-                        "ubuntu" "wp7" "wp8" "tizen" "webos"}
+      (checker mobile #{"amazon-fire" "android" "blackberry" "firefoxos" "ios"
+                        "ubuntu" "wp7" "wp8" "tizen"}
                (str "Browserific Error: mobile system " mobile " not supported, options are:
- amazon-fire, android, blackberry, firefox-os, ios, ubuntu, wp7, wp8, webos, tizen")))
+ amazon-fire, android, blackberry, firefoxos, ios, ubuntu, wp7, wp8, tizen")))
     (doseq [desktop desktops]
       (checker desktop #{"linux32" "linux64" "osx32" "osx64" "windows"}
                (str "Browserific Error: desktop system " desktop " not supported, options are:
@@ -74,9 +74,9 @@ linux32, linux64, osx32, osx64, windows")))))
          (recur (rest item) type (assoc acc name val)))))))
 
 (defn- config-reader
-  "This is a little config file DSL. Enter ! to indicate
-   a nested config option. Otherwise it will output
-   a normal key value pair."
+  "This generates a config file from a given map. Enter ! to
+  indicate a nested config option. Otherwise it will output a
+  normal key value pair."
   [conf-map]
   (if (some #(= % :action!type) (keys conf-map)) ; format browser/page actions
       (let [type (keyword (str (get-config (:action!type conf-map)) "-action"))]
@@ -86,6 +86,8 @@ linux32, linux64, osx32, osx64, windows")))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Config Builders
+
+;;; Browser Configs
 
 ;; NOTE: :key isn't really necessary so we'll leave it out for now (chrome + opera)
 ;;   and we're omitting :plugins because that is being phased out
@@ -249,6 +251,7 @@ linux32, linux64, osx32, osx64, windows")))))
                 :Website [:extensions :homepage]}))))
            "?>" (str "?>\n" doctype "\n")))))
 
+;;; Mobile Configs
 
 ;; FIXME: whitelisting domains using [:mobile :permissions] needs to be corrected
 (defn- mobile-config
@@ -278,6 +281,26 @@ linux32, linux64, osx32, osx64, windows")))))
                                (into (reduce #(conj %1 [:splash %2])
                                              [] (get-config [:mobile :splash])))))))))
 
+;; TODO: not doing for now, let's get cordova working first
+(comment (defn firefoxos-config
+  "Creates the manifest.webapp for firefoxos"
+  []
+  (js/generate-string
+ (config-reader ; only a little bit done
+  {:name [:name]
+   :description [:description]
+   :launch-path [:mobile :content]
+   :icons [:mobile :firefoxos]
+   :developer!name [:author :author-name]
+   :developer!url [:author :url]
+   :default-locale [:default-locale]
+   :activities [:mobile :firefoxos :activities]
+   :appcache-path [:mobile :firefoxos :appcache]
+   :chrome [:mobile :firefoxos :chrome]})
+ {:pretty true})))
+
+
+;;; Desktop Configs
 
 (defn- desktop-config
   "Generates the node-webkit config file using config.edn"

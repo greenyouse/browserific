@@ -24,11 +24,6 @@
 (defn member? [i coll]
   (some #(= i %) coll))
 
-;; TODO: delete this and follow the Om idioms properly
-(defn cursor-hack
-  "This is a cringeworthy hack to convert cursors into clj"
-  [cursor]
-  (map pr-str (vec cursor)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Widgets
@@ -166,7 +161,6 @@
                                                 true false))}]
              (om/build help-view app)]))))
 
-;; TODO: don't forget to fix this cursor too
 (defmethod widget :checkbox-list [app owner]
   (reify
     om/IInitState
@@ -218,7 +212,7 @@
   (reify
     om/IInitState
     (init-state [_]
-      {:items (cursor-hack (:value app))
+      {:items (->> (:value app) (vec) (map pr-str))
        :actions (chan)})
     om/IWillMount
     (will-mount [_]
@@ -259,7 +253,6 @@
                "Add"]]
              (om/build help-view app)]))))
 
-;; TODO: This also works for now but feels very dirty
 (defmethod widget :cordova-plugin [app owner]
   (reify
     om/IInitState

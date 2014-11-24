@@ -18,8 +18,10 @@
 ;;; Helper fns
 
 (defn- write-dirs []
-  (doseq [plat #{"chrome" "firefox" "opera" "safari" "mobile"
-                 "linux32" "linux64" "osx32" "osx64" "windows"}]
+  (doseq [plat #{"chrome" "firefox" "opera" "safari" "amazon-fire"
+                 "android" "blackberry" "firefoxos" "ios" "ubuntu"
+                 "wp7" "wp8" "tizen" "linux32" "linux64"
+                 "osx32" "osx64" "windows"}]
     (let [loc (File. (str "intermediate/" plat))]
       (.mkdirs (File. (str loc "/content")))
       (.mkdirs (File. (str loc "/background"))))))
@@ -38,11 +40,11 @@
 (defn- build
   "Write lein-cljsbuilds for all relevant platforms"
   ([]
-     (lmain/info (yellow-text "Writing a new lein-cljsbuild configuration.\nDon't forget to change your project.clj!\n"))
+     (lmain/info (yellow-text "Writing a new lein-cljsbuild configuration.\n"))
      (lmain/warn (red-text "Warning: no draft platform specified but building config anyway.\n"))
      (builds/generate-builds))
   ([custom]
-     (lmain/info (yellow-text "Writing a new lein-cljsbuild configuration.\nDon't forget to change your project.clj!\n"))
+     (lmain/info (yellow-text "Writing a new lein-cljsbuild configuration.\n"))
      (if-not (u/member? custom u/platforms) (lmain/abort (red-text (str "Browserific Error: " custom " is not a valid platform.\n\nOptions are:
 " u/platforms))))
      (builds/generate-builds custom)))

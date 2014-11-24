@@ -177,24 +177,67 @@
  :mobile {
           :id "com.example.tester"
 
-          :platforms ["amazon-fire" "android" "blackberry" "firefox-os" "ios"
-                      "ubuntu" "wp7" "wp8" "tizen" "webos"]
+          :platforms ["amazon-fire" "android" "blackberry" "firefoxos" "ios"
+                      "ubuntu" "wp7" "wp8" "tizen"]
 
-          :preferences [{:name "phonegap-version" :value "3.5.0"}
-                        {:name "orientation" :value "default"}
-                        {:name "target-device" :value "universal"}
+          ;; FIXME: The platform-specific options must be wrapped in a <platform name="target-platform"> tag or they
+          ;;   will accidentally litter other platform config files
+          ;; FIXME: change the Om Schema so the correct menu gets created and make sure the output is valid
+          :preferences {; global, all platforms
                         {:name "fullscreen" :value "true"}
-                        {:name "webviewbounce" :value "true"}
-                        {:name "prerendered-icon" :value "true"}
-                        {:name "stay-in-webview" :value "false"}
-                        {:name "ios-statusbarstyle" :value "black-opaque"}
-                        {:name "detect-data-types" :value "true"}
-                        {:name "exit-on-suspend" :value "false"}
-                        {:name "show-splash-screen-spinner" :value "true"}
-                        {:name "auto-hide-splash-screen" :value "true"}
-                        {:name "disable-cursor" :value "false"}
-                        {:name "android-minSdkVersion" :value "7"}
-                        {:name "android-installLocation" :value "auto"}]
+                        {:name "orientation" :value "default"}
+
+                        ; amazon-fire prefs
+                        {:name "KeepRunning" :value "false"}
+                        {:name "LoadUrlTimeout" :value "10000"}
+                        {:name "Splashscreen" :value "mySplash"}
+                        {:name "SplashScreenDelay" :value "true"}
+                        {:name "LoadingDialog" :value "Please wait, the data is loading"}
+                        {:name "LoadingPageDialog" :value "Please wait, the data is loading"}
+                        {:name "ErrorUrl" :value "error.html"}
+                        {:name "ShowTitle" :value "true"}
+                        {:name "LogLevel" :value "VERBOSE"}
+
+                        ; android prefs
+                        {:name "KeepRunning" :value "false"}
+                        {:name "LoadUrlTimeout" :value "10000"}
+                        {:name "Splashscreen" :value "mySplash"}
+                        {:name "SplashScreenDelay" :value "true"}
+                        {:name "InAppBrowserStorageEnabled" :value "true"}
+                        {:name "LoadingDialog" :value "My Title, My Message"}
+                        {:name "LoadingPageDialog" :value "My Title, My Message"}
+                        {:name "ErrorUrl" :value "myErrorPage.html"}
+                        {:name "ShowTitle" :value "true"}
+                        {:name "LogLevel" :value "VERBOSE"}
+                        {:name "AndroidLaunchMode" :value "SingleTop"}
+                        {:name "DisallowOverscroll" :value "true"}
+                        {:name "BackgroundColor" :value "0xff0000ff"}
+
+                        ; blackberry prefs
+                        {:name "ChildBrowser" :value "disable"}
+                        {:name "PopupBlocker" :value "enable"}
+                        {:name "WebSecurity" :value "disable"}
+                        {:name "BackgroundColor" :value "0xff0000ff"}
+                        {:name "HideKeyboardFormAccessoryBar" :value "true"}
+
+                        ; iOS prefs
+                        {:name "EnableViewportScale" :value "true"}
+                        {:name "MediaPlaybackRequiresUserAction" :value "true"}
+                        {:name "AllowInlineMediaPlayback" :value "true"}
+                        {:name "BackupWebStorage" :value "local"}
+                        {:name "TopActivityIndicator" :value "white"}
+                        {:name "KeyboardDisplayRequiresUserAction" :value "false"}
+                        {:name "SuppressesIncrementalRendering" :value "true"}
+                        {:name "GapBetweenPages" :value "0"}
+                        {:name "PageLength" :value "0"}
+                        {:name "PaginationBreakingMode" :value "page"}
+                        {:name "PaginationMode" :value "unpaginated"}
+                        {:name "UIWebViewDecelerationSpeed" :value "fast"}
+                        {:name "DisallowOverscroll" :value "true"}
+                        {:name "HideKeyboardFormAccessoryBar" :value "true"}
+
+                        ; windows phone prefs
+                        {:name "windows-target-version" :value "8.1"}}
 
           :plugins [{:name "org.apache.cordova.battery-status" :value true}
                     {:name "org.apache.cordova.camera" :value true}
@@ -219,7 +262,7 @@
                   {:src "res/icon/android/icon-36-ldpi.png" :platform "android" :density "ldpi"}
                   {:src "res/icon/android/icon-48-mdpi.png" :platform "android" :density "mdpi"}
                   {:src "res/icon/android/icon-72-hdpi.png" :platform "andoird" :density "hdpi"}
-                  {:src "res/icon/android/icon-96-xhdpi.png" :platform "andoird" :density "xhdpi"}
+                  {:src "res/icon/android/icon-96-xhdpi.png" :platform "android" :density "xhdpi"}
                   {:src "src/icon/ios/icon-57.png" :platform "ios" :width "54" :height "54"}
                   {:src "src/icon/ios/icon-72.png" :platform "ios" :width "72" :height "72"}
                   {:src "src/icon/ios/icon-57-2x.png" :platform "ios" :width "114" :height "114"}
@@ -246,7 +289,49 @@
                         "https://www.yoogle.com/"]
 
           :content "index.html"
+
+          ;; since manifest.webapp is not config.xml, let's make a special section for it
+          ;; FIXME: add this to browserific.config.file/GUI
+          :firefoxos {:icons [{:128 "/img/icon-128.png"}
+                              {:512 "/img/icon-512.png"}]
+                      :type "privileged"
+                      :activities {:pick {:href "./pick.html"
+                                          :disposition "inline"
+                                          ; the filter is tricky to implment, let's just stick to an array, no definition objects
+                                          :filters {:type ["image/*" "image/jpeg" "image/png"]}}
+                                   :returnValue true}
+                      :appcache "/cache.manifest"
+                      :chrome {:navigation true} ; best to write your own and make this false
+                      ; All local JS+CSS must be indexed here before dropping <script> and <link rel="stylesheet"... tags into the HTML.
+                      ; Certified apps cannot have inline <style> or style="" tags.
+                      ; No inline events (onClick, onMouseOver).
+                      ; This CSP only strengthens the default security restrictions of firefoxos (makes security tighter, never looser).
+                      ; NOTE: not including the csp option for now
+                      ; NOTE: no datastore stuff because those are for pre-installed (certified) apps
+                      :fullscreen true ; best to keep this as true
+                      :installs-allowed-from ["https://marketplace.firefox.com"] ;default "*"
+                      ; This specifies optional app manifest fields to override too, different from general locales
+                      :locales {:it {:name "L' Open Web"
+                                     :description "Eccitante azione di sviluppo web open!"}
+                                :de {:name "Der Open Web"
+                                     :description "Spannende offene Web-Entwicklung-Action!"}}
+                      :messages [{:telephony-new-call "/dialer/index.html#keyboard-view"}]
+                      ; use the persona polyfill if included in non-firefox stuff
+                      :moz-firefox-accounts {}
+                      :orientation ["landscape-primary"]
+                      :permissions [{:contacts {:description "Required for autocompletion in the share screen"
+                                                  :access "readcreate"}
+                                     :alarms {:description "Required to schedule notifications"}}
+                                    {:contacts {:description "Required for autocompletion in the share scren"
+                                                :access "readcreate"}
+                                     :video-capture {:description "Required so I can take cool videos :D"}}]
+                      :precompile ["game.js" "database.js"]
+                      :redirects {:from "http://facebook.com/authentication/success.html"
+                                  :to "/app/main_interface.html"}
+                      ;NOTE: no role
+                      }
           }
+
 
  :desktop {
            :platforms ["osx32" "osx64" "windows" "linux32" "linux64"]

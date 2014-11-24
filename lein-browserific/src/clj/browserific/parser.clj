@@ -55,8 +55,8 @@ Browser = 'chrome' | 'firefox' | 'opera' | 'safari'
 Desktop = Linux | OSX | 'windows'
 Linux = 'linux32' | 'linux64' | 'linux'
 OSX = 'osx32' | 'osx64' | 'osx'
-Mobile = 'amazon-fire' | 'android' | 'blackberry' | 'firefox-os' | 'ios' |
-         'ubuntu' | 'wp7' | 'wp8' | 'tizen' | 'webos'
+Mobile = 'amazon-fire' | 'android' | 'blackberry' | 'firefoxos' | 'ios' |
+         'ubuntu' | 'wp7' | 'wp8' | 'tizen'
 (* Denotes all browsers, all mobile, or all desktop *)
 Meta = 'b' | 'm' | 'd' | 'mobile' | 'dekstop' | 'browser'
 
@@ -132,7 +132,7 @@ SEXP = #'\u6D3B\u6CC9.*?\u6D3B\u6CC9'
 (comment (parse "(+ 1 1)" "woot")
          (parse "[!+ [osx d firefox m] (+ 1 1)]" "woot")
          (parse "[!- [linux32 firefox m] (+ 1 1)]" "woot")
-         (parse "[!+ [ios firefox-os] (+ 1 1)]" "woot")
+         (parse "[!+ [ios firefoxos] (+ 1 1)]" "woot")
          (parse "[!- [mobile ios android safari] (+ 1 1)]" "woot"))
 
 (defn- write-files [expr filename]
@@ -149,8 +149,8 @@ SEXP = #'\u6D3B\u6CC9.*?\u6D3B\u6CC9'
                   (io/make-parents dest)
                   (spit dest contents)))))]
     (doseq [plat #{"chrome" "firefox" "opera" "safari" "ubuntu" "wp7" "wp8"
-                   "amazon-fire" "android" "blackberry" "firefox-os" "ios"
-                   "tizen" "webos" "linux32" "linux64" "osx32" "osx64" "windows"}]
+                   "amazon-fire" "android" "blackberry" "firefoxos" "ios"
+                   "tizen" "linux32" "linux64" "osx32" "osx64" "windows"}]
       (process expr plat filename))))
 
 (defn get-file

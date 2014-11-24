@@ -1,6 +1,3 @@
-;; lein-cljsbuild options stored here
-(def builds (-> "builds.clj" slurp read-string))
-
 (defproject {{name}} "0.1.0-SNAPSHOT"
   :description "FIXME: write description"
   :url "http://example.com/FIXME"
@@ -23,7 +20,4 @@
             [lein-figwheel "0.1.5-SNAPSHOT"]]
 
 
-  ;; write your cljsbuild configuration here or use lein browserific builds
-  ;;
-  ;; build-ids: draft, browser-dev, mobile-dev, desktop-dev, release
-  :cljsbuild ~builds)
+  :cljsbuild ~(-> "builds.clj" slurp read-string))

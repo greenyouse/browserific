@@ -46,10 +46,10 @@
 
    ;; dev mobile
    (#{"amazon-fire" "android" "blackberry"
-      "firefox-os" "ios" "ubuntu"
-      "wp7" "wp8" "tizen" "webos"} platform)
+      "firefoxos" "ios" "ubuntu"
+      "wp7" "wp8" "tizen"} platform)
    [{:id "mobile-dev"
-     :souce-paths [(str "intermediate/" platform)]  ;FIXME: add "dev" once websocket tools work on actual devices
+     :source-paths [(str "intermediate/" platform)]  ;FIXME: add "dev" once websocket tools work on actual devices
      :compiler {:output-to (str "resources/mobile/" u/project-name "/platforms/" platform "/www/js/app.js")
                 :output-dir (str "resources/mobile/" u/project-name "/platforms/" platform "/www/js/out")
                 :source-map true
@@ -57,7 +57,7 @@
 
     ;; release mobile
     {:id "mobile-release"
-     :souce-paths [(str "intermediate/" platform)]
+     :source-paths [(str "intermediate/" platform)]
      :compiler {:output-to (str "resources/mobile/" u/project-name "/platforms/" platform "/www/js/app.js")
                 :source-map (str "resources/mobile/" u/project-name "/platforms/" platform "/www/js/app.js.map")
                 :optimizations :advanced

@@ -6,7 +6,6 @@
 (def render (renderer "browserific-app"))
 
 (defn member? [i coll]
-  (println i " -- " coll)
   (some #(= i %) coll))
 
 (defn parse-opts [opts]
@@ -26,10 +25,10 @@
                  :sablono (member? :sablono opts)
                  :kioo (member? :kioo opts)
                  :secretary (member? :secretary opts)}]
-       (println opts " -- " data)
        (->files data
                 [".gitignore" (render "gitignore" data)]
                 ["project.clj" (render "project.clj" data)]
+                ["builds.clj" (render "builds.clj" data)]
                 ["src/config.edn" (render "config.edn" data)]
                 ["src/{{sanitized}}/background/background.cljs"
                  (render "background.cljs" data)]
