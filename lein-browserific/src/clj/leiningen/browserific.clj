@@ -108,28 +108,3 @@
          (lmain/warn (red-text (str "Browserific Error: Subtask " subtask " not found."))
           (lhelp/subtask-help-for *ns* #'browserific))
          (lmain/abort)))))
-
-
-(comment "init" (init args))
-
-;; TODO: Detect when a build has already been done and throw error
-(comment (defn- init
-  "Build the basic project outline for Node-Webkit or Cordova.
-  When called without arguments, both Node-Webkit and Cordova will
-  be built.
-
-  init options are: node, cordova, or *blank*"
-  [project & args]
-  (letfn [(display [msg] (lmain/info (yellow-text "Building " msg)))
-          (build [b]
-            (try b (catch Exception e (lmain/warn (red-text e)))))]
-    (let [p-name (second project)
-          mobile  (str "mkdir -p resources/mobile/" p-name "/ && cd /resources/mobile/" p-name " && cordova create " p-name)
-          desktop (str "mkdir -p resources/desktop/" p--name "/ && cd /resources/desktop/" p-name " && " )]
-      (case args
-        "cordova" (build (do (display "a new Cordova project")
-                             (sh/sh mobile)))
-        "node" (build (do (display " a new Node-Webkit project")
-                          (sh/sh desktop)))
-        (build (do (display " Cordova and Node-Webkit projects")
-                   (sh/sh mobile) (sh/sh desktop))))))))

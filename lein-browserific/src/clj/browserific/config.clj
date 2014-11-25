@@ -252,8 +252,6 @@ linux32, linux64, osx32, osx64, windows")))))
            "?>" (str "?>\n" doctype "\n")))))
 
 ;;; Mobile Configs
-
-;; FIXME: whitelisting domains using [:mobile :permissions] needs to be corrected
 (defn- mobile-config
   "Outputs the mobile config file from the config.edn data"
   []
@@ -270,8 +268,8 @@ linux32, linux64, osx32, osx64, windows")))))
                                 [:author {:email (get-config [:author :email])
                                           :href (get-config [:author :url])}
                                  (get-config [:author :author-name])]
-                                [:content {:src (get-config [:mobile :content])}]
-                                [:access {:origin (get-config [:mobile :permissions])}]]
+                                [:content {:src (get-config [:mobile :content])}]]
+                               (into (map #(identity [:access {:origin %}]) (get-config [:mobile :permissions])))
                                (into (reduce #(conj %1 [:preference %2])
                                              [] (get-config [:mobile :preferences])))
                                (into (reduce #(conj %1 [:cdv:plugin %2])
