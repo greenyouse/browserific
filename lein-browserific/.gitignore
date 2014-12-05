@@ -8,10 +8,6 @@ pom.xml.asc
 /.lein-*
 /.nrepl-port
 .\#*
-/resources/desktop
-/resources/mobile
-/resources/extension
-/resources/public/js
-/resources/public/config.edn
 /intermediate
+/resources/public/js
 /.repl

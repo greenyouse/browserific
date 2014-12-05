@@ -1,7 +1,7 @@
 (ns browserific.config
   "Generates config files from config.edn"
   (:require [browserific.helpers.plist :as p]
-            [browserific.helpers.utils :refer [get-config systems red-text project-name]]
+            [browserific.helpers.utils :as u :refer [get-config]]
             [cheshire.core :as js]
             [clojure.data.xml :as xml]
             [clojure.string :as st]
@@ -11,29 +11,32 @@
 ;; TODO: Certain build options must be injected at compile time. Generate
 ;; a data file somewhere (dot file?) to keep track of what needs injecting.
 ;; ex. content-scripts for Firefox
+;;
+;; Got the injection capability now. Don't forget to add this. It would probably make
+;; sense to write special, inner-transition functions in browserific (library) and just
+;; call them during the chenex compilation.
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Helper Fns
 
 (defn- config-check
   "Validates whether the config file has proper platforms listed"
-  [browsers mobiles desktops]
+  [browsers desktops mobiles]
   (letfn [(checker [platform platform-types err]
             (if-not (contains? platform-types platform)
-              (l/abort (red-text err))))]
+              (l/abort (u/red-text err))))]
     (doseq [browser browsers]
-      (checker browser #{"chrome" "firefox" "opera" "safari"}
+      (checker browser u/browsers
                 (str "Browserific Error: browser " browser " not supported, options are:
 firefox, chrome, opera, safari")))
-    (doseq [mobile mobiles]
-      (checker mobile #{"amazon-fire" "android" "blackberry" "firefoxos" "ios"
-                        "ubuntu" "wp7" "wp8" "tizen"}
-               (str "Browserific Error: mobile system " mobile " not supported, options are:
- amazon-fire, android, blackberry, firefoxos, ios, ubuntu, wp7, wp8, tizen")))
     (doseq [desktop desktops]
-      (checker desktop #{"linux32" "linux64" "osx32" "osx64" "windows"}
+      (checker desktop u/desktop
                (str "Browserific Error: desktop system " desktop " not supported, options are:
-linux32, linux64, osx32, osx64, windows")))))
+linux32, linux64, osx32, osx64, windows")))
+    (doseq [mobile mobiles]
+      (checker mobile u/mobile
+               (str "Browserific Error: mobile system " mobile " not supported, options are:
+ amazon-fire, android, blackberry, firefoxos, ios, ubuntu, wp7, wp8, tizen")))))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -255,7 +258,7 @@ linux32, linux64, osx32, osx64, windows")))))
 (defn- mobile-config
   "Outputs the mobile config file from the config.edn data"
   []
-  (let [loc (str "resources/mobile/" project-name "/config.xml")]
+  (let [loc (str "resources/mobile/" u/project-name "/config.xml")]
     (io/make-parents loc)
     (spit loc
           (xml/indent-str (xml/sexp-as-element
@@ -360,10 +363,10 @@ linux32, linux64, osx32, osx64, windows")))))
   "Processes the config.edn file to generate JavaScript
    output for the given platforms"
   []
-  (let [browsers (:browsers systems)
-        mobile (:mobile systems)
-        desktops (:desktop systems)]
-    (config-check browsers mobile desktops)
+  (let [browsers u/browsers
+        desktops u/desktop
+        mobile u/mobile]
+    (config-check browsers desktops mobile)
     (doseq [vendor browsers]
       (cond
        (= vendor "chrome") (chrome-config)

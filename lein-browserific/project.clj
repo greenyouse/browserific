@@ -11,6 +11,7 @@
                  [ring "1.3.1"]
                  [fogus/ring-edn "0.2.0"]
                  [compojure "1.2.1"]
+                 [com.greenyouse/chenex "0.1.0"]
                  [org.clojure/core.async "0.1.346.0-17112a-alpha"]
                  ;; cljs
                  [org.clojure/clojurescript "0.0-2371"]

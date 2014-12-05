@@ -22,21 +22,39 @@
   (let [conf (-> config-file slurp read-string)]
     (get-in conf coll)))
 
-(defn yellow-text [msg] (str "\033[33m" msg "\033[0m"))
-(defn red-text [msg] (str "\033[31m" msg "\033[0m"))
+(defn yellow-text [msg & more] (if more
+                                 (str "\033[33m" (reduce #(str % %2) msg more) "\033[0m")
+                                 (str "\033[33m" msg "\033[0m")))
+
+(defn red-text [msg & more] (if more
+                              (str "\033[31m" (reduce #(str % %2) msg more) "\033[0m")
+                              (str "\033[31m" msg "\033[0m")))
 
 (defn- config-warning [e]
   (l/warn (str (red-text e) "\n\n")))
 
-(def systems
-  {:browsers (try (get-config [:extensions :platforms]) (catch Exception e (config-warning e)))
-   :mobile (try (get-config [:mobile :platforms]) (catch Exception e (config-warning e)))
-   :desktop (try (get-config [:desktop :platforms]) (catch Exception e (config-warning e)))})
+
+;; here are the different platforms we're targeting
+(def browsers
+  (-> (try (get-config [:extensions :platforms])
+           (catch Exception e (config-warning e)))
+      set))
+
+(def mobile
+  (-> (try (get-config [:mobile :platforms])
+           (catch Exception e (config-warning e)))
+      set))
+
+(def desktop
+  (-> (try (get-config [:desktop :platforms])
+           (catch Exception e (config-warning e)))
+      set))
 
 (def platforms
-  `[~@(:browsers systems)
-    ~@(:mobile systems)
-    ~@(:desktop systems)])
+  `#{~@browsers
+    ~@mobile
+    ~@desktop})
+
 
 (def project-file
   (-> "project.clj" slurp))
@@ -58,5 +76,5 @@
    (not-empty (re-seq #"content/" file)) (->> (.indexOf file "content")
                                               (subs file))
    :default
-   (l/abort (red-text (str "Browserific Error: Could not compile file: " file
-                           "\n\nBrowserific source files must be in either the background or content directores.\n")))))
+   (l/abort (red-text "Browserific Error: Could not compile file: " file
+                      "\n\nBrowserific source files must be in either the background or content directores.\n"))))
