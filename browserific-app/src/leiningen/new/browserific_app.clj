@@ -30,8 +30,8 @@
     (println opts " -- " data)
     (->files data
              [".gitignore" (render "gitignore" data)]
+             "builds"
              ["project.clj" (render "project.clj" data)]
-             ["builds.clj" (render "builds.clj" data)]
              ["src/config.edn" (render "config.edn" data)]
              ["src/{{sanitized}}/background/background.cljs" (render "background.cljs" data)]
              ["src/{{sanitized}}/content/content.cljs" (render "content.cljs" data)]

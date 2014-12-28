@@ -19,5 +19,6 @@
             [lein-auto "0.1.1"]
             [lein-figwheel "0.1.5-SNAPSHOT"]]
 
+  :chenex {:builds ~(-> "builds/chenex-build.clj" slurp read-string)}
 
   :cljsbuild ~(-> "builds.clj" slurp read-string))
