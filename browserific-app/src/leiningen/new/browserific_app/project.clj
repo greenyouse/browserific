@@ -7,7 +7,7 @@
                  [org.clojure/clojurescript "0.0-2371"]
                  [weasel "0.4.2"]
                  [org.clojure/core.async "0.1.346.0-17112a-alpha"]
-                 [om "0.8.0-alpha2"]
+                 [reagent "0.5.0-alpha"]
                  [figwheel "0.1.5-SNAPSHOT"]{{#sablono}}
                  [sablono "0.2.22"]{{/sablono}}{{^sablono}}{{/sablono}}{{#kioo}}
                  [kioo "0.4.0"]{{/kioo}}{{^kioo}}{{/kioo}}{{#secretary}}
@@ -17,8 +17,9 @@
             [com.cemerick/clojurescript.test "0.3.1"]
             [lein-browserific "0.1.0-SNAPSHOT"]
             [lein-auto "0.1.1"]
-            [lein-figwheel "0.1.5-SNAPSHOT"]]
+            [lein-figwheel "0.1.5-SNAPSHOT"]
+            [com.greenyouse/chenex "0.1.0"]]
 
   :chenex {:builds ~(-> "builds/chenex-build.clj" slurp read-string)}
 
-  :cljsbuild ~(-> "builds.clj" slurp read-string))
+  :cljsbuild ~(-> "builds/browserific-build.clj" slurp read-string))

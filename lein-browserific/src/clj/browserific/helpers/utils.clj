@@ -22,13 +22,17 @@
   (let [conf (-> config-file slurp read-string)]
     (get-in conf coll)))
 
-(defn yellow-text [msg & more] (if more
-                                 (str "\033[33m" (reduce #(str % %2) msg more) "\033[0m")
-                                 (str "\033[33m" msg "\033[0m")))
+(defn yellow-text
+  [msg & more]
+  (if more
+    (str "\033[33m" (reduce #(str % %2) msg more) "\033[0m")
+    (str "\033[33m" msg "\033[0m")))
 
-(defn red-text [msg & more] (if more
-                              (str "\033[31m" (reduce #(str % %2) msg more) "\033[0m")
-                              (str "\033[31m" msg "\033[0m")))
+(defn red-text
+  [msg & more]
+  (if more
+    (str "\033[31m" (reduce #(str % %2) msg more) "\033[0m")
+    (str "\033[31m" msg "\033[0m")))
 
 (defn- config-warning [e]
   (l/warn (str (red-text e) "\n\n")))

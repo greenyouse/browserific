@@ -29,12 +29,15 @@
   "Write lein-cljsbuilds for all relevant platforms"
   ([]
      (lmain/info (yellow-text "Writing a new lein-cljsbuild configuration.\n"))
-     (lmain/warn (red-text "Warning: no draft platform specified but building config anyway.\n"))
+     (lmain/warn
+      (red-text "Warning: no draft platform specified but building config anyway.\n"))
      (bbuilds/write-browserific-builds)
      (cb/write-chenex-builds))
   ([custom]
      (lmain/info (yellow-text "Writing a new lein-cljsbuild configuration.\n"))
-     (if-not (u/member? custom u/platforms) (lmain/abort (red-text "Browserific Error: " custom " is not a valid platform.\n\nOptions are:
+     (if-not (u/member? custom u/platforms)
+       (lmain/abort (red-text "Browserific Error: " custom
+                              " is not a valid platform.\n\nOptions are:
 " u/platforms)))
      (bbuilds/write-browserific-builds custom)
      (cb/write-chenex-builds custom)))

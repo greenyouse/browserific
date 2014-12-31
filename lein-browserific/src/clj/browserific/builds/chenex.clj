@@ -11,26 +11,18 @@
   {:source-paths ["src"]
    :output-path (str "intermediate/" plat)
    :rules {:filetype "cljs"
-           :features #{class plat}
+           :features #{class (keyword plat)}
            :inner-transforms []
            :outer-transforms []}})
-
-(defn repl-build
-  "Creates the repl file for chenex"
-  [class plat]
-  {:filetype "cljs"
-   :features #{class plat}
-   :inner-transforms []
-   :outer-transforms []})
 
 (defn classify-platform
   "Tags a platform with a meta tag of: b, d, or m
   (for browser, desktop, or mobile)."
   [plat]
   (#(cond
-     (u/browsers %) ["b" %]
-     (u/desktop %) ["d" %]
-     (u/mobile  %) ["m" %])
+     (u/browsers %) [:b %]
+     (u/desktop %) [:d %]
+     (u/mobile  %) [:m %])
    plat))
 
 (defn write-chenex-builds
@@ -39,9 +31,9 @@
   build relevant platform configs."
   [& plat]
   (let [custom (classify-platform (first plat))
-        repl-file (apply repl-build custom)
+        c-set (set (mapv keyword custom))
         all-platforms (mapv #(classify-platform %) u/platforms)
         builds (mapv #(apply write-build %)  all-platforms)]
     (do (io/make-parents "builds/chenex-builds.clj")
         (spit "builds/chenex-build.clj" (with-out-str (pprint builds)))
-        (if custom (spit "builds/chenex-repl.clj" (with-out-str (pprint repl-file)))))))
+        (if plat (spit "builds/chenex-repl.clj" (with-out-str (pprint c-set)))))))
