@@ -21,7 +21,9 @@
   [plat]
   (#(cond
      (u/browsers %) [:b %]
-     (u/desktop %) [:d %]
+     (#{"windows"} %) [:d %]
+     (#{"linux32" "linux64"} %) [:d :linux %]
+     (#{"osx32" "osx64"} %) [:d :osx %]
      (u/mobile  %) [:m %])
    plat))
 

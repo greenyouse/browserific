@@ -65,7 +65,7 @@
    (u/mobile platform)
    ;; dev mobile
    [{:id "mobile-dev"
-     :source-paths [(str "intermediate/" platform)]  ;FIXME: add "dev" once websocket tools work on actual devices
+     :source-paths ["dev" (str "intermediate/" platform)]
      :compiler {:output-to (str "resources/mobile/" u/project-name "/platforms/" platform "/www/js/app.js")
                 :output-dir (str "resources/mobile/" u/project-name "/platforms/" platform "/www/js/out")
                 :source-map true

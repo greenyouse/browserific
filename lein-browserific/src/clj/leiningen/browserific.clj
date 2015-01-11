@@ -35,7 +35,7 @@
      (cb/write-chenex-builds))
   ([custom]
      (lmain/info (yellow-text "Writing a new lein-cljsbuild configuration.\n"))
-     (if-not (u/member? custom u/platforms)
+     (if-not (contains? u/platforms custom)
        (lmain/abort (red-text "Browserific Error: " custom
                               " is not a valid platform.\n\nOptions are:
 " u/platforms)))

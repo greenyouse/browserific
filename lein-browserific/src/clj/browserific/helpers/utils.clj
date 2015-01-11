@@ -2,8 +2,6 @@
   (:require [leiningen.core.main :as l]
             [clojure.string :as st]))
 
-(defn member? [i coll]
-  (some #(= i %) coll))
 
 (def ^:private options
   "Map of browserific options"

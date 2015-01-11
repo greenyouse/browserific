@@ -42,6 +42,7 @@ linux32, linux64, osx32, osx64, windows")))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Config parsing
 
+;; FIXME: redo this section at some point. Right now it's very yucky
 (defn- nested-options
   "Adds a nested option to the output config file."
   [opt val acc]
@@ -254,10 +255,18 @@ linux32, linux64, osx32, osx64, windows")))
                 :Website [:extensions :homepage]}))))
            "?>" (str "?>\n" doctype "\n")))))
 
+(defn- mobile-prefs
+  "Picks out mobile preferences according to the vendor"
+  [vendor]
+   (reduce #(conj % [:preference %2])
+           [:platform {:name vendor}]
+           (into (get-config [:mobile :preferences :global])
+             (get-config [:mobile :preferences (keyword vendor)]))))
+
 ;;; Mobile Configs
 (defn- mobile-config
   "Outputs the mobile config file from the config.edn data"
-  []
+  [prefs]
   (let [loc (str "resources/mobile/" u/project-name "/config.xml")]
     (io/make-parents loc)
     (spit loc
@@ -273,32 +282,43 @@ linux32, linux64, osx32, osx64, windows")))
                                  (get-config [:author :author-name])]
                                 [:content {:src (get-config [:mobile :content])}]]
                                (into (map #(identity [:access {:origin %}]) (get-config [:mobile :permissions])))
-                               (into (reduce #(conj %1 [:preference %2])
-                                             [] (get-config [:mobile :preferences])))
-                               (into (reduce #(conj %1 [:cdv:plugin %2])
+                               (into prefs)
+                               (into (reduce #(conj % [:cdv:plugin %2])
                                              [] (get-config [:mobile :plugins])))
-                               (into (reduce #(conj %1 [:icon %2])
+                               (into (reduce #(conj % [:icon %2])
                                              [] (get-config [:mobile :icons])))
-                               (into (reduce #(conj %1 [:splash %2])
+                               (into (reduce #(conj % [:splash %2])
                                              [] (get-config [:mobile :splash])))))))))
 
-;; TODO: not doing for now, let's get cordova working first
-(comment (defn firefoxos-config
+(defn firefoxos-config
   "Creates the manifest.webapp for firefoxos"
   []
-  (js/generate-string
- (config-reader ; only a little bit done
-  {:name [:name]
-   :description [:description]
-   :launch-path [:mobile :content]
-   :icons [:mobile :firefoxos]
-   :developer!name [:author :author-name]
-   :developer!url [:author :url]
-   :default-locale [:default-locale]
-   :activities [:mobile :firefoxos :activities]
-   :appcache-path [:mobile :firefoxos :appcache]
-   :chrome [:mobile :firefoxos :chrome]})
- {:pretty true})))
+  (io/make-parents (str "resources/mobile/" u/project-name "/platforms/firefoxos/package.json"))
+  (spit (str "resources/mobile/" u/project-name "/platforms/firefoxos/package.json")
+    (js/generate-string
+      (config-reader
+        {:name [:name]
+         :description [:description]
+         :launch-path [:mobile :content]
+         :icons [:mobile :firefoxos]
+         :developer!name [:author :author-name]
+         :developer!url [:author :url]
+         :default-locale [:default-locale]
+         :activities [:mobile :firefoxos :activities]
+         :appcache-path [:mobile :firefoxos :appcache]
+         :chrome [:mobile :firefoxos :chrome]
+         :fullscreen [:mobile :firefoxos :fullscreen]
+         :installs-allowed-from [:mobile :firefoxos :installs-allowed-from]
+         :locales [:mobile :firefoxos :locales]
+         :messages [:mobile :firefoxos :messages]
+         :orientation [:mobile :firefoxos :orientation]
+         :origin [:mobile :firefoxos :origin]
+         :permissions [:mobile :firefoxos :permissions]
+         :precompile [:mobile :firefoxos :precompile]
+         :redirects [:mobile :firefoxos :redirects]
+         :role [:mobile :firefoxos :role]
+         :version [:version]})
+      {:pretty true})))
 
 
 ;;; Desktop Configs
@@ -373,14 +393,18 @@ linux32, linux64, osx32, osx64, windows")))
        (= vendor "firefox") (firefox-config)
        (= vendor "opera") (opera-config)
        (= vendor "safari") (safari-config)))
-    (cond
-     (= [] mobile) '()
-     :else
-     (mobile-config))
+    (let [prefs (->> mobile
+                  (reduce #(conj % (mobile-prefs %2)) [])
+                  (filter not-empty))]
+      (doseq [vendor mobile]
+        (cond
+          (= vendor "firefoxos") (firefoxos-config)
+          :else
+          (mobile-config prefs))))
     (doseq [vendor desktops]
       (cond
-       (= vendor "linux32" ) (desktop-config "linux32")
-       (= vendor "linux64" ) (desktop-config "linux64")
-       (= vendor "osx32") (desktop-config "osx32")
-       (= vendor "osx64") (desktop-config "osx64")
-       (= vendor "windows") (desktop-config "windows")))))
+        (= vendor "linux32" ) (desktop-config "linux32")
+        (= vendor "linux64" ) (desktop-config "linux64")
+        (= vendor "osx32") (desktop-config "osx32")
+        (= vendor "osx64") (desktop-config "osx64")
+        (= vendor "windows") (desktop-config "windows")))))

@@ -184,60 +184,60 @@
           ;;   will accidentally litter other platform config files
           ;; FIXME: change the Om Schema so the correct menu gets created and make sure the output is valid
           :preferences {; global, all platforms
-                        {:name "fullscreen" :value "true"}
-                        {:name "orientation" :value "default"}
+                        :global [{:name "fullscreen" :value "true"}
+                                 {:name "orientation" :value "default"}]
 
-                        ; amazon-fire prefs
-                        {:name "KeepRunning" :value "false"}
-                        {:name "LoadUrlTimeout" :value "10000"}
-                        {:name "Splashscreen" :value "mySplash"}
-                        {:name "SplashScreenDelay" :value "true"}
-                        {:name "LoadingDialog" :value "Please wait, the data is loading"}
-                        {:name "LoadingPageDialog" :value "Please wait, the data is loading"}
-                        {:name "ErrorUrl" :value "error.html"}
-                        {:name "ShowTitle" :value "true"}
-                        {:name "LogLevel" :value "VERBOSE"}
+                        ;; amazon-fire prefs
+                        :amazone-fire [{:name "KeepRunning" :value "false"}
+                                       {:name "LoadUrlTimeout" :value "10000"}
+                                       {:name "Splashscreen" :value "mySplash"}
+                                       {:name "SplashScreenDelay" :value "true"}
+                                       {:name "LoadingDialog" :value "Please wait, the data is loading"}
+                                       {:name "LoadingPageDialog" :value "Please wait, the data is loading"}
+                                       {:name "ErrorUrl" :value "error.html"}
+                                       {:name "ShowTitle" :value "true"}
+                                       {:name "LogLevel" :value "VERBOSE"}]
 
-                        ; android prefs
-                        {:name "KeepRunning" :value "false"}
-                        {:name "LoadUrlTimeout" :value "10000"}
-                        {:name "Splashscreen" :value "mySplash"}
-                        {:name "SplashScreenDelay" :value "true"}
-                        {:name "InAppBrowserStorageEnabled" :value "true"}
-                        {:name "LoadingDialog" :value "My Title, My Message"}
-                        {:name "LoadingPageDialog" :value "My Title, My Message"}
-                        {:name "ErrorUrl" :value "myErrorPage.html"}
-                        {:name "ShowTitle" :value "true"}
-                        {:name "LogLevel" :value "VERBOSE"}
-                        {:name "AndroidLaunchMode" :value "SingleTop"}
-                        {:name "DisallowOverscroll" :value "true"}
-                        {:name "BackgroundColor" :value "0xff0000ff"}
+                        ;; android prefs
+                        :android [{:name "KeepRunning" :value "false"}
+                                  {:name "LoadUrlTimeout" :value "10000"}
+                                  {:name "Splashscreen" :value "mySplash"}
+                                  {:name "SplashScreenDelay" :value "true"}
+                                  {:name "InAppBrowserStorageEnabled" :value "true"}
+                                  {:name "LoadingDialog" :value "My Title, My Message"}
+                                  {:name "LoadingPageDialog" :value "My Title, My Message"}
+                                  {:name "ErrorUrl" :value "myErrorPage.html"}
+                                  {:name "ShowTitle" :value "true"}
+                                  {:name "LogLevel" :value "VERBOSE"}
+                                  {:name "AndroidLaunchMode" :value "SingleTop"}
+                                  {:name "DisallowOverscroll" :value "true"}
+                                  {:name "BackgroundColor" :value "0xff0000ff"}]
 
-                        ; blackberry prefs
-                        {:name "ChildBrowser" :value "disable"}
-                        {:name "PopupBlocker" :value "enable"}
-                        {:name "WebSecurity" :value "disable"}
-                        {:name "BackgroundColor" :value "0xff0000ff"}
-                        {:name "HideKeyboardFormAccessoryBar" :value "true"}
+                        ;; blackberry prefs
+                        :blackberry [{:name "ChildBrowser" :value "disable"}
+                                     {:name "PopupBlocker" :value "enable"}
+                                     {:name "WebSecurity" :value "disable"}
+                                     {:name "BackgroundColor" :value "0xff0000ff"}
+                                     {:name "HideKeyboardFormAccessoryBar" :value "true"}]
 
-                        ; iOS prefs
-                        {:name "EnableViewportScale" :value "true"}
-                        {:name "MediaPlaybackRequiresUserAction" :value "true"}
-                        {:name "AllowInlineMediaPlayback" :value "true"}
-                        {:name "BackupWebStorage" :value "local"}
-                        {:name "TopActivityIndicator" :value "white"}
-                        {:name "KeyboardDisplayRequiresUserAction" :value "false"}
-                        {:name "SuppressesIncrementalRendering" :value "true"}
-                        {:name "GapBetweenPages" :value "0"}
-                        {:name "PageLength" :value "0"}
-                        {:name "PaginationBreakingMode" :value "page"}
-                        {:name "PaginationMode" :value "unpaginated"}
-                        {:name "UIWebViewDecelerationSpeed" :value "fast"}
-                        {:name "DisallowOverscroll" :value "true"}
-                        {:name "HideKeyboardFormAccessoryBar" :value "true"}
+                        ;; iOS prefs
+                        :ios [{:name "EnableViewportScale" :value "true"}
+                              {:name "MediaPlaybackRequiresUserAction" :value "true"}
+                              {:name "AllowInlineMediaPlayback" :value "true"}
+                              {:name "BackupWebStorage" :value "local"}
+                              {:name "TopActivityIndicator" :value "white"}
+                              {:name "KeyboardDisplayRequiresUserAction" :value "false"}
+                              {:name "SuppressesIncrementalRendering" :value "true"}
+                              {:name "GapBetweenPages" :value "0"}
+                              {:name "PageLength" :value "0"}
+                              {:name "PaginationBreakingMode" :value "page"}
+                              {:name "PaginationMode" :value "unpaginated"}
+                              {:name "UIWebViewDecelerationSpeed" :value "fast"}
+                              {:name "DisallowOverscroll" :value "true"}
+                              {:name "HideKeyboardFormAccessoryBar" :value "true"}]
 
-                        ; windows phone prefs
-                        {:name "windows-target-version" :value "8.1"}}
+                        ;; windows phone prefs
+                        :wp8 [{:name "windows-target-version" :value "8.1"}]}
 
           :plugins [{:name "org.apache.cordova.battery-status" :value true}
                     {:name "org.apache.cordova.camera" :value true}
@@ -297,28 +297,30 @@
                       :type "privileged"
                       :activities {:pick {:href "./pick.html"
                                           :disposition "inline"
-                                          ; the filter is tricky to implment, let's just stick to an array, no definition objects
+                                          ;; the filter is tricky to implment, let's just stick to an array, no definition objects
                                           :filters {:type ["image/*" "image/jpeg" "image/png"]}}
                                    :returnValue true}
                       :appcache "/cache.manifest"
                       :chrome {:navigation true} ; best to write your own and make this false
-                      ; All local JS+CSS must be indexed here before dropping <script> and <link rel="stylesheet"... tags into the HTML.
-                      ; Certified apps cannot have inline <style> or style="" tags.
-                      ; No inline events (onClick, onMouseOver).
-                      ; This CSP only strengthens the default security restrictions of firefoxos (makes security tighter, never looser).
-                      ; NOTE: not including the csp option for now
-                      ; NOTE: no datastore stuff because those are for pre-installed (certified) apps
+                      ;; All local JS+CSS must be indexed here before dropping <script> and <link rel="stylesheet"... tags into the HTML.
+                      ;; No remote JS or CSS, but can use a URI with a postMessage()
+                      ;; Privileged apps can use <style> (inline) or style="" tags, certified can't (most never make certified apps anyway)
+                      ;; No inline events (onClick, onMouseOver) use addEventListener() instead
+                      ;; This CSP only strengthens the default security restrictions of firefoxos (makes security tighter, never looser).
+                      ;; NOTE: not including the csp option for now
+                      ;; NOTE: no datastore stuff because those are for pre-installed (certified) apps
                       :fullscreen true ; best to keep this as true
-                      :installs-allowed-from ["https://marketplace.firefox.com"] ;default "*"
-                      ; This specifies optional app manifest fields to override too, different from general locales
+                      :installs-allowed-from ["https://marketplace.firefox.com"] ;default "*", no trailing slash!
+                      ;; This specifies optional app manifest fields to override too, different from general locales
                       :locales {:it {:name "L' Open Web"
                                      :description "Eccitante azione di sviluppo web open!"}
                                 :de {:name "Der Open Web"
                                      :description "Spannende offene Web-Entwicklung-Action!"}}
                       :messages [{:telephony-new-call "/dialer/index.html#keyboard-view"}]
-                      ; use the persona polyfill if included in non-firefox stuff
+                      ;; use the persona polyfill if included in non-firefox stuff
                       :moz-firefox-accounts {}
                       :orientation ["landscape-primary"]
+                      :origin "app://mywebapp.com" ;must start with "app://"
                       :permissions [{:contacts {:description "Required for autocompletion in the share screen"
                                                   :access "readcreate"}
                                      :alarms {:description "Required to schedule notifications"}}
@@ -328,7 +330,7 @@
                       :precompile ["game.js" "database.js"]
                       :redirects {:from "http://facebook.com/authentication/success.html"
                                   :to "/app/main_interface.html"}
-                      ;NOTE: no role
+                      :role "system" ;not sure if actually necessary but including anyway
                       }
           }
 
