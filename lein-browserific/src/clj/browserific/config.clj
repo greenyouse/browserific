@@ -176,7 +176,7 @@ linux32, linux64, osx32, osx64, windows")))
            :name [:extensions :extra :firefox :name]
            :packages [:extensions :extra :firefox :packages]
            :permissions!private-browsing [:extensions :private]
-           :permissions!cross-domain-content [:extensions :extra :firefox :permissions]
+           :permissions!cross-domain-content [:extensions :extra :firefox :permissions :cross-domain-content]
            :preferences [:extensions :extra :firefox :preferences]
            :tests [:extensions :extra :firefox :tests]
            :title [:extensions :extra :firefox :title]
@@ -219,6 +219,7 @@ linux32, linux64, osx32, osx64, windows")))
          {:pretty true})))
 
 ;; TODO: make sure that plist output order is not imporant
+;; FIXME: get icons here!
 (defn- safari-config
   "Creates the safari config file using config.edn"
   []

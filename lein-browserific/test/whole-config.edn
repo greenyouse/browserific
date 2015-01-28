@@ -15,15 +15,20 @@
               :private true
 
               :action {:type "browser" ; Either browser or page
-                       :default-icon {:chrome {:19"my-chrome-icon19.png"}
-                                      :firefox {:38 "my-firefox-icon38.png"}
-                                      :opera {:19 "my-opera-icon19.png"
-                                              :38 "my-opera-icon38.png"}
-                                      :safari {:19 "my-safari-icon19.png"}}
+                       ;; TODO: Changed icons here
+                       ;; {:chrome [{:19 "my-chrome-icon19.png"}]
+                       ;; :firefox [{:38 "my-firefox-icon38.png"}]
+                       ;;  :opera [{:19 "my-opera-icon19.png"
+                       ;;  :38 "my-opera-icon38.png" }]
+                       ;;:safari [{:19 "my-safari-icon19.png"}] }
+
+                       :default-icon [{:19 "my-action-icon19.png"}
+                                      {:38 "my-action-icon38.png"}]
                        :default-title "example title"
                        :default-popup "popup.html"}
 
-              :background {:scripts ["background.js"]
+              ;; TODO: Changed this too
+              :background {:scripts "background.js" ;["background.js"]
                            :persistent false}
 
               ;; For firefox use inject pageMod at compile time
@@ -32,13 +37,16 @@
                         :css ["mystyles.css"]
                         :js ["special-script.js" "myscript.js"]}
 
-              :icons {:chrome {:48 "my-chrome-icon48.png"}
-                      :firefox {:48 "my-firefox-icon48.png"
-                                :64 "my-firefox-icon64.png"}
-                      :opera {:16 "my-opera-icon16.png"
-                              :48 "my-opera-icon48.png"
-                              :128 "my-opera-icon128.png"}
-                      :safari {:128 "my-safari-icon128.png"}}
+              ;; TODO: Changed icons a bit here
+              ;; {:chrome {:48  "my-chrome-icon48.png"}
+              :icons {:chrome [{:48 "my-chrome-icon48.png"}]
+                      :firefox [{:48 "my-firefox-icon48.png"}
+                                {:64 "my-firefox-icon64.png"}]
+                      :opera [{:16 "my-opera-icon16.png"}
+                              {:48 "my-opera-icon48.png"}
+                              {:128 "my-opera-icon128.png"}]
+                      :safari [{:48 "Icon.png"}
+                               {:64 "Icon-64.png"}]}
 
               :homepage "https://www.my-cool-site.com"
 
@@ -56,13 +64,18 @@
               :web-accessible-resources ["https://www.my.server.com/stuff.js"
                                          "https://www.another-server.com/woot.img"]
 
+              ;; TODO: Moved this here from :shared
+              :requirements {:3D {:features ["webgl"]}}
+              :sandbox {:page ["page1.html"
+                               "some-dir/page2.html"]
+                        :content-security-policy "sandbox allow-scripts; script-src https://www.google.com"}
+
               :extra {:chrome
                       {:chrome-ui-overrides {:bookmark-ui
-                                             {:remove-button "true"
-                                              :remove-bookmark-shortuct "true"}}
+                                             {:remove-button true
+                                              :remove-bookmark-shortuct true}}
                        :chrome-settings-overrides {:homepage "http://www.homepage.com"
-                                                   :startup-pages ["http://www.startup.com"
-                                                                   "https://www.kittehs.com"]
+                                                   :startup-pages ["http://www.startup.com"]
                                                    :search-provider {:name "name.__MSG_url_domain__"
                                                                      :keyword "keyword.__MSG_url_domain__"
                                                                      :search-url "http://www.foo.__MSG_url_domain__/s?q={searchTerms}"
@@ -77,29 +90,30 @@
                                                                      :alternate-urls ["http://www.moo.__MSG_url_domain__/s?q={searchTerms}"
                                                                                       "http://www.noo.__MSG_url_domain__/s?q={searchTerms}"]
                                                                      :encoding "UTF-8"
+                                                                     :prepopulated-id 2 ;TODO: new key here
                                                                      :is-default true}}
                        :chrome-url-overrides {:some-builtin-page "my-bookmarks.html"}
                        :commands {:do-something {:suggested-key "Ctrl+Shift+d"
                                                  :description "does something"}}
                        :current-locale "en_US"
-                       :devtools_page "new-devtool.html"
+                       :devtools-page "new-devtool.html"
                        :externally-connectable {:ids ["aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
                                                       "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"]
                                                 :matches ["https://*.google.com/*"
                                                           "*://*.chromium.org/*"]
-                                                :accepts_tls_channel_id false}
+                                                :accepts-tls-channel-id false}
                        :file-browser-handlers [{:id "upload"
                                                 :default-title "Save to Gallery"
                                                 :file-filters ["filesystem://*.jpg"
                                                                "filesystem://*.png"]}]
                        :import "" ; TODO: find what :import does
-                       :input-components {:name "My IME" ;; A user visible name.
-                                          :type "ime"  ;; The type of input component.
-                                          :id "my_ime"   ;; The id that will be passed to callbacks
-                                          :description "My Input method for Japanese"  ;; A user visible description
-                                          :language "ja" ;; The primary language this IME is used for
-                                          ;; FIXME: is vector the correct thing for layouts?
-                                          :layouts ["jp::jpn" "us:dvorak:eng"]}  ;; The supported keyboard layouts for this IME,
+                       :input-components [{:name "My IME" ; A user visible name.
+                                           :type "ime"  ; The type of input component.
+                                           :id "my_ime"   ; The id that will be passed to callbacks
+                                           :description "My Input method for Japanese"  ; A user visible description
+                                           :language "ja" ; The primary language this IME is used for
+                                           ;; FIXME: is vector the correct thing for layouts?
+                                           :layouts ["jp::jpn" "us:dvorak:eng"]}]  ; The supported keyboard layouts for this IME,
                        :minimum-chrome-version "15.0"
                        :nacl-modules [{:path "OpenOfficeViewer.nmf"
                                        :mime-type "application/vnd.oasis.opendocument.spreadsheet"}]
@@ -115,19 +129,18 @@
                        :spellcheck true ; TODO: find what :spellcheck does (or how to implement it)
                        :storage {:managed-schema "schema.json"}
                        :system-indicator {} ; TODO: find what :system-indicator does
-                       :tts-engine {:voice-name "Hanz"
-                                    :lange "no"
-                                    :gender "male"
-                                    :event-types ["start" "end" "error"]}}
+                       :tts-engine {:voices [{:voice-name "Hanz"
+                                              :lange "no"
+                                              :gender "male"
+                                              :event-types ["start" "end" "error"]}]}}
 
                       :firefox {:dependencies ["jquery" "D3"]
                                 :lib "some-dir/woot"
                                 :main "not/main"
                                 :name "noSpacesOrPeriods"
                                 :packages "cool/packages"
-                                ;; FIXME: redo the permissions so this isn't so clunky
-                                :permissions ["https://www.wahoo.com/"
-                                              "https://www.yoogle.com/"]
+                                :permissions {:cross-domain-content ["https://www.wahoo.com/"
+                                                                     "https://www.yoogle.com/"]}
                                 :preferences [{:name "some pref"
                                                :title "pref title"
                                                :description "this is a description"
@@ -167,11 +180,8 @@
                                :start-script "adblocker.js" ;fired before dom is loaded, usually to block unwanted content (ads)
                                :access-level "Some" ; None/Some/All
                                }
-
-                      :shared {:requirements {:3D {:features ["webgl"]}}
-                               :sandbox {:page ["page1.html"
-                                                "some-dir/page2.html"]
-                                         :content-security-policy "sandbox allow-scripts; script-src https://www.google.com"}}}
+                      ;; TODO: move this to general
+                      }
               }
 
  :mobile {
@@ -180,126 +190,110 @@
           :platforms ["amazon-fire" "android" "blackberry" "firefoxos" "ios"
                       "ubuntu" "wp7" "wp8" "tizen"]
 
-          ;; FIXME: The platform-specific options must be wrapped in a <platform name="target-platform"> tag or they
-          ;;   will accidentally litter other platform config files
-          ;; FIXME: change the Om Schema so the correct menu gets created and make sure the output is valid
           :preferences {; global, all platforms
-                        :global [{:name "fullscreen" :value "true"}
-                                 {:name "orientation" :value "default"}]
+                        :global {:fullscreen "true"
+                                 :orientation "default"}
 
                         ;; amazon-fire prefs
-                        :amazone-fire [{:name "KeepRunning" :value "false"}
-                                       {:name "LoadUrlTimeout" :value "10000"}
-                                       {:name "Splashscreen" :value "mySplash"}
-                                       {:name "SplashScreenDelay" :value "true"}
-                                       {:name "LoadingDialog" :value "Please wait, the data is loading"}
-                                       {:name "LoadingPageDialog" :value "Please wait, the data is loading"}
-                                       {:name "ErrorUrl" :value "error.html"}
-                                       {:name "ShowTitle" :value "true"}
-                                       {:name "LogLevel" :value "VERBOSE"}]
+                        :amazon-fire {:KeepRunning "false"
+                                      :LoadUrlTimeout "10000"
+                                      :Splashscreen "mySplash"
+                                      :SplashScreenDelay "true"
+                                      :LoadingDialog "Please wait, the data is loading"
+                                      :LoadingPageDialog "Please wait, the data is loading"
+                                      :ErrorUrl "error.html"
+                                      :ShowTitle "true"
+                                      :LogLevel "VERBOSE"}
 
                         ;; android prefs
-                        :android [{:name "KeepRunning" :value "false"}
-                                  {:name "LoadUrlTimeout" :value "10000"}
-                                  {:name "Splashscreen" :value "mySplash"}
-                                  {:name "SplashScreenDelay" :value "true"}
-                                  {:name "InAppBrowserStorageEnabled" :value "true"}
-                                  {:name "LoadingDialog" :value "My Title, My Message"}
-                                  {:name "LoadingPageDialog" :value "My Title, My Message"}
-                                  {:name "ErrorUrl" :value "myErrorPage.html"}
-                                  {:name "ShowTitle" :value "true"}
-                                  {:name "LogLevel" :value "VERBOSE"}
-                                  {:name "AndroidLaunchMode" :value "SingleTop"}
-                                  {:name "DisallowOverscroll" :value "true"}
-                                  {:name "BackgroundColor" :value "0xff0000ff"}]
+                        :android {:KeepRunning "false"
+                                  :LoadUrlTimeout "10000"
+                                  :Splashscreen "mySplash"
+                                  :SplashScreenDelay "true"
+                                  :InAppBrowserStorageEnabled "true"
+                                  :LoadingDialog "My Title, My Message"
+                                  :LoadingPageDialog "My Title, My Message"
+                                  :ErrorUrl "myErrorPage.html"
+                                  :ShowTitle "true"
+                                  :LogLevel "VERBOSE"
+                                  :AndroidLaunchMode "SingleTop"}
 
                         ;; blackberry prefs
-                        :blackberry [{:name "ChildBrowser" :value "disable"}
-                                     {:name "PopupBlocker" :value "enable"}
-                                     {:name "WebSecurity" :value "disable"}
-                                     {:name "BackgroundColor" :value "0xff0000ff"}
-                                     {:name "HideKeyboardFormAccessoryBar" :value "true"}]
+                        :blackberry {:ChildBrowser "disable"
+                                     :PopupBlocker "enable"
+                                     :WebSecurity "disable"
+                                     :BackgroundColor "0xff0000ff"
+                                     :HideKeyboardFromAccessoryBar "true"}
 
                         ;; iOS prefs
-                        :ios [{:name "EnableViewportScale" :value "true"}
-                              {:name "MediaPlaybackRequiresUserAction" :value "true"}
-                              {:name "AllowInlineMediaPlayback" :value "true"}
-                              {:name "BackupWebStorage" :value "local"}
-                              {:name "TopActivityIndicator" :value "white"}
-                              {:name "KeyboardDisplayRequiresUserAction" :value "false"}
-                              {:name "SuppressesIncrementalRendering" :value "true"}
-                              {:name "GapBetweenPages" :value "0"}
-                              {:name "PageLength" :value "0"}
-                              {:name "PaginationBreakingMode" :value "page"}
-                              {:name "PaginationMode" :value "unpaginated"}
-                              {:name "UIWebViewDecelerationSpeed" :value "fast"}
-                              {:name "DisallowOverscroll" :value "true"}
-                              {:name "HideKeyboardFormAccessoryBar" :value "true"}]
+                        :ios {:EnableViewportScale "true"
+                              :MediaPlaybackRequiresUserAction "true"
+                              :AllowInlineMediaPlayback "true"
+                              :BackupWebStorage "local"
+                              :TopActivityIndicator "white"
+                              :KeyboardDisplayRequiresUserAction "false"
+                              :SuppressesIncrementalRendering "true"
+                              :GapBetweenPages "0"
+                              :PageLength "0"
+                              :PaginationBreakingMode "page"
+                              :PaginationMode "unpaginated"
+                              :UIWebViewDecelerationSpeed "fast"
+                              :DisallowOverscroll "true"
+                              :HideKeyboardFromAccessoryBar "true"}
 
                         ;; windows phone prefs
-                        :wp8 [{:name "windows-target-version" :value "8.1"}]}
+                        :wp8 {:windows-target-version "8.1"}}
 
-          :plugins [{:name "org.apache.cordova.battery-status" :value true}
-                    {:name "org.apache.cordova.camera" :value true}
-                    {:name "org.apache.cordova.media-capture" :value true}
-                    {:name "org.apache.cordova.console" :value true}
-                    {:name "org.apache.cordova.contacts" :value true}
-                    {:name "org.apache.cordova.device" :value true}
-                    {:name "org.apache.cordova.device-motion" :value true}
-                    {:name "org.apache.cordova.device-orientation" :value true}
-                    {:name "org.apache.cordova.dialogs" :value true}
-                    {:name "org.apache.cordova.file" :value true}
-                    {:name "org.apache.cordova.file-transfer" :value true}
-                    {:name "org.apache.cordova.geolocation" :value true}
-                    {:name "org.apache.cordova.globalization" :value true}
-                    {:name "org.apache.cordova.inappbrowser" :value true}
-                    {:name "org.apache.cordova.media" :value true}
-                    {:name "org.apache.cordova.network-information" :value true}
-                    {:name "org.apache.cordova.splashscreen" :value true}
-                    {:name "org.apache.cordova.vibration" :value true}]
+          :icons {:global {:src "icon.png"}
+                  :android [{:src "res/icon/android/icon-36-ldpi.png" :density "ldpi"}
+                            {:src "res/icon/android/icon-48-mdpi.png" :density "mdpi"}
+                            {:src "res/icon/android/icon-72-hdpi.png" :density "hdpi"}
+                            {:src "res/icon/android/icon-96-xhdpi.png" :density "xhdpi"}]
 
-          :icons [{:src "icon.png"}
-                  {:src "res/icon/android/icon-36-ldpi.png" :platform "android" :density "ldpi"}
-                  {:src "res/icon/android/icon-48-mdpi.png" :platform "android" :density "mdpi"}
-                  {:src "res/icon/android/icon-72-hdpi.png" :platform "andoird" :density "hdpi"}
-                  {:src "res/icon/android/icon-96-xhdpi.png" :platform "android" :density "xhdpi"}
-                  {:src "src/icon/ios/icon-57.png" :platform "ios" :width "54" :height "54"}
-                  {:src "src/icon/ios/icon-72.png" :platform "ios" :width "72" :height "72"}
-                  {:src "src/icon/ios/icon-57-2x.png" :platform "ios" :width "114" :height "114"}
-                  {:src "src/icon/ios/icon-72-2x.png" :platform "ios" :width "144" :height "144"}
-                  {:src "res/icon/blackberry/icon-80.png" :platform "blackberry"}
-                  {:src "res/icon/blackberry/icon-80.png" :platform "blackberry"}
-                  {:src "res/icon/webos/icon-64.png" :platform "webos"}
-                  {:src "res/icon/windows-phone/icon-48.png" :platform "wp8"}
-                  {:src "res/icon/windows-phone/icon-173.png" :platform "wp8"}]
+                  :ios  [{:src "src/icon/ios/icon-57.png" :width "54" :height "54"}
+                         {:src "src/icon/ios/icon-72.png" :width "72" :height "72"}
+                         {:src "src/icon/ios/icon-57-2x.png" :width "114" :height "114"}
+                         {:src "src/icon/ios/icon-72-2x.png" :width "144" :height "144"}]
 
-          :splash [{:src "res/screen/android/screen-ldpi-portrait.png" :platform "android" :density "port-ldpi"}
-                   {:src "res/screen/android/screen-mdpi-portrait.png" :platform "android" :density "port-mdpi"}
-                   {:src "res/screen/android/screen-hdpi-portrait.png" :platform "android" :density "port-hdpi"}
-                   {:src "res/screen/android/screen-xhdpi-portrait.png" :platform "android" :density "port-xhdpi"}
-                   {:src "res/screen/blackberry/screen-225.png" :platform "blackberry"}
-                   {:src "res/screen/ios/screen-iphone-portrait.png" :platform "ios" :width "320" :height "480"}
-                   {:src "res/screen/ios/screen-iphone-portrait-2x.png" :platform "ios" :width "640" :height "960"}
-                   {:src "res/screen/ios/screen-iphone-portrait-568h-2x.png" :platform "ios" :width "640" :height "1136"}
-                   {:src "res/screen/ios/screen-ipad-portrait.png" :platform "ios" :width "768" :height "1024"}
-                   {:src "res/screen/ios/screen-ipad-landscape.png" :platform "ios" :width "1024" :height "768"}
-                   {:src "res/screen/windows-phone/screen-portrait.jpg" :platform "winphone"}]
+                  :blackberry [{:src "res/icon/blackberry/icon-80.png"}
+                               {:src "res/icon/blackberry/icon-80.png"}]
+
+                  :wp8 [{:src "res/icon/windows-phone/icon-48.png"}
+                        {:src "res/icon/windows-phone/icon-173.png"}]}
+
+          :splash [:android [{:src "res/screen/android/screen-ldpi-portrait.png" :density "port-ldpi"}
+                             {:src "res/screen/android/screen-mdpi-portrait.png" :density "port-mdpi"}
+                             {:src "res/screen/android/screen-hdpi-portrait.png" :density "port-hdpi"}
+                             {:src "res/screen/android/screen-xhdpi-portrait.png" :density "port-xhdpi"}]
+
+                   :blackberry [{:src "res/screen/blackberry/screen-225.png"}]
+
+                   :ios [{:src "res/screen/ios/screen-iphone-portrait.png" :width "320" :height "480"}
+                         {:src "res/screen/ios/screen-iphone-portrait-2x.png" :width "640" :height "960"}
+                         {:src "res/screen/ios/screen-iphone-portrait-568h-2x.png" :width "640" :height "1136"}
+                         {:src "res/screen/ios/screen-ipad-portrait.png" :width "768" :height "1024"}
+                         {:src "res/screen/ios/screen-ipad-landscape.png" :width "1024" :height "768"}]
+
+                   ;; TODO: Check this
+                   :wp8 [{:src "res/screen/windows-phone/screen-portrait.jpg"}]]
 
           :permissions ["https://www.wahoo.com/"
                         "https://www.yoogle.com/"]
 
           :content "index.html"
 
-          ;; since manifest.webapp is not config.xml, let's make a special section for it
-          ;; FIXME: add this to browserific.config.file/GUI
-          :firefoxos {:icons [{:128 "/img/icon-128.png"}
+          ;; since manifest.webapp is not in Cordova's config.xml, let's make a special section for it
+          :firefoxos {:icons [{:128 "/img/icon-128.png"} ;FIXME: output this in config.xml too?
                               {:512 "/img/icon-512.png"}]
                       :type "privileged"
-                      :activities {:pick {:href "./pick.html"
+                      ;; Each item can have href, disposition, filters, and return
+                      :activities {:browse {:filters {:type ["photos"]}}
+                                   :configure {:filters {:target ["device"]}}
+                                   :pick {:href "./pick.html"
                                           :disposition "inline"
                                           ;; the filter is tricky to implment, let's just stick to an array, no definition objects
-                                          :filters {:type ["image/*" "image/jpeg" "image/png"]}}
-                                   :returnValue true}
+                                          :filters {:type ["image/*" "image/jpeg" "image/png"]}
+                                          :returnValue true}}
                       :appcache "/cache.manifest"
                       :chrome {:navigation true} ; best to write your own and make this false
                       ;; All local JS+CSS must be indexed here before dropping <script> and <link rel="stylesheet"... tags into the HTML.
@@ -318,18 +312,15 @@
                                      :description "Spannende offene Web-Entwicklung-Action!"}}
                       :messages [{:telephony-new-call "/dialer/index.html#keyboard-view"}]
                       ;; use the persona polyfill if included in non-firefox stuff
-                      :moz-firefox-accounts {}
                       :orientation ["landscape-primary"]
                       :origin "app://mywebapp.com" ;must start with "app://"
-                      :permissions [{:contacts {:description "Required for autocompletion in the share screen"
-                                                  :access "readcreate"}
-                                     :alarms {:description "Required to schedule notifications"}}
-                                    {:contacts {:description "Required for autocompletion in the share scren"
-                                                :access "readcreate"}
-                                     :video-capture {:description "Required so I can take cool videos :D"}}]
+                      :permissions {:contacts {:description "Required for autocompletion in the share screen"
+                                               :access "readcreate"}
+                                    :alarms {:description "Required to schedule notifications"}
+                                    :video-capture {:description "Required so I can take cool videos :D"}}
                       :precompile ["game.js" "database.js"]
-                      :redirects {:from "http://facebook.com/authentication/success.html"
-                                  :to "/app/main_interface.html"}
+                      :redirects [{:from "http://facebook.com/authentication/success.html"
+                                     :to "/app/main_interface.html"}]
                       :role "system" ;not sure if actually necessary but including anyway
                       }
           }
@@ -338,7 +329,7 @@
  :desktop {
            :platforms ["osx32" "osx64" "windows" "linux32" "linux64"]
            :main "init.html"
-           :nodejs "true"
+           :nodejs true
            :node-main "core/nodejs.js"
            :single-instance true
            :user-agent {:name "openbsd"
@@ -355,6 +346,8 @@
            :dom-storage-quota 10
            :keywords ["so fun", "way cool", "wow", "totally app"]
            :bugs "http://my.bug-report.com"
+           ;; FIXME: in the config I only allow for one repo but should
+           ;; allow multiple in the future
            :repositories [{:type "git"
                            :url "http://github.com/example.git"
                            :path "packages/mypackage"}]

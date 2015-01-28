@@ -15,22 +15,49 @@ h4,input,button,div {
     margin-left: 1em;
 }
 
-#page-select {
+.nav {
     background-color: #42526C;
-    color: #E0EEEE;
     -moz-border-radius: 0.3em;
     border-radius: 0.3em;
     padding: 1em;
     height: 2em;
 }
 
-#page-select li {
-    float: left;
-    padding-left: 1em;
-    padding-bottom: 0.5em;
+.nav a {
+    color: #E0EEEE;
+    text-decoration: none;
 }
 
-#page-select li:hover {
+.nav li ul {
+    display: none;
+}
+
+.nav li {
+    float: left;
+    padding-left: 1em;
+    padding-bottom: 0.3em;
+}
+
+.nav ul li {
+    display: block;
+    position: relative;
+}
+
+.nav li:hover ul {
+    display: block;
+    position: absolute;
+}
+
+.nav li:hover li {
+    background-color: #BDC3C7;
+    color: azure;
+    border: 3px solid black;
+    padding-top: 0.3em;
+    padding-right: 0.3em;
+    padding-left: 0.4em;
+}
+
+.nav a:hover {
     color: #60AFFE;
     cursor: hand;
     cursor: pointer;

@@ -15,9 +15,11 @@
                  [org.clojure/core.async "0.1.346.0-17112a-alpha"]
                  ;; cljs
                  [org.clojure/clojurescript "0.0-2371"]
-                 [sablono "0.2.22"]
-                 [om "0.8.0-alpha1"]
-                 [om-sync "0.1.1"]]
+                 [reagent "0.5.0-alpha"]
+                 ;;[sablono "0.2.22"]
+                 ;;[om "0.8.0-rc1"] ;use reagent instead of om later for refactoring
+                 ;;[om-sync "0.1.1"]
+                 ]
 
 
   :eval-in-leiningen true
@@ -28,7 +30,7 @@
 
   :ring {:handler browserific.config.server/app}
 
-  :browserific {:config "test/whole-config.edn" ;"test/test-config.edn" ;delete this!
+  :browserific {:config "test/test-config.edn" ;delete this! ;"test/whole-config.edn"
                 :source-paths "test/fake-src"}
 
   :source-paths ["src/clj"]
@@ -41,16 +43,4 @@
                                    :output-dir "resources/public/js/out"
                                    :optimizations :none
                                    :source-map true
-                                   :externs ["react/externs/react.js"]}}
-                       {:id "release"
-                        :source-paths ["src/cljs"]
-                        :compiler {
-                                   :output-to "resources/public/js/client.js"
-                                   :source-map "resources/public/js/client.js.map"
-                                   :optimizations :advanced
-                                   :pretty-print false
-                                   :output-wrapper false
-                                   :preamble ["react/react.min.js"]
-                                   :externs ["react/externs/react.js"]
-                                   :closure-warnings
-                                   {:non-standard-jsdoc :off}}}]})
+                                   :externs ["react/externs/react.js"]}}]})
