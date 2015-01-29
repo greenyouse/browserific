@@ -39,7 +39,7 @@
   (let [data (<! trans-chan)]
     (edn-xhr {:method "PUT"
               :url "/config"
-              :data data
+              :data {:value data}
               ;; NOTE: good place for XHR debugging
               :on-complete (fn [] (do (println "OK")
                                      (println data)))

@@ -48,7 +48,7 @@
   {:method "GET"
    :url "/init"
    :on-complete
-   (fn [res]
-     (reset! config-db res)
+   (fn [{:keys [coll]}]
+     (reset! config-db coll)
      (reagent/render-component [config-screen]
        (.getElementById js/document "content")))})

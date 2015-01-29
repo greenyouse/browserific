@@ -19,13 +19,13 @@
 (defn- init
   "Loads the config file on startup"
   []
-  (let [config (-> u/config-file slurp)]
-    (edn-response {:url "/config" :coll config})))
+  (let [config (-> u/config-file slurp read-string)]
+    (edn-response {:coll config})))
 
 (defn- update-config
   "Saves a copy of the current state back to the config.edn file"
-  [{:keys [config]}]
-  (spit u/config-file config)
+  [{:keys [value]}]
+  (spit u/config-file value)
   (edn-response {:status :ok}))
 
 (defroutes ^:private app-routes
