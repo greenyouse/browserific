@@ -1,7 +1,9 @@
 (ns browserific.config.pages.mobile.blackberry
   (:require [browserific.config.db :refer [config-db]]
+            [browserific.config.trans :as t]
             [browserific.config.components :as co]
-            [reagent.core :as reagent]))
+            [reagent.core :as reagent])
+  (:require-macros [browserific.config.macros :refer [multi-input-template]]))
 
 (defn blackberry-page
   "Config page for blackberry"
@@ -22,11 +24,11 @@
        {:type :checkbox :data (reagent/cursor [:mobile :preferences :blackberry :WebSecurity] config-db) :label "Web Security?"
         :help "Set to disable to override web security settings, allowing access to remote content from unknown sources. This preference is intended as a development convenience only, so remove it before packaging the app for distribution. Use the <access> element to whitelist URIs saftely in production."
         :default true}]}
-     {:type :cordova-multi :data (reagent/cursor [:mobile :icons :blackberry] config-db) :label "Blackberry Icons"
+     {:type :multi :data (reagent/cursor [:mobile :icons :blackberry] config-db) :label "Blackberry Icons"
       :htxt "Icons for Blackberry."
       :hurl "https://cordova.apache.org/docs/en/4.0.0/config_ref_images.md.html#Icons%20and%20Splash%20Screens"
-      :plat "blackberry"}
-     {:type :cordova-multi :data (reagent/cursor [:mobile :splash :blackberry] config-db) :label "Blackberry Splashscreen"
+      :multi-c (multi-input-template :vec [{:type :name :label "location"}])}
+     {:type :multi :data (reagent/cursor [:mobile :splash :blackberry] config-db) :label "Blackberry Splashscreen"
       :htxt "Splashscreen for Blackberry."
       :hurl "https://cordova.apache.org/docs/en/4.0.0/config_ref_images.md.html#Icons%20and%20Splash%20Screens"
-      :plat "blackberry"}]))
+      :multi-c (multi-input-template :vec [{:type :name :label "location"}])}]))

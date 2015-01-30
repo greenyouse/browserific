@@ -7,12 +7,6 @@
            goog.net.EventType
            [goog.events EventType]))
 
-(defn dissoc-in
-  [m [k & ks]]
-  (if (and ks m)
-    (assoc m k (dissoc-in (get m k) ks))
-    (dissoc m k)))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; XHR Helper
 
@@ -47,11 +41,12 @@
                                    (js/console.log e)))}))
   (recur))
 
+;; TODO: make the syntax nicer?
 (defn add-item
   "This evaluates some update to a reagent cursor and then puts the entire
   database on tras-chan so it can be written to config.edn."
-  [f cursor v]
-  (let [s (f cursor v)]
+  [f cursor v & m]
+  (let [s (f cursor v (first m))]
     (put! trans-chan s)
     s))
 

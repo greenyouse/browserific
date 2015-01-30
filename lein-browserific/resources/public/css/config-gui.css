@@ -50,7 +50,6 @@ h4,input,button,div {
 
 .nav li:hover li {
     background-color: #42526C;
-    color: azure;
     border: 3px solid black;
     padding-top: 0.3em;
     padding-right: 0.3em;

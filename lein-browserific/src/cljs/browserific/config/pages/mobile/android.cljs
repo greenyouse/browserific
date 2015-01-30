@@ -1,7 +1,9 @@
 (ns browserific.config.pages.mobile.android
   (:require [browserific.config.db :refer [config-db]]
+            [browserific.config.trans :as t]
             [browserific.config.components :as co]
-            [reagent.core :as reagent]))
+            [reagent.core :as reagent])
+  (:require-macros [browserific.config.macros :refer [multi-input-template]]))
 
 (defn android-page
   "A page for android options"
@@ -35,11 +37,13 @@
        {:type :select :data (reagent/cursor [:mobile :preferences :android :LogLevel] config-db) :label "Log Level"
         :help " Sets the minimum log level through which log messages from your application will be filtered. Valid values are ERROR, WARN, INFO, DEBUG, and VERBOSE."
         :options ["ERROR" "WARN" "INFO" "DEBUG" "VERBOSE"]}]}
-     {:type :cordova-multi :data (reagent/cursor [:mobile :icons :android] config-db) :label "Android Icons"
+     {:type :multi :data (reagent/cursor [:mobile :icons :android] config-db) :label "Android Icons"
       :htxt "Icons for Android."
       :hurl "https://cordova.apache.org/docs/en/4.0.0/config_ref_images.md.html#Icons%20and%20Splash%20Screens"
-      :plat "android"}
-     {:type :cordova-multi :data (reagent/cursor [:mobile :splash :android] config-db) :label "Android Splashscreen"
+      :multi-c (multi-input-template :vec [{:type :name :label "location"}
+                                           {:type :select :options ["ldpi" "mdpi" "hdpi" "xhdpi"] :label "density"}])}
+     {:type :multi :data (reagent/cursor [:mobile :splash :android] config-db) :label "Android Splashscreen"
       :htxt "Splashscreen for Android."
       :hurl "https://cordova.apache.org/docs/en/4.0.0/config_ref_images.md.html#Icons%20and%20Splash%20Screens"
-      :plat "android"}]))
+      :multi-c (multi-input-template :vec [{:type :name :label "location"}
+                                           {:type :select :options ["ldpi" "mdpi" "hdpi" "xhdpi"] :label "density"}])}]))

@@ -1,7 +1,9 @@
 (ns browserific.config.pages.mobile.amazon-fire
   (:require [browserific.config.db :refer [config-db]]
+            [browserific.config.trans :as t]
             [browserific.config.components :as co]
-            [reagent.core :as reagent]))
+            [reagent.core :as reagent])
+  (:require-macros [browserific.config.macros :refer [multi-input-template]]))
 
 (defn amazon-fire-page
   "Little page for amazon fire options"
@@ -33,11 +35,13 @@
        {:type :select :data (reagent/cursor [:mobile :preferences :amazon-fire :LogLevel] config-db) :label "Log Level"
         :help "Sets the minimum log level through which log messages from your application will be filtered. Valid values are ERROR, WARN, INFO, DEBUG, and VERBOSE."
         :options ["ERROR" "WARN" "INFO" "DEBUG" "VERBOSE"]}]}
-     {:type :cordova-multi :data (reagent/cursor [:mobile :icons :amazon-fire] config-db) :label "Amazon Fire Icons"
+     {:type :multi :data (reagent/cursor [:mobile :icons :amazon-fire] config-db) :label "Amazon Fire Icons"
       :htxt "Icons for Amazon Fire."
       :hurl "https://cordova.apache.org/docs/en/4.0.0/config_ref_images.md.html#Icons%20and%20Splash%20Screens"
-      :plat "amazon-fire"}
-     {:type :cordova-multi :data (reagent/cursor [:mobile :splash :amazon-fire] config-db) :label "Amazon-Fire Splashscreen"
+      :multi-c (multi-input-template :vec [{:type :name :label "location"}
+                                           {:type :select :options ["ldpi" "mdpi" "hdpi" "xhdpi"] :label "density"}])}
+     {:type :multi :data (reagent/cursor [:mobile :splash :amazon-fire] config-db) :label "Amazon-Fire Splashscreen"
       :htxt "Splashscreen for Amazon Fire."
       :hurl "https://cordova.apache.org/docs/en/4.0.0/config_ref_images.md.html#Icons%20and%20Splash%20Screens"
-      :plat "amazon-fire"}]))
+      :multi-c (multi-input-template :vec [{:type :name :label "location"}
+                                           {:type :select :options ["ldpi" "mdpi" "hdpi" "xhdpi"] :label "density"}])}]))

@@ -1,7 +1,13 @@
 (ns browserific.config.pages.browser
   (:require [browserific.config.db :refer [config-db]]
+            [browserific.config.trans :as t]
             [browserific.config.components :as co]
-            [reagent.core :as reagent]))
+            [reagent.core :as reagent])
+  (:require-macros [browserific.config.macros :refer [multi-input-template]]))
+
+(def ^:private icon-c
+  (multi-input-template :vec [{:type :name :label "src"}
+                              {:type :name :label "size"}]))
 
 (defn browser-page
   "The page for browser options"
@@ -19,9 +25,10 @@
       :htxt "Browser actions allow for putting stuff in the browser chrome (like adding icons to a toolbar) while Page actions only interact with a webpage (for DOM interaction). Only for Chrome + Opera."
       :hurl ["https://dev.opera.com/extensions/browserAction.html" "https://dev.opera.com/extensions/pageAction.html"]
       :options ["browser" "page"]}
-     {:type :icon :data (reagent/cursor [:extensions :action :default-icon] config-db) :label "Action Icons"
+     {:type :multi :data (reagent/cursor [:extensions :action :default-icon] config-db) :label "Action Icons"
       :htxt "Relative path to a icon PNG file for the action. You're encouraged to use both 19px and 38px icons but only one is required. Only for Chrome + Opera."
-      :hurl ["https://developer.chrome.com/extensions/browserAction#icon" "https://developer.chrome.com/extensions/pageAction"]}
+      :hurl ["https://developer.chrome.com/extensions/browserAction#icon" "https://developer.chrome.com/extensions/pageAction"]
+      :multi-c icon-c}
      {:type :name :data (reagent/cursor [:extensions :action :default-title] config-db) :label "Action Title"
       :htxt "A title for the action that will be shown in a tooltip. Only for Chrome + Opera."
       :hurl "https://developer.chrome.com/extensions/browserAction#tooltip"}
@@ -47,18 +54,22 @@
      {:type :strings :data (reagent/cursor [:extensions :content :js] config-db) :label "Content JS"
       :htxt "The list of JavaScript files to be injected into matching pages. These are injected in the order they appear in this array."
       :hurl ["https://developer.chrome.com/extensions/content_scripts" "https://developer.apple.com/library/safari/documentation/Tools/Conceptual/SafariExtensionGuide/ExtensionPermissions/ExtensionPermissions.html#//apple_ref/doc/uid/TP40009977-CH8-SW1"]}
-     {:type :icon :data (reagent/cursor [:extensions :icons :chrome] config-db) :label "Chrome Icon"
+     {:type :multi :data (reagent/cursor [:extensions :icons :chrome] config-db) :label "Chrome Icon"
       :htxt "Icons for Chrome to use. Suggested sizes are 16px, 48px, and 128px (128 is required)."
-      :hurl "https://developer.chrome.com/extensions/manifest/icons"}
-     {:type :icon :data (reagent/cursor [:extensions :icons :firefox] config-db) :label "Firefox Icon"
+      :hurl "https://developer.chrome.com/extensions/manifest/icons"
+      :multi-c icon-c}
+     {:type :multi :data (reagent/cursor [:extensions :icons :firefox] config-db) :label "Firefox Icon"
       :htxt "Icons for Firefox. Suggested sizes are 32px, 48px, and 64px."
-      :hurl "https://developer.mozilla.org/en-US/Add-ons/Install_Manifests#iconURL"}
-     {:type :icon :data (reagent/cursor [:extensions :icons :opera] config-db) :label "Opera Icon"
+      :hurl "https://developer.mozilla.org/en-US/Add-ons/Install_Manifests#iconURL"
+      :multi-c icon-c}
+     {:type :multi :data (reagent/cursor [:extensions :icons :opera] config-db) :label "Opera Icon"
       :htxt "Opera icons. Suggested sizes are 16px, 48px, and 128px (128 is required)."
-      :hurl "https://dev.opera.com/extensions/manifest.html#icons"}
-     {:type :icon :data (reagent/cursor [:extensions :icons :safari] config-db) :label "Safari Icon"
+      :hurl "https://dev.opera.com/extensions/manifest.html#icons"
+      :multi-c icon-c}
+     {:type :multi :data (reagent/cursor [:extensions :icons :safari] config-db) :label "Safari Icon"
       :htxt "Safari icons. Suggested sizes are 32px, 48px, and 64px."
-      :hurl "https://developer.apple.com/library/safari/documentation/Tools/Conceptual/SafariExtensionGuide/UsingExtensionBuilder/UsingExtensionBuilder.html#//apple_ref/doc/uid/TP40009977-CH2-SW1"}
+      :hurl "https://developer.apple.com/library/safari/documentation/Tools/Conceptual/SafariExtensionGuide/UsingExtensionBuilder/UsingExtensionBuilder.html#//apple_ref/doc/uid/TP40009977-CH2-SW1"
+      :multi-c icon-c}
      {:type :name :data (reagent/cursor [:extensions :hompage] config-db) :label "Homepage"
       :htxt "A link to the add-on's home page - intended for display in the user interface."
       :hurl "https://developer.mozilla.org/en-US/Add-ons/Install_Manifests#homepageURL"}

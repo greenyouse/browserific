@@ -1,7 +1,9 @@
 (ns browserific.config.pages.mobile.ios
   (:require [browserific.config.db :refer [config-db]]
+            [browserific.config.trans :as t]
             [browserific.config.components :as co]
-            [reagent.core :as reagent]))
+            [reagent.core :as reagent])
+  (:require-macros [browserific.config.macros :refer [multi-input-template]]))
 
 (defn ios-page
   "Configurations for ios"
@@ -43,11 +45,15 @@
        {:type :select :data (reagent/cursor [:mobile :preferences :ios :UIWebViewDecelerationSpeed] config-db) :label "UI WebView Decelartion Speed"
         :help "This property controls the deceleration speed of momentum scrolling. normal is the default speed for most native apps, and fast is the default for Mobile Safari."
         :options ["normal" "fast"]}]}
-     {:type :cordova-multi :data (reagent/cursor [:mobile :icons :ios] config-db) :label "iOS Icons"
+     {:type :multi :data (reagent/cursor [:mobile :icons :ios] config-db) :label "iOS Icons"
       :htxt "Icons for iOS."
       :hurl "https://cordova.apache.org/docs/en/4.0.0/config_ref_images.md.html#Icons%20and%20Splash%20Screens"
-      :plat "ios"}
-     {:type :cordova-multi :data (reagent/cursor [:mobile :splash :ios] config-db) :label "iOS Splashscreen"
+      :multi-c (multi-input-template :vec [{:type :name :label "location"}
+                                           {:type :name :label "height"}
+                                           {:type :name :label "width"}])}
+     {:type :multi :data (reagent/cursor [:mobile :splash :ios] config-db) :label "iOS Splashscreen"
       :htxt "Splashscreen for iOS."
       :hurl "https://cordova.apache.org/docs/en/4.0.0/config_ref_images.md.html#Icons%20and%20Splash%20Screens"
-      :plat "ios"}]))
+      :multi-c (multi-input-template :vec [{:type :name :label "location"}
+                                           {:type :name :label "height"}
+                                           {:type :name :label "width"}])}]))
