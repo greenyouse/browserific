@@ -42,40 +42,62 @@ linux32, linux64, osx32, osx64, windows")))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Config parsing
 
-;; FIXME: redo this section at some point. Right now it's very yucky
+;; FIXME: This still feels yucky because my transformations are tied closely to
+;; my data structure. There should be a more abstract, data-independent way to
+;; handle this. That would be much better for the long term.
+(defn- icon-parser
+  "Formats the icons for output."
+  [type name val acc]
+  (let [v (reduce #(assoc % (keyword (:size %2)) (:src %2))
+            {} val)]
+    (if (seq? name)
+      (nested-options [type (second name)] v acc)
+      (assoc acc name v))))
+
 (defn- nested-options
   "Adds a nested option to the output config file."
-  [opt val acc]
-  (let [base (first opt)
-        nest (second opt)]
-    (if (= 2 (count opt))
-      (assoc-in acc [base nest] val) ; single nested vs double nested
-      (assoc-in acc [base nest (nth opt 2)] val))))
+  [[a ad d :as ks] val acc]
+  (if (nil? d)
+    (assoc-in acc [a ad] val) ; single nested
+    (assoc-in acc [a ad d] val))) ; double nested
 
-(defn- parse-configs [item type acc]
-  (let [raw-val (first (vals item)) ; non-optional configs have metadata
-        val (if (:browserific (meta raw-val))
-              (first raw-val) (get-config raw-val))
-        raw-name (first (keys item))
-        name (if (re-seq #"!" (str raw-name))
-               (map keyword
-                    (st/split
-                     (subs (str raw-name) 1) #"!"))
-               raw-name)]
+;; FIXME: filter out empty values
+(defn- parse-configs [[[k v] d :as item] type acc]
+  (let [val (if (meta v) (first v)  ;required opts have tagged metadata
+              (get-config v))
+        name (if (re-seq #"!" (str k))
+               (as-> (str k) sk
+                 (subs sk 1)
+                 (st/split sk #"!")
+                 (map keyword sk))
+               k)]
     (if (empty? item)
-      acc
-      (if-not (or (false? val) val)
-        (recur (rest item) type acc) ; Option wasn't given in config.edn
-        (cond
-         ;; page/browser action, use special type for name
-         (and (seq? name)
-              (some #(= % (second name))
-                    '(:default-icon :default-popup :default-title)))
-         (recur (rest item) type (nested-options (list type (second name)) val acc))
-         ;; generic nested option goto nested-options
-         (seq? name) (recur (rest item) type (nested-options name val acc))
-         :default
-         (recur (rest item) type (assoc acc name val)))))))
+      (into {} acc)
+      ;; add clause for required opts (was metadata)
+      (cond
+
+        ;; drop :action!type because it doesn't go into config files
+        (= :action!type k) (recur (rest item) type acc)
+
+        ;; drop any nil values
+        (or (nil? val) (= {} val) (= "" val) (= [] val))
+        (recur (rest item) type acc)
+
+        ;; icons need to be formated and then sent to nested-options
+        (or (= :icons name) (and (seq? name)
+                             (some #(#{:default-icon :icons :splash} %) name)))
+        (recur (rest item) type (icon-parser type name val acc))
+
+        ;; page/browser actions require special formatting
+        (and (seq? name) (some #(#{:action} %) name))
+        (recur (rest item) type
+          (nested-options [type (second name)] val acc))
+
+        ;; generic nested options go to nested-options
+        (seq? name) (recur (rest item) type (nested-options name val acc))
+
+        :default
+        (recur (rest item) type (assoc acc name val))))))
 
 (defn- config-reader
   "This generates a config file from a given map. Enter ! to
@@ -84,12 +106,16 @@ linux32, linux64, osx32, osx64, windows")))
   [conf-map]
   (if (some #(= % :action!type) (keys conf-map)) ; format browser/page actions
       (let [type (keyword (str (get-config (:action!type conf-map)) "-action"))]
-        (parse-configs conf-map type {}))
-      (parse-configs conf-map nil {})))
+        (parse-configs (vec conf-map) type {}))
+      (parse-configs (vec conf-map) nil {})))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Config Builders
+
+;; TODO: These configs are too verbose, let's just pass fields that need
+;; special formatting to config-reader and pull the rest directly from
+;; config.edn. The pulled values will be filtered with empty?.
 
 ;;; Browser Configs
 
@@ -111,7 +137,8 @@ linux32, linux64, osx32, osx64, windows")))
            :icons [:extensions :icons :chrome]
            :default-locale [:default-locale]
            :action!type [:extensions :action :type]
-           :action!default-icon [:extensions :action :default-icon :chrome]
+           ;; FIXME default-icon
+           :action!default-icon [:extensions :action :default-icon]
            :action!default-title [:extensions :action :default-title]
            :action!default-popup [:extensions :action :default-popup]
            :background!scripts [:extensions :background :scripts]
@@ -121,10 +148,10 @@ linux32, linux64, osx32, osx64, windows")))
            :content-scripts!js [:extensions :content :js]
            :content-scripts!css [:extensions :content :css]
            :homepage [:extensions :homepage]
-           :incognito ^{:browserific "config"} ["spanning"] ; split is for legacy
+           :incognito [:extensions :incognito]
            :options-page [:extensions :options-page]
            :permissions [:extensions :permissions]
-           :requirements [:extensions :extra :shared :requirements]
+           :requirements [:extensions :requirements]
            :web-accessible-resources [:extensions :web-accessible-resources]
            :update-url [:extensions :update-url :chrome]
 
@@ -152,7 +179,7 @@ linux32, linux64, osx32, osx64, windows")))
            :storage [:extensions :extra :chrome :storage]
            :system-indicator [:extensions :extra :chrome :system-indicator]
            :tts-engine [:extensions :extra :chrome :tts-engine]
-           :sandbox [:extensions :extra :shared :sandbox]})
+           :sandbox [:extensions :sandbox]})
          {:pretty true})))
 
 (defn- firefox-config
@@ -210,12 +237,13 @@ linux32, linux64, osx32, osx64, windows")))
            :content-scripts!js [:extensions :content :js]
            :content-scripts!css [:extensions :content :css]
            :homepage [:extensions :homepage]
-           :incognito ^{:browserific "config"} ["spanning"] ; split is for legacy
+           :incognito [:extensions :incognito]
            :options-page [:extensions :options-page]
            :permissions [:extensions :permissions]
-           :requirements [:extensions :extra :shared :requirements]
+           :requirements [:extensions :requirements]
            :web-accessible-resources [:extensions :web-accessible-resources]
-           :update-url [:extensions :update-url :opera]})
+           :update-url [:extensions :update-url :opera]
+           :sandbox [:extensions :sandbox]})
          {:pretty true})))
 
 ;; TODO: make sure that plist output order is not imporant
@@ -264,6 +292,7 @@ linux32, linux64, osx32, osx64, windows")))
            (into (get-config [:mobile :preferences :global])
              (get-config [:mobile :preferences (keyword vendor)]))))
 
+;; FIXME: update the prefs, icons, and splash
 ;;; Mobile Configs
 (defn- mobile-config
   "Outputs the mobile config file from the config.edn data"
@@ -300,8 +329,9 @@ linux32, linux64, osx32, osx64, windows")))
       (config-reader
         {:name [:name]
          :description [:description]
+         :type [:mobile :firefoxos :type]
          :launch-path [:mobile :content]
-         :icons [:mobile :firefoxos]
+         :icons [:mobile :firefoxos :icons]
          :developer!name [:author :author-name]
          :developer!url [:author :url]
          :default-locale [:default-locale]
@@ -350,9 +380,7 @@ linux32, linux64, osx32, osx64, windows")))
            :dom_storage_quota [:desktop :dom-storage-quota]
            :keywords [:desktop :keywords]
            :bugs [:desktop :bugs]
-           :repositories!type [:desktop :repositories :type]
-           :repositories!url [:desktop :repositories :url]
-           :repositories!path [:desktop :repositories :path]
+           :repositories [:desktop :repositories]
            :window!title [:desktop :window :title]
            :window!width [:desktop :window :width]
            :window!height [:desktop :window :height]

@@ -4,20 +4,20 @@
             [cljs.reader :as reader]
             [reagent.core :as reagent :refer [atom]]))
 
-(defn display
+(defn- display
   "helper fn to hide/show an element using inline css"
   [show]
   (if show
     #js {}
     #js {:display "none"}))
 
-(defn member?
+(defn- member?
   "helper fn that checks if an item is in a collection"
   [coll item]
   (some #(= item %) coll))
 
 ;; FIXME: may need to ensure the cursor uses a vector for conj, not a seq
-(defn checkbox-entry
+(defn- checkbox-entry
   "helper fn for checkboxes that updates their state"
   [atm item]
   (if (member? @atm item)
@@ -28,7 +28,7 @@
 
 (declare name-c strings-c checkbox-c checkbox-list-c select-c)
 
-(defn dispatch
+(defn- dispatch
   "helper fn to dispatch based on the type of an element"
   [type data boxes number default options multi-c]
   (case type

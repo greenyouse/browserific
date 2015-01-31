@@ -22,13 +22,13 @@
                        ;;  :38 "my-opera-icon38.png" }]
                        ;;:safari [{:19 "my-safari-icon19.png"}] }
 
-                       :default-icon [{:19 "my-action-icon19.png"}
-                                      {:38 "my-action-icon38.png"}]
+                       ;; FIXME: make sure it comes out as {:19 "file"} in config
+                       :default-icon [{:size "19" :src "my-action-icon19.png"}
+                                      {:size "38" :src "my-action-icon38.png"}]
                        :default-title "example title"
                        :default-popup "popup.html"}
 
-              ;; TODO: Changed this too
-              :background {:scripts "background.js" ;["background.js"]
+              :background {:scripts ["background.js"]
                            :persistent false}
 
               ;; For firefox use inject pageMod at compile time
@@ -38,15 +38,20 @@
                         :js ["special-script.js" "myscript.js"]}
 
               ;; TODO: Changed icons a bit here
+              ;; NOTE: Using this because icons should conform to the correct
+              ;; sizes.
+              ;; TODO: allow for varying icon sizes
               ;; {:chrome {:48  "my-chrome-icon48.png"}
-              :icons {:chrome [{:48 "my-chrome-icon48.png"}]
-                      :firefox [{:48 "my-firefox-icon48.png"}
-                                {:64 "my-firefox-icon64.png"}]
-                      :opera [{:16 "my-opera-icon16.png"}
-                              {:48 "my-opera-icon48.png"}
-                              {:128 "my-opera-icon128.png"}]
-                      :safari [{:48 "Icon.png"}
-                               {:64 "Icon-64.png"}]}
+              :icons {:chrome [{:size "16" :src "my-chrome-icon16.png"}
+                               {:size "48" :src "my-chrome-icon48.png"}
+                               {:size "128" :src "my-chrome-icon128.png"}]
+                      :firefox [{:size "48" :src "icon48.png"}
+                                {:size "64" :src "icon64.png"}]
+                      :opera [{:size "16" :src "icon16.png"}
+                              {:size "48" :src "icon48.png"}
+                              {:size "128" :src "icon128.png"}]
+                      :safari [{:size "48" :src "Icon.png"}
+                               {:size "64" :src "Icon-64.png"}]}
 
               :homepage "https://www.my-cool-site.com"
 
@@ -64,8 +69,10 @@
               :web-accessible-resources ["https://www.my.server.com/stuff.js"
                                          "https://www.another-server.com/woot.img"]
 
-              ;; TODO: Moved this here from :shared
+              :incognito "spanning"
+
               :requirements {:3D {:features ["webgl"]}}
+
               :sandbox {:page ["page1.html"
                                "some-dir/page2.html"]
                         :content-security-policy "sandbox allow-scripts; script-src https://www.google.com"}
@@ -180,7 +187,6 @@
                                :start-script "adblocker.js" ;fired before dom is loaded, usually to block unwanted content (ads)
                                :access-level "Some" ; None/Some/All
                                }
-                      ;; TODO: move this to general
                       }
               }
 
@@ -283,8 +289,8 @@
           :content "index.html"
 
           ;; since manifest.webapp is not in Cordova's config.xml, let's make a special section for it
-          :firefoxos {:icons [{:128 "/img/icon-128.png"} ;FIXME: output this in config.xml too?
-                              {:512 "/img/icon-512.png"}]
+          :firefoxos {:icons [{:size "128" :src "/img/icon-128.png"} ;FIXME: output this in config.xml too?
+                              {:size "512" :src "/img/icon-512.png"}]
                       :type "privileged"
                       ;; Each item can have href, disposition, filters, and return
                       :activities {:browse {:filters {:type ["photos"]}}
@@ -299,7 +305,7 @@
                       ;; All local JS+CSS must be indexed here before dropping <script> and <link rel="stylesheet"... tags into the HTML.
                       ;; No remote JS or CSS, but can use a URI with a postMessage()
                       ;; Privileged apps can use <style> (inline) or style="" tags, certified can't (most never make certified apps anyway)
-                      ;; No inline events (onClick, onMouseOver) use addEventListener() instead
+                      ;; No inline events (onClick, onMouseOver) use addEventListener() instead (React.js does this by default)
                       ;; This CSP only strengthens the default security restrictions of firefoxos (makes security tighter, never looser).
                       ;; NOTE: not including the csp option for now
                       ;; NOTE: no datastore stuff because those are for pre-installed (certified) apps

@@ -12,7 +12,7 @@
             (conj div ^{:key (gensym)} (co/generic-c c)))
     [:div]
     [{:type :multi :data (reagent/cursor [:mobile :firefoxos :icons] config-db) :label "FirefoxOS Icons"
-      :htxt "Icons for FirefoxOS. Give the size in pixels and the relative path to the icon file."
+      :htxt "Icons for FirefoxOS. Give the size in pixels and the relative path to the icon file. 128px is required and including another 512px is recommended too. Check the help link below for other useful sizes."
       :hurl "https://developer.mozilla.org/en-US/Apps/Build/Manifest#icons"
       :multi-c (multi-input-template :vec [{:type :name :label "src"}
                                            {:type :name :label "size"}])}

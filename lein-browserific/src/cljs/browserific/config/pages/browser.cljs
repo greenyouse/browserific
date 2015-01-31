@@ -5,10 +5,6 @@
             [reagent.core :as reagent])
   (:require-macros [browserific.config.macros :refer [multi-input-template]]))
 
-(def ^:private icon-c
-  (multi-input-template :vec [{:type :name :label "src"}
-                              {:type :name :label "size"}]))
-
 (defn browser-page
   "The page for browser options"
   []
@@ -28,17 +24,17 @@
      {:type :multi :data (reagent/cursor [:extensions :action :default-icon] config-db) :label "Action Icons"
       :htxt "Relative path to a icon PNG file for the action. You're encouraged to use both 19px and 38px icons but only one is required. Only for Chrome + Opera."
       :hurl ["https://developer.chrome.com/extensions/browserAction#icon" "https://developer.chrome.com/extensions/pageAction"]
-      :multi-c icon-c}
+      :multi-c (multi-input-template :vec [{:type :name :label "src"}
+                              {:type :name :label "size"}])}
      {:type :name :data (reagent/cursor [:extensions :action :default-title] config-db) :label "Action Title"
       :htxt "A title for the action that will be shown in a tooltip. Only for Chrome + Opera."
       :hurl "https://developer.chrome.com/extensions/browserAction#tooltip"}
      {:type :name :data (reagent/cursor [:extensions :action :default-popup] config-db) :label "Action Popup"
       :htxt "If a browser action has a popup, the popup appears when the user clicks the icon. The popup can contain any HTML contents that you like, and it's automatically sized to fit its contents. Only for Chrome + Opera."
       :hurl "https://developer.chrome.com/extensions/browserAction#popups"}
-     {:type :select :data (reagent/cursor [:extensions :background :scripts] config-db) :label "Background Scripts"
+     {:type :strings :data (reagent/cursor [:extensions :background :scripts] config-db) :label "Background Scripts"
       :htxt "Whether to use a background page or an event page. Only for Chrome + Opera."
-      :hurl ["https://developer.chrome.com/extensions/background_pages" "https://developer.chrome.com/extensions/event_pages"]
-      :options ["eventPage.js" "background.js"]}
+      :hurl ["https://developer.chrome.com/extensions/background_pages" "https://developer.chrome.com/extensions/event_pages"]}
      {:type :checkbox :data (reagent/cursor [:extensions :background :persistent] config-db) :label "Persistent Background?"
       :htxt "Set this to true if using a background page and false for an event page. Only for Chrome + Opera."
       :hurl ["https://developer.chrome.com/extensions/background_pages" "https://developer.chrome.com/extensions/event_pages"]}
@@ -57,19 +53,25 @@
      {:type :multi :data (reagent/cursor [:extensions :icons :chrome] config-db) :label "Chrome Icon"
       :htxt "Icons for Chrome to use. Suggested sizes are 16px, 48px, and 128px (128 is required)."
       :hurl "https://developer.chrome.com/extensions/manifest/icons"
-      :multi-c icon-c}
+      :multi-c (multi-input-template :map [{:type :name :label "16"}
+                                           {:type :name :label "48"}
+                                           {:type :name :label "128"}])}
      {:type :multi :data (reagent/cursor [:extensions :icons :firefox] config-db) :label "Firefox Icon"
       :htxt "Icons for Firefox. Suggested sizes are 32px, 48px, and 64px."
       :hurl "https://developer.mozilla.org/en-US/Add-ons/Install_Manifests#iconURL"
-      :multi-c icon-c}
+      :multi-c (multi-input-template :map [{:type :name :label "48"}
+                                           {:type :name :label "64"}])}
      {:type :multi :data (reagent/cursor [:extensions :icons :opera] config-db) :label "Opera Icon"
       :htxt "Opera icons. Suggested sizes are 16px, 48px, and 128px (128 is required)."
       :hurl "https://dev.opera.com/extensions/manifest.html#icons"
-      :multi-c icon-c}
+      :multi-c (multi-input-template :map [{:type :name :label "16"}
+                                           {:type :name :label "48"}
+                                           {:type :name :label "128"}])}
      {:type :multi :data (reagent/cursor [:extensions :icons :safari] config-db) :label "Safari Icon"
       :htxt "Safari icons. Suggested sizes are 32px, 48px, and 64px."
       :hurl "https://developer.apple.com/library/safari/documentation/Tools/Conceptual/SafariExtensionGuide/UsingExtensionBuilder/UsingExtensionBuilder.html#//apple_ref/doc/uid/TP40009977-CH2-SW1"
-      :multi-c icon-c}
+      :multi-c (multi-input-template :map [{:type :name :label "48"}
+                                           {:type :name :label "64"}])}
      {:type :name :data (reagent/cursor [:extensions :hompage] config-db) :label "Homepage"
       :htxt "A link to the add-on's home page - intended for display in the user interface."
       :hurl "https://developer.mozilla.org/en-US/Add-ons/Install_Manifests#homepageURL"}
@@ -93,6 +95,9 @@
      {:type :strings :data (reagent/cursor [:extensions :web-accessible-resources] config-db) :label "Web Accessible Resources"
       :htxt "An array of strings specifying the paths of packaged resources that are expected to be usable in the context of a web page. These paths are relative to the package root, and may contain wildcards."
       :hurl "https://developer.chrome.com/extensions/manifest/web_accessible_resources"}
+     {:type :select :data (reagent/cursor [:extensions :incognito] config-db) :label "Incognito"
+      :htxt "Use the \"incognito\" manifest key with either \"spanning\" or \"split\" to specify how this extension will behave if allowed to run in incognito mode. Only extensions can choose. Apps will always use the default value for the app type; \"spanning\" for Chrome apps and \"split\" for installable web and legacy packaged apps."
+      :hurl "https://developer.chrome.com/extensions/manifest/incognito"}
      {:type :strings :data (reagent/cursor [:extensions :requirements :3D :features] config-db) :label "3D Features"
       :htxt " Technologies required by the app or extension. Hosting sites such as the Chrome Web Store may use this list to dissuade users from installing apps or extensions that will not work on their computer. Supported requirements currently include \"3D\" and \"plugins\"; additional requirements checks may be added in the future. "
       :hurl "https://developer.chrome.com/extensions/manifest/requirements"}
