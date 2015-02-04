@@ -31,9 +31,11 @@
  ;; The default langauge of your app
  :default-locale "en"
 
- :extensions {
 
-              ;; The platforms to deploy to. Options are:
+
+
+
+ :extensions {;; The platforms to deploy to. Options are:
               ;; chrome, firefox, opera, safari
               :platforms ["firefox" "chrome" "opera" "safari"]
 
@@ -43,11 +45,8 @@
               :private true
 
               :action {:type "browser" ; Either browser or page
-                       :default-icon {:chrome {:19"my-chrome-icon19.png"}
-                                      :firefox {:38 "my-firefox-icon38.png"}
-                                      :opera {:19 "my-opera-icon19.png"
-                                              :38 "my-opera-icon38.png"}
-                                      :safari {:19 "my-safari-icon19.png"}}
+                       :default-icon [{:size "19" :src "my-action-icon19.png"}
+                                      {:size "38" :src "my-action-icon38.png"}]
                        :default-title "example title"
                        :default-popup "popup.html"}
 
@@ -59,13 +58,16 @@
                         :css ["mystyles.css"]
                         :js ["special-script.js" "myscript.js"]}
 
-              :icons {:chrome {:48 "my-chrome-icon48.png"}
-                      :firefox {:48 "my-firefox-icon48.png"
-                                :64 "my-firefox-icon64.png"}
-                      :opera {:16 "my-opera-icon16.png"
-                              :48 "my-opera-icon48.png"
-                              :128 "my-opera-icon128.png"}
-                      :safari {:128 "my-safari-icon128.png"}}
+              :icons {:chrome [{:size "16" :src "my-chrome-icon16.png"}
+                               {:size "48" :src "my-chrome-icon48.png"}
+                               {:size "128" :src "my-chrome-icon128.png"}]
+                      :firefox [{:size "48" :src "icon48.png"}
+                                {:size "64" :src "icon64.png"}]
+                      :opera [{:size "16" :src "icon16.png"}
+                              {:size "48" :src "icon48.png"}
+                              {:size "128" :src "icon128.png"}]
+                      :safari [{:size "48" :src "Icon.png"}
+                               {:size "64" :src "Icon-64.png"}]}
 
               :homepage "https://www.my-cool-site.com"
 
@@ -83,13 +85,20 @@
               :web-accessible-resources ["https://www.my.server.com/stuff.js"
                                          "https://www.another-server.com/woot.img"]
 
+              :incognito "spanning"
+
+              :requirements {:3D {:features ["webgl"]}}
+
+              :sandbox {:page ["page1.html"
+                               "some-dir/page2.html"]
+                        :content-security-policy "sandbox allow-scripts; script-src https://www.google.com"}
+
               :extra {:chrome
                       {:chrome-ui-overrides {:bookmark-ui
-                                             {:remove-button "true"
-                                              :remove-bookmark-shortuct "true"}}
+                                             {:remove-button true
+                                              :remove-bookmark-shortuct true}}
                        :chrome-settings-overrides {:homepage "http://www.homepage.com"
-                                                   :startup-pages ["http://www.startup.com"
-                                                                   "https://www.kittehs.com"]
+                                                   :startup-pages ["http://www.startup.com"]
                                                    :search-provider {:name "name.__MSG_url_domain__"
                                                                      :keyword "keyword.__MSG_url_domain__"
                                                                      :search-url "http://www.foo.__MSG_url_domain__/s?q={searchTerms}"
@@ -104,29 +113,29 @@
                                                                      :alternate-urls ["http://www.moo.__MSG_url_domain__/s?q={searchTerms}"
                                                                                       "http://www.noo.__MSG_url_domain__/s?q={searchTerms}"]
                                                                      :encoding "UTF-8"
+                                                                     :prepopulated-id 2
                                                                      :is-default true}}
                        :chrome-url-overrides {:some-builtin-page "my-bookmarks.html"}
                        :commands {:do-something {:suggested-key "Ctrl+Shift+d"
                                                  :description "does something"}}
                        :current-locale "en_US"
-                       :devtools_page "new-devtool.html"
+                       :devtools-page "new-devtool.html"
                        :externally-connectable {:ids ["aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
                                                       "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"]
                                                 :matches ["https://*.google.com/*"
                                                           "*://*.chromium.org/*"]
-                                                :accepts_tls_channel_id false}
+                                                :accepts-tls-channel-id false}
                        :file-browser-handlers [{:id "upload"
                                                 :default-title "Save to Gallery"
                                                 :file-filters ["filesystem://*.jpg"
                                                                "filesystem://*.png"]}]
-                       :import "" ; TODO: find what :import does
-                       :input-components {:name "My IME" ;; A user visible name.
-                                          :type "ime"  ;; The type of input component.
-                                          :id "my_ime"   ;; The id that will be passed to callbacks
-                                          :description "My Input method for Japanese"  ;; A user visible description
-                                          :language "ja" ;; The primary language this IME is used for
-                                          ;; FIXME: is vector the correct thing for layouts?
-                                          :layouts ["jp::jpn" "us:dvorak:eng"]}  ;; The supported keyboard layouts for this IME,
+                       :import ""
+                       :input-components [{:name "My IME" ; A user visible name.
+                                           :type "ime"  ; The type of input component.
+                                           :id "my_ime"   ; The id that will be passed to callbacks
+                                           :description "My Input method for Japanese"  ; A user visible description
+                                           :language "ja" ; The primary language this IME is used for
+                                           :layouts ["jp::jpn" "us:dvorak:eng"]}]  ; The supported keyboard layouts for this IME,
                        :minimum-chrome-version "15.0"
                        :nacl-modules [{:path "OpenOfficeViewer.nmf"
                                        :mime-type "application/vnd.oasis.opendocument.spreadsheet"}]
@@ -135,45 +144,43 @@
                        :offline-enabled true
                        :omnibox {:keyword "woots"}
                        :optional-permissions ["https://www.google.com"]
-                       :platforms [] ; TODO: find what :platforms does
-                       :script-badge "" ; TODO: find what :script-badge does
+                       :platforms []
+                       :script-badge ""
                        :short-name "test"
-                       :signature "" ; TODO: find what :signature does
-                       :spellcheck true ; TODO: find what :spellcheck does (or how to implement it)
+                       :signature ""
+                       :spellcheck true
                        :storage {:managed-schema "schema.json"}
-                       :system-indicator {} ; TODO: find what :system-indicator does
-                       :tts-engine {:voice-name "Hanz"
-                                    :lange "no"
-                                    :gender "male"
-                                    :event-types ["start" "end" "error"]}}
+                       :system-indicator {}
+                       :tts-engine {:voices [{:voice-name "Hanz"
+                                              :lange "no"
+                                              :gender "male"
+                                              :event-types ["start" "end" "error"]}]}}
 
                       :firefox {:dependencies ["jquery" "D3"]
                                 :lib "some-dir/woot"
                                 :main "not/main"
                                 :name "noSpacesOrPeriods"
                                 :packages "cool/packages"
-                                ;; FIXME: redo the permissions so this isn't so clunky
-                                :permissions ["https://www.wahoo.com/"
-                                              "https://www.yoogle.com/"]
+                                :permissions {:cross-domain-content ["https://www.wahoo.com/"
+                                                                     "https://www.yoogle.com/"]}
                                 :preferences [{:name "some pref"
                                                :title "pref title"
                                                :description "this is a description"
                                                :type "string"
                                                :value "woot woot, I'm a default string"}]
-                                :preferences-branch "some/alt/prefs" ; TODO: make sure this is correct (probly not)
+                                :preferences-branch "some/alt/prefs"
                                 :tests "tests"
                                 :title "even moar titles"
                                 :translators ["frank-the-translator"
                                               "jennie-the-translita"]}
 
-                      ;; FIXME: we can't require users to enter tokens like -.- redo safari later
                       :safari {:bars [{:Filename "bar.html"
                                        :Identifier "some bar id"
                                        :Label "some bar label"}]
                                :context-items [{:Command "console.log(\"woohoo it's context!\");"
                                                 :Identifier "some wooting context id"
                                                 :Title "I show up on hover"}]
-                               :menus [{:Identifier "my cool menu"  ; FIXME: check other menu options!
+                               :menus [{:Identifier "my cool menu"
                                         :Menu-.-Items [{:Command "yourCommand.menu.here();"
                                                         :Disabled true
                                                         :Identifier "my little menu item"
@@ -182,23 +189,19 @@
                                            :Height 200
                                            :Width 200
                                            :Identifier "super neat popover"}]
-                               :toolbar [{:Command "someToolbar.command();" ; tokenize "Toolbar Items"
+                               :toolbar [{:Command "someToolbar.command();"
                                           :Identifier "woot.toolbar"
                                           :Image "toolbar.png"
                                           :Label "some-label"
                                           :Menu "my cool menu"
                                           :Pallete "my cool tool"
                                           :Popover "super neat popover"
-                                          :Tool-.-tip "hover to see this"}] ; tokenize "Tool Tip"
-                               :database-quota 1048576 ;tokenize "Database Quota"
+                                          :Tool-.-tip "hover to see this"}]
+                               :database-quota 1048576
                                :start-script "adblocker.js" ;fired before dom is loaded, usually to block unwanted content (ads)
                                :access-level "Some" ; None/Some/All
                                }
-
-                      :shared {:requirements {:3D {:features ["webgl"]}}
-                               :sandbox {:page ["page1.html"
-                                                "some-dir/page2.html"]
-                                         :content-security-policy "sandbox allow-scripts; script-src https://www.google.com"}}}
+                      }
               }
 
  }

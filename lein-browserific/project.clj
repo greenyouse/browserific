@@ -1,36 +1,34 @@
-(defproject lein-browserific "0.1.0-SNAPSHOT"
-  :description "Pre-processor to convert browserific code to API code"
-  :url "http://example.com/FIXME"
-  :license {:name "Eclipse Public License"
+(defproject lein-browserific "0.1.0-alpha"
+  :description "A Leiningen build tool for unified app development"
+  :url "https://github.com/greenyouse/browserific/lein-browserific"
+  :license {:name "GPL 3.0"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies [[org.clojure/clojure "1.6.0"]
                  [org.clojure/data.xml "0.0.8"]
                  [cheshire "5.3.1"]
                  [instaparse "1.3.4"]
                  [me.raynes/fs "1.4.6"]
-                 [ring "1.3.1"]
+                 [ring "1.3.2"]
                  [fogus/ring-edn "0.2.0"]
                  [compojure "1.2.1"]
                  [com.greenyouse/chenex "0.1.0"]
                  [org.clojure/core.async "0.1.346.0-17112a-alpha"]
                  ;; cljs
-                 [org.clojure/clojurescript "0.0-2371"]
-                 [reagent "0.5.0-alpha"]
-                 ;;[sablono "0.2.22"]
-                 ;;[om "0.8.0-rc1"] ;use reagent instead of om later for refactoring
-                 ;;[om-sync "0.1.1"]
-                 ]
-
+                 [org.clojure/clojurescript "0.0-2371"] ;2760
+                 [reagent "0.5.0-alpha"]]
 
   :eval-in-leiningen true
 
-  :profiles {:dev {:dependencies [[javax.servlet/servlet-api "2.5"]]
-                   :plugins [[lein-cljsbuild "1.0.3"]
-                             [lein-ring "0.8.7"]]}}
+  ;; for chenex
+  :plugins [[com.greenyouse/chenex "0.1.0"]]
+  :profiles {:default [:base :system :user :provided :dev :plugin.chenex/default]
+             :dev {:dependencies [[javax.servlet/servlet-api "2.5"]]
+                   :plugins [[lein-cljsbuild "1.0.4"]
+                             [lein-ring "0.9.1"]]}}
 
   :ring {:handler browserific.config.server/app}
 
-  :browserific {:config "test/whole-config.edn" ;delete this! "test/test-config.edn"
+  :browserific {:config "test/test-config.edn" ; "test/whole-config.edn"
                 :source-paths "test/fake-src"}
 
   :source-paths ["src/clj"]

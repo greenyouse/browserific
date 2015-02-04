@@ -3,6 +3,7 @@
 ;; options. The values for various fields were arbitrarily picked; for
 ;; more information on mobile configurations see the official
 ;; Cordova/PhoneGap documentation at: https://cordova.apache.org/docs/en/4.0.0/
+;; For info on FirefoxOS, see: https://developer.mozilla.org/en-US/Apps/Build/Manifest
 
 
 {;; The name of your application
@@ -30,7 +31,6 @@
 
 
  :mobile {
-
           ;; A unique identifier for your app
           :id "com.example.tester"
 
@@ -44,77 +44,95 @@
           ;; These are various cordova preferences. The pattern is a map with
           ;; :name and :value. For more options see:
           ;; https://cordova.apache.org/docs/en/4.0.0/config_ref_index.md.html#The%20config.xml%20File
-          :preferences [
-                        ;; default means both landscape and portrait are
-                        ;; enabled
-                        {:name "Orientation" :value "default"}
+          :preferences {; global, all platforms
+                        :global {:fullscreen "true"
+                                 :orientation "default"}
 
-                        ;; hides the status bar at the top of the screen
-                        {:name "Fullscreen" :value "true"}
+                        ;; amazon-fire prefs
+                        :amazon-fire {:KeepRunning "false"
+                                      :LoadUrlTimeout "10000"
+                                      :Splashscreen "mySplash"
+                                      :SplashScreenDelay "true"
+                                      :LoadingDialog "Please wait, the data is loading"
+                                      :LoadingPageDialog "Please wait, the data is loading"
+                                      :ErrorUrl "error.html"
+                                      :ShowTitle "true"
+                                      :LogLevel "VERBOSE"}
 
-                        ;; if you don't want the interface to display any
-                        ;; feedback when the user scrolls past the beginning
-                        ;; or end of content
-                        {:name "DisallowOverscroll" :value "true"}
+                        ;; android prefs
+                        :android {:KeepRunning "false"
+                                  :LoadUrlTimeout "10000"
+                                  :Splashscreen "mySplash"
+                                  :SplashScreenDelay "true"
+                                  :InAppBrowserStorageEnabled "true"
+                                  :LoadingDialog "My Title, My Message"
+                                  :LoadingPageDialog "My Title, My Message"
+                                  :ErrorUrl "myErrorPage.html"
+                                  :ShowTitle "true"
+                                  :LogLevel "VERBOSE"
+                                  :AndroidLaunchMode "SingleTop"}
 
-                        ;; sets the app's background color in 4-byte hex
-                        {:name "BackgroundColor" :value "0xff0000ff"}
+                        ;; blackberry prefs
+                        :blackberry {:ChildBrowser "disable"
+                                     :PopupBlocker "enable"
+                                     :WebSecurity "disable"
+                                     :BackgroundColor "0xff0000ff"
+                                     :HideKeyboardFromAccessoryBar "true"}
 
-                        ;; hides the additional toolbar that appears above the
-                        ;; keyboard to help navigate between input forms
-                        {:name "HideKeyboardFormAccessoryBar" :value "true"}]
+                        ;; iOS prefs
+                        :ios {:EnableViewportScale "true"
+                              :MediaPlaybackRequiresUserAction "true"
+                              :AllowInlineMediaPlayback "true"
+                              :BackupWebStorage "local"
+                              :TopActivityIndicator "white"
+                              :KeyboardDisplayRequiresUserAction "false"
+                              :SuppressesIncrementalRendering "true"
+                              :GapBetweenPages "0"
+                              :PageLength "0"
+                              :PaginationBreakingMode "page"
+                              :PaginationMode "unpaginated"
+                              :UIWebViewDecelerationSpeed "fast"
+                              :DisallowOverscroll "true"
+                              :HideKeyboardFromAccessoryBar "true"}
 
-          ;; Here is a list of all the core cordova plugins. More
-          ;; thrid-party are available at: https://build.phonegap.com/plugins
-          :plugins [{:name "org.apache.cordova.battery-status"}
-                    {:name "org.apache.cordova.camera"}
-                    {:name "org.apache.cordova.media-capture"}
-                    {:name "org.apache.cordova.console"}
-                    {:name "org.apache.cordova.contacts"}
-                    {:name "org.apache.cordova.device"}
-                    {:name "org.apache.cordova.device-motion"}
-                    {:name "org.apache.cordova.device-orientation"}
-                    {:name "org.apache.cordova.dialogs"}
-                    {:name "org.apache.cordova.file"}
-                    {:name "org.apache.cordova.file-transfer"}
-                    {:name "org.apache.cordova.geolocation"}
-                    {:name "org.apache.cordova.globalization"}
-                    {:name "org.apache.cordova.inappbrowser"}
-                    {:name "org.apache.cordova.media"}
-                    {:name "org.apache.cordova.network-information"}
-                    {:name "org.apache.cordova.splashscreen"}
-                    {:name "org.apache.cordova.vibration"}]
+                        ;; windows phone prefs
+                        :wp8 {:windows-target-version "8.1"}}
 
           ;; Icon files tend vary for each platform. This is a list of
           ;; all necessary formats:
-          :icons [{:src "icon.png"}
-                  {:src "res/icon/android/icon-36-ldpi.png" :platform "android" :density "ldpi"}
-                  {:src "res/icon/android/icon-48-mdpi.png" :platform "android" :density "mdpi"}
-                  {:src "res/icon/android/icon-72-hdpi.png" :platform "andoird" :density "hdpi"}
-                  {:src "res/icon/android/icon-96-xhdpi.png" :platform "andoird" :density "xhdpi"}
-                  {:src "src/icon/ios/icon-57.png" :platform "ios" :width "54" :height "54"}
-                  {:src "src/icon/ios/icon-72.png" :platform "ios" :width "72" :height "72"}
-                  {:src "src/icon/ios/icon-57-2x.png" :platform "ios" :width "114" :height "114"}
-                  {:src "src/icon/ios/icon-72-2x.png" :platform "ios" :width "144" :height "144"}
-                  {:src "res/icon/blackberry/icon-80.png" :platform "blackberry"}
-                  {:src "res/icon/blackberry/icon-80.png" :platform "blackberry" :state "hover"}
-                  {:src "res/icon/webos/icon-64.png" :platform "webos"}
-                  {:src "res/icon/windows-phone/icon-48.png" :platform "wp8"}
-                  {:src "res/icon/windows-phone/icon-173.png" :platform "wp8"}]
+          :icons {:global {:src "icon.png"}
+                  :android [{:src "res/icon/android/icon-36-ldpi.png" :density "ldpi"}
+                            {:src "res/icon/android/icon-48-mdpi.png" :density "mdpi"}
+                            {:src "res/icon/android/icon-72-hdpi.png" :density "hdpi"}
+                            {:src "res/icon/android/icon-96-xhdpi.png" :density "xhdpi"}]
+
+                  :ios  [{:src "src/icon/ios/icon-57.png" :width "54" :height "54"}
+                         {:src "src/icon/ios/icon-72.png" :width "72" :height "72"}
+                         {:src "src/icon/ios/icon-57-2x.png" :width "114" :height "114"}
+                         {:src "src/icon/ios/icon-72-2x.png" :width "144" :height "144"}]
+
+                  :blackberry [{:src "res/icon/blackberry/icon-80.png"}
+                               {:src "res/icon/blackberry/icon-80.png"}]
+
+                  :wp8 [{:src "res/icon/windows-phone/icon-48.png"}
+                        {:src "res/icon/windows-phone/icon-173.png"}]}
 
           ;; Some platforms take a few seconds to load. For those, a splash
           ;; screen can be used.
-          :splash [{:src "res/screen/android/screen-ldpi-portrait.png" :platform "android" :density "ldpi"}
-                   {:src "res/screen/android/screen-mdpi-portrait.png" :platform "android" :density "mdpi"}
-                   {:src "res/screen/android/screen-hdpi-portrait.png" :platform "android" :densitry "hdpi"}
-                   {:src "res/screen/android/screen-xhdpi-portrait.png" :platform "android" :density "xhdpi"}
-                   {:src "res/screen/blackberry/screen-225.png" :platform "blackberry"}
-                   {:src "res/screen/ios/screen-iphone-portrait.png" :platform "ios" :width "320" :height "480"}
-                   {:src "res/screen/ios/screen-iphone-portrait-2x.png" :platform "ios" :width "640" :height "960"}
-                   {:src "res/screen/ios/screen-iphone-portrait-568h-2x.png" :platform "ios" :width "640" :height "1136"}
-                   {:src "res/screen/ios/screen-ipad-portrait.png" :platform "ios" :width "768" :height "1024"}
-                   {:src "res/screen/ios/screen-ipad-landscape.png" :platform "ios" :width "1024" :height "768"}
-                   {:src "res/screen/windows-phone/screen-portrait.jpg" :platform "wp8" :width "99" :height "99"}]
+          :splash {:android [{:src "res/screen/android/screen-ldpi-portrait.png" :density "port-ldpi"}
+                             {:src "res/screen/android/screen-mdpi-portrait.png" :density "port-mdpi"}
+                             {:src "res/screen/android/screen-hdpi-portrait.png" :density "port-hdpi"}
+                             {:src "res/screen/android/screen-xhdpi-portrait.png" :density "port-xhdpi"}]
+
+                   :blackberry [{:src "res/screen/blackberry/screen-225.png"}]
+
+                   :ios [{:src "res/screen/ios/screen-iphone-portrait.png" :width "320" :height "480"}
+                         {:src "res/screen/ios/screen-iphone-portrait-2x.png" :width "640" :height "960"}
+                         {:src "res/screen/ios/screen-iphone-portrait-568h-2x.png" :width "640" :height "1136"}
+                         {:src "res/screen/ios/screen-ipad-portrait.png" :width "768" :height "1024"}
+                         {:src "res/screen/ios/screen-ipad-landscape.png" :width "1024" :height "768"}]
+
+                   :wp8 [{:src "res/screen/windows-phone/screen-portrait.jpg"}]}
 
           ;; Whitelist of domains that can connect with your app.
           :permissions ["https://www.wahoo.com/"
@@ -125,6 +143,55 @@
           ;; value is index.html, which customarily appears in a project's
           ;; top-level www directory.
           :content "app-file.html"
-          }
 
+          :firefoxos {:icons [{:size "128" :src "/img/icon-128.png"}
+                              {:size "512" :src "/img/icon-512.png"}]
+
+                      ;; The type of app, options are: web, priviledged, and certified
+                      :type "privileged"
+
+                      ;; Each item can have href, disposition, filters, and return
+                      :activities {:browse {:filters {:type ["photos"]}}
+                                   :configure {:filters {:target ["device"]}}
+                                   :pick {:href "./pick.html"
+                                          :disposition "inline"
+                                          :filters {:type ["image/*" "image/jpeg" "image/png"]}
+                                          :returnValue true}}
+                      :appcache "/cache.manifest"
+
+                      ;; Whether to use the default FirefoxOS navigation chrome.
+                      ;; It's best to write your own and make this false.
+                      :chrome {:navigation true}
+
+                      ;; Whether the app launch in full screen mode.
+                      :fullscreen true ; best to keep this as true
+
+                      ;; Domains from which your app can be installed from.
+                      ;; The default is "*". Don't put a trailing slash!
+                      :installs-allowed-from ["https://marketplace.firefox.com"]
+
+                      ;; This specifies optional app manifest fields to override
+                      ;; too, different from general locales
+                      :locales {:it {:name "L' Open Web"
+                                     :description "Eccitante azione di sviluppo web open!"}
+                                :de {:name "Der Open Web"
+                                     :description "Spannende offene Web-Entwicklung-Action!"}}
+
+                      ;;The system messages you allow the app to capture, and the
+                      ;;pages in your app that will display when those messages occur.
+                      :messages [{:telephony-new-call "/dialer/index.html#keyboard-view"}]
+
+                      :orientation ["landscape-primary"]
+
+                      ;; Position for your application.
+                      :origin "app://mywebapp.com" ;must start with "app://"
+                      :permissions {:contacts {:description "Required for autocompletion in the share screen"
+                                               :access "readcreate"}
+                                    :alarms {:description "Required to schedule notifications"}
+                                    :video-capture {:description "Required so I can take cool videos :D"}}
+                      :precompile ["game.js" "database.js"]
+                      :redirects [{:from "http://facebook.com/authentication/success.html"
+                                   :to "/app/main_interface.html"}]
+                      :role "system"
+                      }}
  }

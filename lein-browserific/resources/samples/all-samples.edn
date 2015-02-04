@@ -11,40 +11,39 @@
  :license ""
  :description "FIXME: write this!"
  :default-locale "en"
- :extensions {
+ :extensions {;; The platforms to deploy to. Options are:
+              ;; chrome, firefox, opera, safari
               :platforms ["firefox" "chrome" "opera" "safari"]
 
-              ;; different url addresses can load different namespaces of the app
-              :activations [{:urls ["https://www.example.com/*"
-                                    "http://www.example.com/*"]
-                             :scripts ["example-code.js"]}]
+              ;; Controls whether the app can run in private mode
+              ;; (aka incognito) and interact with private windows
+              ;; and objects.
               :private true
 
               :action {:type "browser" ; Either browser or page
-                       :default-icon {:chrome {:19"my-chrome-icon19.png"}
-                                      :firefox {:38 "my-firefox-icon38.png"}
-                                      :opera {:19 "my-opera-icon19.png"
-                                              :38 "my-opera-icon38.png"}
-                                      :safari {:19 "my-safari-icon19.png"}}
+                       :default-icon [{:size "19" :src "my-action-icon19.png"}
+                                      {:size "38" :src "my-action-icon38.png"}]
                        :default-title "example title"
                        :default-popup "popup.html"}
 
               :background {:scripts ["background.js"]
                            :persistent false}
 
-              ;; For firefox use inject pageMod at compile time
               :content {:matches ["http*www.woot.com"]
                         :exclude ["*bad-stuff*"]
                         :css ["mystyles.css"]
                         :js ["special-script.js" "myscript.js"]}
 
-              :icons {:chrome {:48 "my-chrome-icon48.png"}
-                      :firefox {:48 "my-firefox-icon48.png"
-                                :64 "my-firefox-icon64.png"}
-                      :opera {:16 "my-opera-icon16.png"
-                              :48 "my-opera-icon48.png"
-                              :128 "my-opera-icon128.png"}
-                      :safari {:128 "my-safari-icon128.png"}}
+              :icons {:chrome [{:size "16" :src "my-chrome-icon16.png"}
+                               {:size "48" :src "my-chrome-icon48.png"}
+                               {:size "128" :src "my-chrome-icon128.png"}]
+                      :firefox [{:size "48" :src "icon48.png"}
+                                {:size "64" :src "icon64.png"}]
+                      :opera [{:size "16" :src "icon16.png"}
+                              {:size "48" :src "icon48.png"}
+                              {:size "128" :src "icon128.png"}]
+                      :safari [{:size "48" :src "Icon.png"}
+                               {:size "64" :src "Icon-64.png"}]}
 
               :homepage "https://www.my-cool-site.com"
 
@@ -62,13 +61,20 @@
               :web-accessible-resources ["https://www.my.server.com/stuff.js"
                                          "https://www.another-server.com/woot.img"]
 
+              :incognito "spanning"
+
+              :requirements {:3D {:features ["webgl"]}}
+
+              :sandbox {:page ["page1.html"
+                               "some-dir/page2.html"]
+                        :content-security-policy "sandbox allow-scripts; script-src https://www.google.com"}
+
               :extra {:chrome
                       {:chrome-ui-overrides {:bookmark-ui
-                                             {:remove-button "true"
-                                              :remove-bookmark-shortuct "true"}}
+                                             {:remove-button true
+                                              :remove-bookmark-shortuct true}}
                        :chrome-settings-overrides {:homepage "http://www.homepage.com"
-                                                   :startup-pages ["http://www.startup.com"
-                                                                   "https://www.kittehs.com"]
+                                                   :startup-pages ["http://www.startup.com"]
                                                    :search-provider {:name "name.__MSG_url_domain__"
                                                                      :keyword "keyword.__MSG_url_domain__"
                                                                      :search-url "http://www.foo.__MSG_url_domain__/s?q={searchTerms}"
@@ -83,29 +89,29 @@
                                                                      :alternate-urls ["http://www.moo.__MSG_url_domain__/s?q={searchTerms}"
                                                                                       "http://www.noo.__MSG_url_domain__/s?q={searchTerms}"]
                                                                      :encoding "UTF-8"
+                                                                     :prepopulated-id 2
                                                                      :is-default true}}
                        :chrome-url-overrides {:some-builtin-page "my-bookmarks.html"}
                        :commands {:do-something {:suggested-key "Ctrl+Shift+d"
                                                  :description "does something"}}
                        :current-locale "en_US"
-                       :devtools_page "new-devtool.html"
+                       :devtools-page "new-devtool.html"
                        :externally-connectable {:ids ["aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
                                                       "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"]
                                                 :matches ["https://*.google.com/*"
                                                           "*://*.chromium.org/*"]
-                                                :accepts_tls_channel_id false}
+                                                :accepts-tls-channel-id false}
                        :file-browser-handlers [{:id "upload"
                                                 :default-title "Save to Gallery"
                                                 :file-filters ["filesystem://*.jpg"
                                                                "filesystem://*.png"]}]
-                       :import "" ; TODO: find what :import does
-                       :input-components {:name "My IME" ;; A user visible name.
-                                          :type "ime"  ;; The type of input component.
-                                          :id "my_ime"   ;; The id that will be passed to callbacks
-                                          :description "My Input method for Japanese"  ;; A user visible description
-                                          :language "ja" ;; The primary language this IME is used for
-                                          ;; FIXME: is vector the correct thing for layouts?
-                                          :layouts ["jp::jpn" "us:dvorak:eng"]}  ;; The supported keyboard layouts for this IME,
+                       :import ""
+                       :input-components [{:name "My IME" ; A user visible name.
+                                           :type "ime"  ; The type of input component.
+                                           :id "my_ime"   ; The id that will be passed to callbacks
+                                           :description "My Input method for Japanese"  ; A user visible description
+                                           :language "ja" ; The primary language this IME is used for
+                                           :layouts ["jp::jpn" "us:dvorak:eng"]}]  ; The supported keyboard layouts for this IME,
                        :minimum-chrome-version "15.0"
                        :nacl-modules [{:path "OpenOfficeViewer.nmf"
                                        :mime-type "application/vnd.oasis.opendocument.spreadsheet"}]
@@ -114,45 +120,43 @@
                        :offline-enabled true
                        :omnibox {:keyword "woots"}
                        :optional-permissions ["https://www.google.com"]
-                       :platforms [] ; TODO: find what :platforms does
-                       :script-badge "" ; TODO: find what :script-badge does
+                       :platforms []
+                       :script-badge ""
                        :short-name "test"
-                       :signature "" ; TODO: find what :signature does
-                       :spellcheck true ; TODO: find what :spellcheck does (or how to implement it)
+                       :signature ""
+                       :spellcheck true
                        :storage {:managed-schema "schema.json"}
-                       :system-indicator {} ; TODO: find what :system-indicator does
-                       :tts-engine {:voice-name "Hanz"
-                                    :lange "no"
-                                    :gender "male"
-                                    :event-types ["start" "end" "error"]}}
+                       :system-indicator {}
+                       :tts-engine {:voices [{:voice-name "Hanz"
+                                              :lange "no"
+                                              :gender "male"
+                                              :event-types ["start" "end" "error"]}]}}
 
                       :firefox {:dependencies ["jquery" "D3"]
                                 :lib "some-dir/woot"
                                 :main "not/main"
                                 :name "noSpacesOrPeriods"
                                 :packages "cool/packages"
-                                ;; FIXME: redo the permissions so this isn't so clunky
-                                :permissions ["https://www.wahoo.com/"
-                                              "https://www.yoogle.com/"]
+                                :permissions {:cross-domain-content ["https://www.wahoo.com/"
+                                                                     "https://www.yoogle.com/"]}
                                 :preferences [{:name "some pref"
                                                :title "pref title"
                                                :description "this is a description"
                                                :type "string"
                                                :value "woot woot, I'm a default string"}]
-                                :preferences-branch "some/alt/prefs" ; TODO: make sure this is correct (probly not)
+                                :preferences-branch "some/alt/prefs"
                                 :tests "tests"
                                 :title "even moar titles"
                                 :translators ["frank-the-translator"
                                               "jennie-the-translita"]}
 
-                      ;; FIXME: we can't require users to enter tokens like -.- redo safari later
                       :safari {:bars [{:Filename "bar.html"
                                        :Identifier "some bar id"
                                        :Label "some bar label"}]
                                :context-items [{:Command "console.log(\"woohoo it's context!\");"
                                                 :Identifier "some wooting context id"
                                                 :Title "I show up on hover"}]
-                               :menus [{:Identifier "my cool menu"  ; FIXME: check other menu options!
+                               :menus [{:Identifier "my cool menu"
                                         :Menu-.-Items [{:Command "yourCommand.menu.here();"
                                                         :Disabled true
                                                         :Identifier "my little menu item"
@@ -161,27 +165,22 @@
                                            :Height 200
                                            :Width 200
                                            :Identifier "super neat popover"}]
-                               :toolbar [{:Command "someToolbar.command();" ; tokenize "Toolbar Items"
+                               :toolbar [{:Command "someToolbar.command();"
                                           :Identifier "woot.toolbar"
                                           :Image "toolbar.png"
                                           :Label "some-label"
                                           :Menu "my cool menu"
                                           :Pallete "my cool tool"
                                           :Popover "super neat popover"
-                                          :Tool-.-tip "hover to see this"}] ; tokenize "Tool Tip"
-                               :database-quota 1048576 ;tokenize "Database Quota"
+                                          :Tool-.-tip "hover to see this"}]
+                               :database-quota 1048576
                                :start-script "adblocker.js" ;fired before dom is loaded, usually to block unwanted content (ads)
                                :access-level "Some" ; None/Some/All
                                }
-
-                      :shared {:requirements {:3D {:features ["webgl"]}}
-                               :sandbox {:page ["page1.html"
-                                                "some-dir/page2.html"]
-                                         :content-security-policy "sandbox allow-scripts; script-src https://www.google.com"}}}
+                      }
               }
 
  :mobile {
-
           ;; A unique identifier for your app
           :id "com.example.tester"
 
@@ -195,77 +194,95 @@
           ;; These are various cordova preferences. The pattern is a map with
           ;; :name and :value. For more options see:
           ;; https://cordova.apache.org/docs/en/4.0.0/config_ref_index.md.html#The%20config.xml%20File
-          :preferences [
-                        ;; default means both landscape and portrait are
-                        ;; enabled
-                        {:name "Orientation" :value "default"}
+          :preferences {; global, all platforms
+                        :global {:fullscreen "true"
+                                 :orientation "default"}
 
-                        ;; hides the status bar at the top of the screen
-                        {:name "Fullscreen" :value "true"}
+                        ;; amazon-fire prefs
+                        :amazon-fire {:KeepRunning "false"
+                                      :LoadUrlTimeout "10000"
+                                      :Splashscreen "mySplash"
+                                      :SplashScreenDelay "true"
+                                      :LoadingDialog "Please wait, the data is loading"
+                                      :LoadingPageDialog "Please wait, the data is loading"
+                                      :ErrorUrl "error.html"
+                                      :ShowTitle "true"
+                                      :LogLevel "VERBOSE"}
 
-                        ;; if you don't want the interface to display any
-                        ;; feedback when the user scrolls past the beginning
-                        ;; or end of content
-                        {:name "DisallowOverscroll" :value "true"}
+                        ;; android prefs
+                        :android {:KeepRunning "false"
+                                  :LoadUrlTimeout "10000"
+                                  :Splashscreen "mySplash"
+                                  :SplashScreenDelay "true"
+                                  :InAppBrowserStorageEnabled "true"
+                                  :LoadingDialog "My Title, My Message"
+                                  :LoadingPageDialog "My Title, My Message"
+                                  :ErrorUrl "myErrorPage.html"
+                                  :ShowTitle "true"
+                                  :LogLevel "VERBOSE"
+                                  :AndroidLaunchMode "SingleTop"}
 
-                        ;; sets the app's background color in 4-byte hex
-                        {:name "BackgroundColor" :value "0xff0000ff"}
+                        ;; blackberry prefs
+                        :blackberry {:ChildBrowser "disable"
+                                     :PopupBlocker "enable"
+                                     :WebSecurity "disable"
+                                     :BackgroundColor "0xff0000ff"
+                                     :HideKeyboardFromAccessoryBar "true"}
 
-                        ;; hides the additional toolbar that appears above the
-                        ;; keyboard to help navigate between input forms
-                        {:name "HideKeyboardFormAccessoryBar" :value "true"}]
+                        ;; iOS prefs
+                        :ios {:EnableViewportScale "true"
+                              :MediaPlaybackRequiresUserAction "true"
+                              :AllowInlineMediaPlayback "true"
+                              :BackupWebStorage "local"
+                              :TopActivityIndicator "white"
+                              :KeyboardDisplayRequiresUserAction "false"
+                              :SuppressesIncrementalRendering "true"
+                              :GapBetweenPages "0"
+                              :PageLength "0"
+                              :PaginationBreakingMode "page"
+                              :PaginationMode "unpaginated"
+                              :UIWebViewDecelerationSpeed "fast"
+                              :DisallowOverscroll "true"
+                              :HideKeyboardFromAccessoryBar "true"}
 
-          ;; Here is a list of all the core cordova plugins. More
-          ;; thrid-party are available at: https://build.phonegap.com/plugins
-          :plugins [{:name "org.apache.cordova.battery-status"}
-                    {:name "org.apache.cordova.camera"}
-                    {:name "org.apache.cordova.media-capture"}
-                    {:name "org.apache.cordova.console"}
-                    {:name "org.apache.cordova.contacts"}
-                    {:name "org.apache.cordova.device"}
-                    {:name "org.apache.cordova.device-motion"}
-                    {:name "org.apache.cordova.device-orientation"}
-                    {:name "org.apache.cordova.dialogs"}
-                    {:name "org.apache.cordova.file"}
-                    {:name "org.apache.cordova.file-transfer"}
-                    {:name "org.apache.cordova.geolocation"}
-                    {:name "org.apache.cordova.globalization"}
-                    {:name "org.apache.cordova.inappbrowser"}
-                    {:name "org.apache.cordova.media"}
-                    {:name "org.apache.cordova.network-information"}
-                    {:name "org.apache.cordova.splashscreen"}
-                    {:name "org.apache.cordova.vibration"}]
+                        ;; windows phone prefs
+                        :wp8 {:windows-target-version "8.1"}}
 
           ;; Icon files tend vary for each platform. This is a list of
           ;; all necessary formats:
-          :icons [{:src "icon.png"}
-                  {:src "res/icon/android/icon-36-ldpi.png" :platform "android" :density "ldpi"}
-                  {:src "res/icon/android/icon-48-mdpi.png" :platform "android" :density "mdpi"}
-                  {:src "res/icon/android/icon-72-hdpi.png" :platform "andoird" :density "hdpi"}
-                  {:src "res/icon/android/icon-96-xhdpi.png" :platform "andoird" :density "xhdpi"}
-                  {:src "src/icon/ios/icon-57.png" :platform "ios" :width "54" :height "54"}
-                  {:src "src/icon/ios/icon-72.png" :platform "ios" :width "72" :height "72"}
-                  {:src "src/icon/ios/icon-57-2x.png" :platform "ios" :width "114" :height "114"}
-                  {:src "src/icon/ios/icon-72-2x.png" :platform "ios" :width "144" :height "144"}
-                  {:src "res/icon/blackberry/icon-80.png" :platform "blackberry"}
-                  {:src "res/icon/blackberry/icon-80.png" :platform "blackberry" :state "hover"}
-                  {:src "res/icon/webos/icon-64.png" :platform "webos"}
-                  {:src "res/icon/windows-phone/icon-48.png" :platform "wp8"}
-                  {:src "res/icon/windows-phone/icon-173.png" :platform "wp8"}]
+          :icons {:global {:src "icon.png"}
+                  :android [{:src "res/icon/android/icon-36-ldpi.png" :density "ldpi"}
+                            {:src "res/icon/android/icon-48-mdpi.png" :density "mdpi"}
+                            {:src "res/icon/android/icon-72-hdpi.png" :density "hdpi"}
+                            {:src "res/icon/android/icon-96-xhdpi.png" :density "xhdpi"}]
+
+                  :ios  [{:src "src/icon/ios/icon-57.png" :width "54" :height "54"}
+                         {:src "src/icon/ios/icon-72.png" :width "72" :height "72"}
+                         {:src "src/icon/ios/icon-57-2x.png" :width "114" :height "114"}
+                         {:src "src/icon/ios/icon-72-2x.png" :width "144" :height "144"}]
+
+                  :blackberry [{:src "res/icon/blackberry/icon-80.png"}
+                               {:src "res/icon/blackberry/icon-80.png"}]
+
+                  :wp8 [{:src "res/icon/windows-phone/icon-48.png"}
+                        {:src "res/icon/windows-phone/icon-173.png"}]}
 
           ;; Some platforms take a few seconds to load. For those, a splash
           ;; screen can be used.
-          :splash [{:src "res/screen/android/screen-ldpi-portrait.png" :platform "android" :density "ldpi"}
-                   {:src "res/screen/android/screen-mdpi-portrait.png" :platform "android" :density "mdpi"}
-                   {:src "res/screen/android/screen-hdpi-portrait.png" :platform "android" :densitry "hdpi"}
-                   {:src "res/screen/android/screen-xhdpi-portrait.png" :platform "android" :density "xhdpi"}
-                   {:src "res/screen/blackberry/screen-225.png" :platform "blackberry"}
-                   {:src "res/screen/ios/screen-iphone-portrait.png" :platform "ios" :width "320" :height "480"}
-                   {:src "res/screen/ios/screen-iphone-portrait-2x.png" :platform "ios" :width "640" :height "960"}
-                   {:src "res/screen/ios/screen-iphone-portrait-568h-2x.png" :platform "ios" :width "640" :height "1136"}
-                   {:src "res/screen/ios/screen-ipad-portrait.png" :platform "ios" :width "768" :height "1024"}
-                   {:src "res/screen/ios/screen-ipad-landscape.png" :platform "ios" :width "1024" :height "768"}
-                   {:src "res/screen/windows-phone/screen-portrait.jpg" :platform "wp8" :width "99" :height "99"}]
+          :splash {:android [{:src "res/screen/android/screen-ldpi-portrait.png" :density "port-ldpi"}
+                             {:src "res/screen/android/screen-mdpi-portrait.png" :density "port-mdpi"}
+                             {:src "res/screen/android/screen-hdpi-portrait.png" :density "port-hdpi"}
+                             {:src "res/screen/android/screen-xhdpi-portrait.png" :density "port-xhdpi"}]
+
+                   :blackberry [{:src "res/screen/blackberry/screen-225.png"}]
+
+                   :ios [{:src "res/screen/ios/screen-iphone-portrait.png" :width "320" :height "480"}
+                         {:src "res/screen/ios/screen-iphone-portrait-2x.png" :width "640" :height "960"}
+                         {:src "res/screen/ios/screen-iphone-portrait-568h-2x.png" :width "640" :height "1136"}
+                         {:src "res/screen/ios/screen-ipad-portrait.png" :width "768" :height "1024"}
+                         {:src "res/screen/ios/screen-ipad-landscape.png" :width "1024" :height "768"}]
+
+                   :wp8 [{:src "res/screen/windows-phone/screen-portrait.jpg"}]}
 
           ;; Whitelist of domains that can connect with your app.
           :permissions ["https://www.wahoo.com/"
@@ -276,13 +293,63 @@
           ;; value is index.html, which customarily appears in a project's
           ;; top-level www directory.
           :content "app-file.html"
-          }
+
+          :firefoxos {:icons [{:size "128" :src "/img/icon-128.png"}
+                              {:size "512" :src "/img/icon-512.png"}]
+
+                      ;; The type of app, options are: web, priviledged, and certified
+                      :type "privileged"
+
+                      ;; Each item can have href, disposition, filters, and return
+                      :activities {:browse {:filters {:type ["photos"]}}
+                                   :configure {:filters {:target ["device"]}}
+                                   :pick {:href "./pick.html"
+                                          :disposition "inline"
+                                          :filters {:type ["image/*" "image/jpeg" "image/png"]}
+                                          :returnValue true}}
+                      :appcache "/cache.manifest"
+
+                      ;; Whether to use the default FirefoxOS navigation chrome.
+                      ;; It's best to write your own and make this false.
+                      :chrome {:navigation true}
+
+                      ;; Whether the app launch in full screen mode.
+                      :fullscreen true ; best to keep this as true
+
+                      ;; Domains from which your app can be installed from.
+                      ;; The default is "*". Don't put a trailing slash!
+                      :installs-allowed-from ["https://marketplace.firefox.com"]
+
+                      ;; This specifies optional app manifest fields to override
+                      ;; too, different from general locales
+                      :locales {:it {:name "L' Open Web"
+                                     :description "Eccitante azione di sviluppo web open!"}
+                                :de {:name "Der Open Web"
+                                     :description "Spannende offene Web-Entwicklung-Action!"}}
+
+                      ;;The system messages you allow the app to capture, and the
+                      ;;pages in your app that will display when those messages occur.
+                      :messages [{:telephony-new-call "/dialer/index.html#keyboard-view"}]
+
+                      :orientation ["landscape-primary"]
+
+                      ;; Position for your application.
+                      :origin "app://mywebapp.com" ;must start with "app://"
+                      :permissions {:contacts {:description "Required for autocompletion in the share screen"
+                                               :access "readcreate"}
+                                    :alarms {:description "Required to schedule notifications"}
+                                    :video-capture {:description "Required so I can take cool videos :D"}}
+                      :precompile ["game.js" "database.js"]
+                      :redirects [{:from "http://facebook.com/authentication/success.html"
+                                   :to "/app/main_interface.html"}]
+                      :role "system"
+                      }}
 
  :desktop {
 
            ;; The platforms to deploy to. Options are:
            ;; linux, osx, windows
-           :platforms ["linux32" "linux64" "osx32" "osx64" "windows" ]
+           :platforms ["linux32" "linux64" "osx32" "osx64" "windows32" "windows64"]
 
            ;; The app's starting page.
            :main "init.html"

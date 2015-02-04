@@ -39,14 +39,14 @@
   [struct items gens]
   (if (= :map struct)
     `[(if (nil? ~'@data)
-        (t/add-item #(reset! % %2) ~'data {}))
-      (t/add-item #(swap! % assoc %2 %3)
+        (browserific.config.trans/add-item #(reset! % %2) ~'data {}))
+      (browserific.config.trans/add-item #(swap! % assoc %2 %3)
         ~'data ~'v1 ~(co-reduce (fn [m i g]
                                   (assoc m
                                     (keyword (:label i))
                                     (swap g "v")))
                        {} (rest items) (rest gens)))]
-    `[(t/add-item #(swap! % conj %2)
+    `[(browserific.config.trans/add-item #(swap! % conj %2)
         ~'data ~(co-reduce (fn [m i g]
                              (assoc m
                                (keyword (:label i))
@@ -62,9 +62,9 @@
   [struct]
   (if (= :map struct)
     `(fn [~'k]
-       (t/rm-item #(swap! % dissoc %2) ~'data ~'k))
+       (browserific.config.trans/rm-item #(swap! % dissoc %2) ~'data ~'k))
     `(fn [~'item]
-       (t/rm-item #(swap! % (fn [~'d] (remove (fn [~'x] (= ~'item ~'x)) ~'d)))
+       (browserific.config.trans/rm-item #(swap! % (fn [~'d] (remove (fn [~'x] (= ~'item ~'x)) ~'d)))
          ~'data))))
 
 (comment (rm-cursor :map))

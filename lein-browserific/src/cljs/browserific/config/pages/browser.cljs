@@ -1,6 +1,5 @@
 (ns browserific.config.pages.browser
   (:require [browserific.config.db :refer [config-db]]
-            [browserific.config.trans :as t]
             [browserific.config.components :as co]
             [reagent.core :as reagent])
   (:require-macros [browserific.config.macros :refer [multi-input-template]]))

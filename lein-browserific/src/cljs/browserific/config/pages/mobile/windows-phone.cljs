@@ -1,6 +1,5 @@
 (ns browserific.config.pages.mobile.windows-phone
   (:require [browserific.config.db :refer [config-db]]
-            [browserific.config.trans :as t]
             [browserific.config.components :as co]
             [reagent.core :as reagent])
   (:require-macros [browserific.config.macros :refer [multi-input-template]]))
@@ -15,7 +14,7 @@
       :htxt "Preferences for Windows Phone 8."
       :hurl "https://cordova.apache.org/docs/en/4.0.0/guide_platforms_win8_index.md.html"
       :prefs
-      [{:type :select :data (reagent/cursor [:mobile :preferences :wp8] config-db) :label "Windows Target Version"
+      [{:type :select :data (reagent/cursor [:mobile :preferences :windows-target-version] config-db) :label "Windows Target Version"
         :help "Only for Window's Phone 8.1. Upgrades the build command to target Windows Phone 8.1 and Windows 8.1 (but you should use nw.js for that :p)."
         :options ["8.0" "8.1"]}]}
      {:type :multi :data (reagent/cursor [:mobile :icons :wp8] config-db) :label "Windows Phone 8 Icons"

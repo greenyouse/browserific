@@ -31,7 +31,7 @@
 
            ;; The platforms to deploy to. Options are:
            ;; linux, osx, windows
-           :platforms ["linux32" "linux64" "osx32" "osx64" "windows" ]
+           :platforms ["linux32" "linux64" "osx32" "osx64" "windows32" "windows64"]
 
            ;; The app's starting page.
            :main "init.html"

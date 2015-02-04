@@ -8,13 +8,9 @@
             [clojure.java.io :as io]
             [leiningen.core.main :as l]))
 
-;; TODO: Certain build options must be injected at compile time. Generate
-;; a data file somewhere (dot file?) to keep track of what needs injecting.
-;; ex. content-scripts for Firefox
-;;
-;; Got the injection capability now. Don't forget to add this. It would probably make
-;; sense to write special, inner-transition functions in browserific (library) and just
-;; call them during the chenex compilation.
+;; TODO: Not sure if necessary but some things, such as Firefox Extension stuff,
+;; can be injected with chenex's inner transformations. Error checking for
+;; feature expressions could also be done using inner transformations.
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Helper Fns
@@ -32,7 +28,7 @@ firefox, chrome, opera, safari")))
     (doseq [desktop desktops]
       (checker desktop u/desktop
                (str "Browserific Error: desktop system " desktop " not supported, options are:
-linux32, linux64, osx32, osx64, windows")))
+linux32, linux64, osx32, osx64, windows32, windows64")))
     (doseq [mobile mobiles]
       (checker mobile u/mobile
                (str "Browserific Error: mobile system " mobile " not supported, options are:
@@ -45,6 +41,13 @@ linux32, linux64, osx32, osx64, windows")))
 ;; FIXME: This still feels yucky because my transformations are tied closely to
 ;; my data structure. There should be a more abstract, data-independent way to
 ;; handle this. That would be much better for the long term.
+(defn- nested-options
+  "Adds a nested option to the output config file."
+  [[a ad d :as ks] val acc]
+  (if (nil? d)
+    (assoc-in acc [a ad] val) ; single nested
+    (assoc-in acc [a ad d] val))) ; double nested
+
 (defn- icon-parser
   "Formats the icons for output."
   [type name val acc]
@@ -54,14 +57,6 @@ linux32, linux64, osx32, osx64, windows")))
       (nested-options [type (second name)] v acc)
       (assoc acc name v))))
 
-(defn- nested-options
-  "Adds a nested option to the output config file."
-  [[a ad d :as ks] val acc]
-  (if (nil? d)
-    (assoc-in acc [a ad] val) ; single nested
-    (assoc-in acc [a ad d] val))) ; double nested
-
-;; FIXME: filter out empty values
 (defn- parse-configs [[[k v] d :as item] type acc]
   (let [val (if (meta v) (first v)  ;required opts have tagged metadata
               (get-config v))
@@ -124,8 +119,8 @@ linux32, linux64, osx32, osx64, windows")))
 (defn- chrome-config
   "Creates the chrome extension config file using config.edn"
   []
-  (io/make-parents "resources/extension/chrome/manifest.json")
-  (spit "resources/extension/chrome/manifest.json"
+  (io/make-parents (str "resources/extension/chrome/" u/project-name "/manifest.json"))
+  (spit (str "resources/extension/chrome/" u/project-name "/manifest.json")
         (js/generate-string
          (config-reader
           {:name [:name]
@@ -185,8 +180,8 @@ linux32, linux64, osx32, osx64, windows")))
 (defn- firefox-config
   "Creates the firefox config file using config.edn"
   []
-  (io/make-parents "resources/extension/firefox/package.json")
-  (spit "resources/extension/firefox/package.json"
+  (io/make-parents (str "resources/extension/firefox/" u/project-name "/package.json"))
+  (spit (str "resources/extension/firefox/" u/project-name "/package.json")
         (js/generate-string
          (config-reader
           {:author [:author :author-name]
@@ -214,8 +209,8 @@ linux32, linux64, osx32, osx64, windows")))
 (defn- opera-config
   "Creates the opera config file using config.edn"
   []
-  (io/make-parents "resources/extension/opera/manifest.json")
-  (spit "resources/extension/opera/manifest.json"
+  (io/make-parents (str "resources/extension/opera/" u/project-name "/manifest.json"))
+  (spit (str "resources/extension/opera/" u/project-name "/manifest.json")
         (js/generate-string
          (config-reader
           {:name [:name]
@@ -247,13 +242,12 @@ linux32, linux64, osx32, osx64, windows")))
          {:pretty true})))
 
 ;; TODO: make sure that plist output order is not imporant
-;; FIXME: get icons here!
 (defn- safari-config
   "Creates the safari config file using config.edn"
   []
-  (io/make-parents "resources/extension/safari/Info.plist")
+  (io/make-parents (str "resources/extension/safari/" u/project-name "/Info.plist"))
   (let [doctype "<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">"]
-    (spit "resources/extension/safari/Info.plist"
+    (spit (str "resources/extension/safari/" u/project-name "/Info.plist")
           (st/replace
            (xml/indent-str
             (xml/sexp-as-element
@@ -270,6 +264,8 @@ linux32, linux64, osx32, osx64, windows")))
                 :Chrome!Context-.-Menu-.-Items [:extensions :extra :safari :context-items]
                 :Chrome!Database-.-Quota [:extensions :extra :safari :database-quota]
                 :Chrome!Menus [:extensions :extra :safari :menus]
+                :Chrome!Popovers [:extensions :extra :safari :popovers]
+                :Chrome!Global-.-Page [:extensions :extra :safari :global-page]
                 :Content!Blacklist [:extensions :content :exclude]
                 :Content!Scripts!Start[:extensions :extra :safari :start-script]
                 :Content!Scripts!End [:extensions :content :js]
@@ -284,47 +280,57 @@ linux32, linux64, osx32, osx64, windows")))
                 :Website [:extensions :homepage]}))))
            "?>" (str "?>\n" doctype "\n")))))
 
-(defn- mobile-prefs
-  "Picks out mobile preferences according to the vendor"
-  [vendor]
-   (reduce #(conj % [:preference %2])
-           [:platform {:name vendor}]
-           (into (get-config [:mobile :preferences :global])
-             (get-config [:mobile :preferences (keyword vendor)]))))
-
-;; FIXME: update the prefs, icons, and splash
 ;;; Mobile Configs
+
+(defn get-image
+  "Returns the icons or splashes for some platform."
+  [type plat]
+  (into [:platform {:name plat}]
+    (if (= type :icon)
+      (map #(conj [:icon] %)
+        (get-config [:mobile :icons (keyword plat)]))
+      (map #(conj [:splash] %)
+        (get-config [:mobile :splash (keyword plat)])))))
+
+;; FIXME: make each option output nothing if nil
 (defn- mobile-config
   "Outputs the mobile config file from the config.edn data"
   [prefs]
   (let [loc (str "resources/mobile/" u/project-name "/config.xml")]
     (io/make-parents loc)
     (spit loc
-          (xml/indent-str (xml/sexp-as-element
-                           (-> [:widget {:id (get-config [:mobile :id])
-                                         :version (get-config [:version])
-                                         :xmlns "http://www.w3.org/ns/widgets"
-                                         :xmlns:cdv "http://cordova.apache.org/ns/1.0"}
-                                [:name (get-config [:name])]
-                                [:description (get-config [:description])]
-                                [:author {:email (get-config [:author :email])
-                                          :href (get-config [:author :url])}
-                                 (get-config [:author :author-name])]
-                                [:content {:src (get-config [:mobile :content])}]]
-                               (into (map #(identity [:access {:origin %}]) (get-config [:mobile :permissions])))
-                               (into prefs)
-                               (into (reduce #(conj % [:cdv:plugin %2])
-                                             [] (get-config [:mobile :plugins])))
-                               (into (reduce #(conj % [:icon %2])
-                                             [] (get-config [:mobile :icons])))
-                               (into (reduce #(conj % [:splash %2])
-                                             [] (get-config [:mobile :splash])))))))))
+      (xml/indent-str
+        (xml/sexp-as-element
+          (-> [:widget {:id (get-config [:mobile :id])
+                        :version (get-config [:version])
+                        :xmlns "http://www.w3.org/ns/widgets"
+                        :xmlns:cdv "http://cordova.apache.org/ns/1.0"}
+               [:name (get-config [:name])]
+               [:description (get-config [:description])]
+               [:author {:email (get-config [:author :email])
+                         :href (get-config [:author :url])}
+                (get-config [:author :author-name])]
+               [:content {:src (get-config [:mobile :content])}]
+               [:icon (get-config [:mobile :icons :global])]]
+            (into (map #(conj [:access] {:origin %})
+                    (get-config [:mobile :permissions])))
+            (into
+              (map (fn [[name val]]
+                     [:preference {:name (subs (str name) 1) :value val}])
+                (get-config [:mobile :preferences])))
+            (into (map #(get-image :icon %) ["amazon-fire" "android"
+                                             "blackberry" "ios" "tizen" "wp8"]))
+            (into (map #(get-image :splash %) ["amazon-fire" "android"
+                                               "blackberry" "ios" "wp8"]))))))))
+
 
 (defn firefoxos-config
   "Creates the manifest.webapp for firefoxos"
   []
-  (io/make-parents (str "resources/mobile/" u/project-name "/platforms/firefoxos/package.json"))
-  (spit (str "resources/mobile/" u/project-name "/platforms/firefoxos/package.json")
+  (io/make-parents (str "resources/mobile/" u/project-name
+                     "/merges/firefoxos/manifest.webapp"))
+  (spit (str "resources/mobile/" u/project-name
+          "/merges/firefoxos/manifest.webapp")
     (js/generate-string
       (config-reader
         {:name [:name]
@@ -365,12 +371,11 @@ linux32, linux64, osx32, osx64, windows")))
            :main [:desktop :main]
            :nodejs [:desktop :nodejs]
            :node-main [:desktop :node-main]
-           :single-instance [:desktop :single-instance]
-           :user!%name [:desktop :user :name]
-           :user!%ver [:desktop :user :ver]
-           :user!%nwver [:desktop :user :nwver]
-           :user!%webkit_ver [:desktop :user :webkit-ver]
-           :user!%osinfo [:desktop :user :osinfo]
+           :user!%name [:desktop :user-agent :name]
+           :user!%ver [:desktop :user-agent :ver]
+           :user!%nwver [:desktop :user-agent :nwver]
+           :user!%webkit_ver [:desktop :user-agent :webkit-ver]
+           :user!%osinfo [:desktop :user-agent :osinfo]
            :node-remote [:desktop :permissions]
            :chromium-args [:desktop :chromium-args]
            :js-flags [:desktop :js-flags]
@@ -399,7 +404,7 @@ linux32, linux64, osx32, osx64, windows")))
            :window!frame [:desktop :window :frame]
            :window!show [:desktop :window :show]
            :window!kiosk [:desktop :window :kiosk]
-           :webkit!plugin [:desktop :webkit :plugins]
+           :webkit!plugin [:desktop :webkit :plugin]
            :webkit!java[:desktop :webkit :java]
            :webkit!page-cache [:desktop :webkit :page-cache]})
          {:pretty true})))
@@ -422,18 +427,16 @@ linux32, linux64, osx32, osx64, windows")))
        (= vendor "firefox") (firefox-config)
        (= vendor "opera") (opera-config)
        (= vendor "safari") (safari-config)))
-    (let [prefs (->> mobile
-                  (reduce #(conj % (mobile-prefs %2)) [])
-                  (filter not-empty))]
-      (doseq [vendor mobile]
-        (cond
-          (= vendor "firefoxos") (firefoxos-config)
-          :else
-          (mobile-config prefs))))
+    (doseq [vendor mobile]
+      (cond
+        (= vendor "firefoxos") (firefoxos-config)
+        :else
+        (mobile-config vendor)))
     (doseq [vendor desktops]
       (cond
         (= vendor "linux32" ) (desktop-config "linux32")
         (= vendor "linux64" ) (desktop-config "linux64")
         (= vendor "osx32") (desktop-config "osx32")
         (= vendor "osx64") (desktop-config "osx64")
-        (= vendor "windows") (desktop-config "windows")))))
+        (= vendor "windows32") (desktop-config "windows32")
+        (= vendor "windows64") (desktop-config "windows64")))))

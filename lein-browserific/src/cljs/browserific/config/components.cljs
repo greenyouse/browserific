@@ -58,7 +58,7 @@
         ["Mobile" (menu [:ul]
                     [["Mobile-General"] ["Amazon-Fire"]
                      ["Android"] ["Blackberry"]
-                     ["iOS"] ["Windows-Phone"] ["FirefoxOS"]])]
+                     ["iOS"] ["Tizen"] ["Windows-Phone"] ["FirefoxOS"]])]
         ["Browsers" (menu [:ul]
                       ;; Opera doesn't have anything special so no page
                       [["Browser-General"] ["Chrome"]

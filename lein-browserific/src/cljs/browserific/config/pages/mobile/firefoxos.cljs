@@ -1,6 +1,5 @@
 (ns browserific.config.pages.mobile.firefoxos
   (:require [browserific.config.db :refer [config-db]]
-            [browserific.config.trans :as t]
             [browserific.config.components :as co]
             [reagent.core :as reagent])
   (:require-macros [browserific.config.macros :refer [multi-input-template]]))
@@ -22,7 +21,7 @@
      ;; NOTE: Web Activity filters aren't 100% implemented, they only allow for strings,
      ;;  not used very much though (low priority)
      {:type :multi :data (reagent/cursor [:mobile :firefoxos :activities] config-db) :label "FirefoxOS Activities"
-      :htxt "Activities allow apps to either create new functions that are callable by other apps (called \"activity handlers\") or consume functions of other apps. The form above allow you to register new activity handlers."
+      :htxt "Activities allow apps to either create new functions that are callable by other apps (called \"activity handlers\") or consume functions of other apps. The form above allows you to register new activity handlers."
       :hurl ["https://developer.mozilla.org/en-US/docs/Web/API/Web_Activities#App_manifest_%28a.k.a._declaration_registration%29" "https://hacks.mozilla.org/2013/01/introducing-web-activities/"]
       :multi-c (multi-input-template :map [{:type :name :label "activity-name"}
                                            {:type :name :label "href"}

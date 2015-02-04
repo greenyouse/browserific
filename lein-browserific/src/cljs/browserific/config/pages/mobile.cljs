@@ -22,12 +22,12 @@
       :htxt "These global preferences apply to all platforms."
       :hurl "https://cordova.apache.org/docs/en/4.0.0/config_ref_index.md.html#The%20config.xml%20File"
       :prefs
-      [{:type :checkbox :data (reagent/cursor [:mobile :preferences :global :fullscreen] config-db) :label "Fullscreen?"
+      [{:type :checkbox :data (reagent/cursor [:mobile :preferences :fullscreen] config-db) :label "Fullscreen?"
         :help "Fullscreen allows you to hide the status bar at the top of the screen."
         :default false}
-       ;;FIXME: use radio buttons for multiple choice
-       {:type :name :data (reagent/cursor [:mobile :preferences :global :orientation] config-db) :label "Orientation"
-        :help "Options for Orientation are: default, landscape, or portrait"}]}
+       {:type :select :data (reagent/cursor [:mobile :preferences :orientation] config-db) :label "Orientation"
+        :help "Allows you to lock orientation and prevent the interface from rotating in response to changes in orientation. Default means both landscape and portrait."
+        :options ["default" "landscape" "portrait"]}]}
      {:type :name :data (reagent/cursor [:mobile :icons :global] config-db) :label "Icons"
       :htxt "Enter the relative path to your icon. This is a global icon and can be used for all your platforms and is the default if none other is specified. Other icons can be created for each platform for more exact sizes."
       :hurl "https://cordova.apache.org/docs/en/4.0.0/config_ref_images.md.html#Icons%20and%20Splash%20Screens"}

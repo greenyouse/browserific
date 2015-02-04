@@ -15,14 +15,6 @@
               :private true
 
               :action {:type "browser" ; Either browser or page
-                       ;; TODO: Changed icons here
-                       ;; {:chrome [{:19 "my-chrome-icon19.png"}]
-                       ;; :firefox [{:38 "my-firefox-icon38.png"}]
-                       ;;  :opera [{:19 "my-opera-icon19.png"
-                       ;;  :38 "my-opera-icon38.png" }]
-                       ;;:safari [{:19 "my-safari-icon19.png"}] }
-
-                       ;; FIXME: make sure it comes out as {:19 "file"} in config
                        :default-icon [{:size "19" :src "my-action-icon19.png"}
                                       {:size "38" :src "my-action-icon38.png"}]
                        :default-title "example title"
@@ -37,11 +29,6 @@
                         :css ["mystyles.css"]
                         :js ["special-script.js" "myscript.js"]}
 
-              ;; TODO: Changed icons a bit here
-              ;; NOTE: Using this because icons should conform to the correct
-              ;; sizes.
-              ;; TODO: allow for varying icon sizes
-              ;; {:chrome {:48  "my-chrome-icon48.png"}
               :icons {:chrome [{:size "16" :src "my-chrome-icon16.png"}
                                {:size "48" :src "my-chrome-icon48.png"}
                                {:size "128" :src "my-chrome-icon128.png"}]
@@ -159,7 +146,6 @@
                                 :translators ["frank-the-translator"
                                               "jennie-the-translita"]}
 
-                      ;; FIXME: we can't require users to enter tokens like -.- redo safari later
                       :safari {:bars [{:Filename "bar.html"
                                        :Identifier "some bar id"
                                        :Label "some bar label"}]
@@ -171,7 +157,7 @@
                                                         :Disabled true
                                                         :Identifier "my little menu item"
                                                         :Title "menu item woot"}]}]
-                               :popovers [{:Filename "popover.html"
+                               :popovers [{:Filename "popup.html"
                                            :Height 200
                                            :Width 200
                                            :Identifier "super neat popover"}]
@@ -184,8 +170,9 @@
                                           :Popover "super neat popover"
                                           :Tool-.-tip "hover to see this"}] ; tokenize "Tool Tip"
                                :database-quota 1048576 ;tokenize "Database Quota"
-                               :start-script "adblocker.js" ;fired before dom is loaded, usually to block unwanted content (ads)
+                               :start-scripts ["adblocker.js"] ;fired before dom is loaded, usually to block unwanted content (ads)
                                :access-level "Some" ; None/Some/All
+                               :global-page "global.html"
                                }
                       }
               }
@@ -196,78 +183,81 @@
           :platforms ["amazon-fire" "android" "blackberry" "firefoxos" "ios"
                       "ubuntu" "wp7" "wp8" "tizen"]
 
-          :preferences {; global, all platforms
-                        :global {:fullscreen "true"
-                                 :orientation "default"}
+          :preferences {;; global
+                        :fullscreen "true"
+                        :orientation "default"
 
-                        ;; amazon-fire prefs
-                        :amazon-fire {:KeepRunning "false"
-                                      :LoadUrlTimeout "10000"
-                                      :Splashscreen "mySplash"
-                                      :SplashScreenDelay "true"
-                                      :LoadingDialog "Please wait, the data is loading"
-                                      :LoadingPageDialog "Please wait, the data is loading"
-                                      :ErrorUrl "error.html"
-                                      :ShowTitle "true"
-                                      :LogLevel "VERBOSE"}
+                        ;; Amazon-Fire + Android
+                        :KeepRunning "false"
+                        :LoadUrlTimeout "10000"
+                        :Splashscreen "mySplash"
+                        :SplashScreenDelay "true"
+                        :LoadingDialog "My Title, My Message"
+                        :LoadingPageDialog "My Title, My Message"
+                        :ErrorUrl "myErrorPage.html"
+                        :ShowTitle "true"
+                        :LogLevel "VERBOSE"
 
-                        ;; android prefs
-                        :android {:KeepRunning "false"
-                                  :LoadUrlTimeout "10000"
-                                  :Splashscreen "mySplash"
-                                  :SplashScreenDelay "true"
-                                  :InAppBrowserStorageEnabled "true"
-                                  :LoadingDialog "My Title, My Message"
-                                  :LoadingPageDialog "My Title, My Message"
-                                  :ErrorUrl "myErrorPage.html"
-                                  :ShowTitle "true"
-                                  :LogLevel "VERBOSE"
-                                  :AndroidLaunchMode "SingleTop"}
+                        ;; Android only
+                        :InAppBrowserStorageEnabled "true"
+                        :AndroidLaunchMode "SingleTop"
 
-                        ;; blackberry prefs
-                        :blackberry {:ChildBrowser "disable"
-                                     :PopupBlocker "enable"
-                                     :WebSecurity "disable"
-                                     :BackgroundColor "0xff0000ff"
-                                     :HideKeyboardFromAccessoryBar "true"}
+                        ;; Android + Blackberry
+                        :BackgroundColor "0xff0000ff"
 
-                        ;; iOS prefs
-                        :ios {:EnableViewportScale "true"
-                              :MediaPlaybackRequiresUserAction "true"
-                              :AllowInlineMediaPlayback "true"
-                              :BackupWebStorage "local"
-                              :TopActivityIndicator "white"
-                              :KeyboardDisplayRequiresUserAction "false"
-                              :SuppressesIncrementalRendering "true"
-                              :GapBetweenPages "0"
-                              :PageLength "0"
-                              :PaginationBreakingMode "page"
-                              :PaginationMode "unpaginated"
-                              :UIWebViewDecelerationSpeed "fast"
-                              :DisallowOverscroll "true"
-                              :HideKeyboardFromAccessoryBar "true"}
+                        ;; Blackberry
+                        :ChildBrowser "disable"
+                        :PopupBlocker "enable"
+                        :WebSecurity "disable"
 
-                        ;; windows phone prefs
-                        :wp8 {:windows-target-version "8.1"}}
+                        ;; Blackberry + iOS
+                        :HideKeyboardFromAccessoryBar "true"
+
+                        ;; Android + iOS
+                        :DisallowOverscroll "true"
+
+                        ;; iOS only
+                        :EnableViewportScale "true"
+                        :MediaPlaybackRequiresUserAction "true"
+                        :AllowInlineMediaPlayback "true"
+                        :BackupWebStorage "local"
+                        :TopActivityIndicator "white"
+                        :KeyboardDisplayRequiresUserAction "false"
+                        :SuppressesIncrementalRendering "true"
+                        :GapBetweenPages "0"
+                        :PageLength "0"
+                        :PaginationBreakingMode "page"
+                        :PaginationMode "unpaginated"
+                        :UIWebViewDecelerationSpeed "fast"
+
+                        ;; Windows Phone only
+                        :windows-target-version "8.1"}
 
           :icons {:global {:src "icon.png"}
+
+                  :amazon-fire [{:src "res/icon/amazon-fire/icon-36-ldpi.png" :density "ldpi"}
+                                {:src "res/icon/amazon-fire/icon-48-mdpi.png" :density "mdpi"}
+                                {:src "res/icon/amazon-fire/icon-72-hdpi.png" :density "hdpi"}
+                                {:src "res/icon/amazon-fire/icon-96-xhdpi.png" :density "xhdpi"}]
+
                   :android [{:src "res/icon/android/icon-36-ldpi.png" :density "ldpi"}
                             {:src "res/icon/android/icon-48-mdpi.png" :density "mdpi"}
                             {:src "res/icon/android/icon-72-hdpi.png" :density "hdpi"}
                             {:src "res/icon/android/icon-96-xhdpi.png" :density "xhdpi"}]
+
+                  :blackberry [{:src "res/icon/blackberry/icon-80.png"}]
 
                   :ios  [{:src "src/icon/ios/icon-57.png" :width "54" :height "54"}
                          {:src "src/icon/ios/icon-72.png" :width "72" :height "72"}
                          {:src "src/icon/ios/icon-57-2x.png" :width "114" :height "114"}
                          {:src "src/icon/ios/icon-72-2x.png" :width "144" :height "144"}]
 
-                  :blackberry [{:src "res/icon/blackberry/icon-80.png"}
-                               {:src "res/icon/blackberry/icon-80.png"}]
+                  :tizen [{:src "res/icon/tizen/icon-128.png" :width "128" :height "128"}]
 
                   :wp8 [{:src "res/icon/windows-phone/icon-48.png"}
                         {:src "res/icon/windows-phone/icon-173.png"}]}
 
-          :splash [:android [{:src "res/screen/android/screen-ldpi-portrait.png" :density "port-ldpi"}
+          :splash {:android [{:src "res/screen/android/screen-ldpi-portrait.png" :density "port-ldpi"}
                              {:src "res/screen/android/screen-mdpi-portrait.png" :density "port-mdpi"}
                              {:src "res/screen/android/screen-hdpi-portrait.png" :density "port-hdpi"}
                              {:src "res/screen/android/screen-xhdpi-portrait.png" :density "port-xhdpi"}]
@@ -280,8 +270,7 @@
                          {:src "res/screen/ios/screen-ipad-portrait.png" :width "768" :height "1024"}
                          {:src "res/screen/ios/screen-ipad-landscape.png" :width "1024" :height "768"}]
 
-                   ;; TODO: Check this
-                   :wp8 [{:src "res/screen/windows-phone/screen-portrait.jpg"}]]
+                   :wp8 [{:src "res/screen/windows-phone/screen-portrait.jpg"}]}
 
           :permissions ["https://www.wahoo.com/"
                         "https://www.yoogle.com/"]
@@ -333,7 +322,7 @@
 
 
  :desktop {
-           :platforms ["osx32" "osx64" "windows" "linux32" "linux64"]
+           :platforms ["osx32" "osx64" "windows32" "windows64" "linux32" "linux64"]
            :main "init.html"
            :nodejs true
            :node-main "core/nodejs.js"

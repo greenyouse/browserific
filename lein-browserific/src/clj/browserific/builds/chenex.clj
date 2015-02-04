@@ -16,12 +16,12 @@
            :outer-transforms []}})
 
 (defn classify-platform
-  "Tags a platform with a meta tag of: b, d, or m
+  "Tags a platform with: b, d, m, or a special tag
   (for browser, desktop, or mobile)."
   [plat]
   (#(cond
      (u/browsers %) [:b %]
-     (#{"windows"} %) [:d %]
+     (#{"windows32" "windows64"} %) [:d :windows %]
      (#{"linux32" "linux64"} %) [:d :linux %]
      (#{"osx32" "osx64"} %) [:d :osx %]
      (u/mobile  %) [:m %])
