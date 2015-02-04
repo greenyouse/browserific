@@ -4,8 +4,6 @@
             [reagent.core :as reagent])
   (:require-macros [browserific.config.macros :refer [multi-input-template]]))
 
-;; NOTE: not working very well, probably should stick with the official
-;; Safari Extension build tool
 (defn safari-page
   "The page for Safari configurations"
   []
@@ -24,14 +22,14 @@
       :multi-c (multi-input-template :vec [{:type :name :label "Command"}
                                            {:type :name :label "Identifier"}
                                            {:type :name :label "Title"}])}
-     ;; TODO: find a way to do a nested multi-input
-     #_  {:type :multi :data (reagent/cursor [:extensions :extra :safari :menu] config-db) :label "Menus"
-          :htxt "Pop-up menus you associate with a toolbar item you have created."
-          :hurl "https://developer.apple.com/library/safari/documentation/Tools/Conceptual/SafariExtensionGuide/UsingExtensionBuilder/UsingExtensionBuilder.html#//apple_ref/doc/uid/TP40009977-CH2-SW1"
-          :multi-c (multi-input-template :vec [{:type :name :label "Identifier"}
-                                               {:type :macro :label "Menu-.-Items"  ;garbage
-                                                :code (multi-input-template :vec [{:type :name :label "Identifier"}
-                                                                            ])}])}
+     {:type :multi :data (reagent/cursor [:extensions :extra :safari :menu] config-db) :label "Menus"
+      :htxt "Pop-up menus you associate with a toolbar item you have created."
+      :hurl "https://developer.apple.com/library/safari/documentation/Tools/Conceptual/SafariExtensionGuide/UsingExtensionBuilder/UsingExtensionBuilder.html#//apple_ref/doc/uid/TP40009977-CH2-SW1"
+      :multi-c (multi-input-template :vec [{:type :name :label "Identifier"}
+                                           {:type :name :label "Command"}
+                                           {:type :checkbox :label "Disabled?"}
+                                           {:type :name :label "Menu-Identifier"} ;doesn't match exactly with output (should be identifier too)
+                                           {:type :name :label "Title"}])}
      {:type :multi :data (reagent/cursor [:extensions :extra :safari :popovers] config-db) :label "Popovers"
       :htxt "Pop-up windows containing HTML content that you associate with a toolbar item you have created."
       :hurl "https://developer.apple.com/library/safari/documentation/Tools/Conceptual/SafariExtensionGuide/UsingExtensionBuilder/UsingExtensionBuilder.html#//apple_ref/doc/uid/TP40009977-CH2-SW1"

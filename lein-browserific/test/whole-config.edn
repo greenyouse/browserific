@@ -152,30 +152,37 @@
                                :context-items [{:Command "console.log(\"woohoo it's context!\");"
                                                 :Identifier "some wooting context id"
                                                 :Title "I show up on hover"}]
-                               :menus [{:Identifier "my cool menu"  ; FIXME: check other menu options!
-                                        :Menu-.-Items [{:Command "yourCommand.menu.here();"
-                                                        :Disabled true
-                                                        :Identifier "my little menu item"
-                                                        :Title "menu item woot"}]}]
-                               :popovers [{:Filename "popup.html"
-                                           :Height 200
-                                           :Width 200
-                                           :Identifier "super neat popover"}]
-                               :toolbar [{:Command "someToolbar.command();" ; tokenize "Toolbar Items"
-                                          :Identifier "woot.toolbar"
-                                          :Image "toolbar.png"
-                                          :Label "some-label"
-                                          :Menu "my cool menu"
-                                          :Pallete "my cool tool"
-                                          :Popover "super neat popover"
-                                          :Tool-.-tip "hover to see this"}] ; tokenize "Tool Tip"
-                               :database-quota 1048576 ;tokenize "Database Quota"
-                               :start-scripts ["adblocker.js"] ;fired before dom is loaded, usually to block unwanted content (ads)
-                               :access-level "Some" ; None/Some/All
-                               :global-page "global.html"
+                               :menus [{:Identifier "my coll menu"
+                                        :Command "yourCommand.menu.here()"
+                                        :Disabled true
+                                        :Menu-Identifier "my little menu item"
+                                        :Title "menu item woot"}]
+
+                               ;; Target output for config.clj
+                               ;;  [{:Identifier "my cool menu" ; FIXME: check other menu options!
+                               ;; :Menu-.-Items [{:Command "yourCommand.menu.here();"
+                               ;; :Disabled true
+                               ;; :Identifier "my little menu item"
+                               ;;                  :Title "menu item woot" }]}]
+                                 :popovers [{:Filename "popup.html"
+                                             :Height 200
+                                             :Width 200
+                                             :Identifier "super neat popover"}]
+                                 :toolbar [{:Command "someToolbar.command();" ; tokenize "Toolbar Items"
+                                            :Identifier "woot.toolbar"
+                                            :Image "toolbar.png"
+                                            :Label "some-label"
+                                            :Menu "my cool menu"
+                                            :Pallete "my cool tool"
+                                            :Popover "super neat popover"
+                                            :Tool-.-tip "hover to see this"}] ; tokenize "Tool Tip"
+                                 :database-quota 1048576 ;tokenize "Database Quota"
+                                 :start-scripts ["adblocker.js"] ;fired before dom is loaded, usually to block unwanted content (ads)
+                                 :access-level "Some" ; None/Some/All
+                                 :global-page "global.html"
+                                 }
+                                }
                                }
-                      }
-              }
 
  :mobile {
           :id "com.example.tester"

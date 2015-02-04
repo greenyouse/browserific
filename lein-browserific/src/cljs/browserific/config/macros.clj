@@ -87,8 +87,7 @@
     `[^{:key (gensym)}
       [:div
        [:span
-        (str ~(:label (first items))
-          ;; FIXME: why is there a wayward colon in the output?
+        (str ~(:label (first items)) ": "
           (~(keyword (:label (first items))) ~'item)
           ~@(reduce #(conj %
                        (str ", " (:label %2)) ": "
@@ -117,7 +116,7 @@
                                          (swap %2 "el")
                                          `(.getElementById js/document ~%2))
                                 [] gens#)
-                            ~'v1 (keyword ~(js-v# (first items) "g1"))
+                            ~'v1 ~(js-v# (first items) "g1")
                             ~@(co-reduce #(conj %
                                             (swap %3 "v")
                                             (js-v# %2 %3))

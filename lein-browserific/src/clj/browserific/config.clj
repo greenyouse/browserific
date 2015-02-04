@@ -241,6 +241,19 @@ linux32, linux64, osx32, osx64, windows32, windows64")))
            :sandbox [:extensions :sandbox]})
          {:pretty true})))
 
+;; FIXME: This is so bad
+(defn safari-menus []
+  "Special parsing for Safari menus"
+  (vec
+    (for [menu (map vec (get-config [:extensions :extra :safari :menu]))]
+      (reduce
+        (fn [acc [k v]]
+          (case k
+            :Identifier (assoc acc k v)
+            :Menu-Identifier (assoc-in acc [:Menu-.-Items :Identifier] v)
+            (assoc-in acc [:Menu-.-Items k] v)))
+        {:Menu-.-Items {}} menu))))
+
 ;; TODO: make sure that plist output order is not imporant
 (defn- safari-config
   "Creates the safari config file using config.edn"
@@ -252,33 +265,35 @@ linux32, linux64, osx32, osx64, windows32, windows64")))
            (xml/indent-str
             (xml/sexp-as-element
              (p/plist
-              (config-reader
-               {:Author [:author :author-name]
-                :Builder-.-Version ^{:browserific "config"} ["6534.59.10"] ; Shouldn't matter
-                :CFBundleDisplayName [:name]
-                :CFBundleIdentifier [:author :author-id]
-                :CFBundleInfoDictionaryVersion ^{:browserific "config"} ["6.0"] ; Shouldn't matter
-                :CFBundleShortVersionString [:version]
-                :CFBundleVersion ^{:browserific "config"} ["1.0"]; FIXME: lookup what this value signifies
-                :Chrome!Bars [:extensions :extra :safari :bars]
-                :Chrome!Context-.-Menu-.-Items [:extensions :extra :safari :context-items]
-                :Chrome!Database-.-Quota [:extensions :extra :safari :database-quota]
-                :Chrome!Menus [:extensions :extra :safari :menus]
-                :Chrome!Popovers [:extensions :extra :safari :popovers]
-                :Chrome!Global-.-Page [:extensions :extra :safari :global-page]
-                :Content!Blacklist [:extensions :content :exclude]
-                :Content!Scripts!Start[:extensions :extra :safari :start-script]
-                :Content!Scripts!End [:extensions :content :js]
-                :Content!Stylesheets [:extensions :content :css]
-                :Content!Whitelist [:extensions :content :matches]
-                :Description [:description]
-                :ExtensionInfoDictionaryVersion ^{:browserific "config"} ["1.0"] ; FIXME: what is this?
-                :Permissions!Website-.-Access!Allowed-.-Domains [:extensions :permissions] ; FIXME: are options like "tabs" just negligeable?
-                :Permissions!Website-.-Access!Include-.-Secure-.-Pages [:extensions :private]
-                :Permissions!Website-.-Access!Level [:extensions :extra :safari :access-level]
-                :Update-.-Manifest-.-URL [:extensions :update-url :safari]
-                :Website [:extensions :homepage]}))))
+               (->
+                 (config-reader
+                        {:Author [:author :author-name]
+                         :Builder-.-Version ^{:browserific "config"} ["6534.59.10"] ; Shouldn't matter
+                         :CFBundleDisplayName [:name]
+                         :CFBundleIdentifier [:author :author-id]
+                         :CFBundleInfoDictionaryVersion ^{:browserific "config"} ["6.0"] ; Shouldn't matter
+                         :CFBundleShortVersionString [:version]
+                         :CFBundleVersion ^{:browserific "config"} ["1.0"]; FIXME: lookup what this value signifies
+                         :Chrome!Bars [:extensions :extra :safari :bars]
+                         :Chrome!Context-.-Menu-.-Items [:extensions :extra :safari :context-items]
+                         :Chrome!Database-.-Quota [:extensions :extra :safari :database-quota]
+                         :Chrome!Popovers [:extensions :extra :safari :popovers]
+                         :Chrome!Global-.-Page [:extensions :extra :safari :global-page]
+                         :Content!Blacklist [:extensions :content :exclude]
+                         :Content!Scripts!Start[:extensions :extra :safari :start-script]
+                         :Content!Scripts!End [:extensions :content :js]
+                         :Content!Stylesheets [:extensions :content :css]
+                         :Content!Whitelist [:extensions :content :matches]
+                         :Description [:description]
+                         :ExtensionInfoDictionaryVersion ^{:browserific "config"} ["1.0"] ; FIXME: what is this?
+                         :Permissions!Website-.-Access!Allowed-.-Domains [:extensions :permissions] ; FIXME: are options like "tabs" just negligeable?
+                         :Permissions!Website-.-Access!Include-.-Secure-.-Pages [:extensions :private]
+                         :Permissions!Website-.-Access!Level [:extensions :extra :safari :access-level]
+                         :Update-.-Manifest-.-URL [:extensions :update-url :safari]
+                         :Website [:extensions :homepage]})
+                 (assoc-in [:Chrome :Menus] (safari-menus))))))
            "?>" (str "?>\n" doctype "\n")))))
+
 
 ;;; Mobile Configs
 
