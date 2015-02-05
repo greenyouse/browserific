@@ -2,5 +2,5 @@
   :description "A Leiningen template for Browserific ClojureScript apps"
   :url "http://example.com/FIXME"
   :license {:name "GPL 3.0"
-            :url "http://www.eclipse.org/legal/epl-v10.html"}
+            :url "https://www.gnu.org/licenses/quick-guide-gplv3.html"}
   :eval-in-leiningen true)

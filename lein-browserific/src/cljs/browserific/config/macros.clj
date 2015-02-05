@@ -78,7 +78,7 @@
         ^{:key (gensym)}
         [:div
          [:span
-          (str ~(:label (first items)) ~'k
+          (str ~(:label (first items)) ": " ~'k
             ~@(reduce #(conj %
                          (str ", " (:label %2)) ": "
                          `(~(keyword (:label %2)) ~'m))

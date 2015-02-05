@@ -4,11 +4,18 @@
             [clojure.java.io :as io]
             [clojure.pprint :refer [pprint]]))
 
+;; TODO: update builds with new :main compiler option, update the template
+;; HTML too after this is changed.
+;; TODO: add a build that can target all of the builds at once, there is trouble
+;; with duplicating output paths...
+
 ;; keeping it simple :)
 ;;
 ;; FIXME: watch out! the browser extensions may need a web_accessible_resource (aka permissions)
 ;; in manifest.json (or whatever) pointing to the sourcemap file
-(defn write-platform
+;; http://stackoverflow.com/questions/15097945/do-source-maps-work-for-chrome-extensions
+;; https://developer.chrome.com/extensions/manifest/web_accessible_resources
+(defn- write-platform
   "This creates a correct build configuration for each platform"
   [platform]
   (cond
@@ -81,13 +88,15 @@
 
 
 (defn write-browserific-builds
-  "Creates a builds.clj file full of all the cljsbuild configurations.
-  Also reads config.edn to only build relevant platform configs."
+  "Creates a builds/builds.clj file full of all the cljsbuild
+  configurations. Also reads config.edn to only build relevant
+  platform configs."
   [& plat]
   (let [platform (first plat)
         all-platforms u/platforms
         choosen-platform (if (#{"chrome" "firefox" "opera" "safari"} platform)
-                           ["dev" (str "intermediate/" platform "/content") (str "intermediate/" platform "/background")]
+                           ["dev" (str "intermediate/" platform "/content")
+                            (str "intermediate/" platform "/background")]
                            ["dev" (str "intermediate/" platform)])
         custom-build {:id "draft"
                       :source-paths choosen-platform

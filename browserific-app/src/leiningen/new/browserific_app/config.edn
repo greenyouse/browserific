@@ -1,33 +1,9 @@
 {:name "{{name}}"
- :author {:author-name "" :email "" :url ""}
  :version "0.1.0"
  :description "FIXME: write this!"
 
- :extension {
-             :browsers []
-             :activations []
-             :content {}
-             :access {}
-             :update-url []}
+ :extension {}
 
- :mobile {
-          :id "your.id.here"
-          :platforms []
-          :permissions []
-          :preferences []
-          :plugins []
-          :icons []
-          :splash []
-          :content ""}
+ :mobile {}
 
- :desktop {
-           :platforms []
-           :main ""
-           :permissions []
-           :keywords []
-           :window {}
-           :bugs "http://your.bug-report.com"
-           :repositories [{:type ""
-                           :url ""
-                           :path ""}]
-           }}
+ :desktop {}}

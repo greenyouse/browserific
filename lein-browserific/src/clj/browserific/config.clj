@@ -242,7 +242,7 @@ linux32, linux64, osx32, osx64, windows32, windows64")))
          {:pretty true})))
 
 ;; FIXME: This is so bad
-(defn safari-menus []
+(defn- safari-menus []
   "Special parsing for Safari menus"
   (vec
     (for [menu (map vec (get-config [:extensions :extra :safari :menu]))]
@@ -297,7 +297,7 @@ linux32, linux64, osx32, osx64, windows32, windows64")))
 
 ;;; Mobile Configs
 
-(defn get-image
+(defn- get-image
   "Returns the icons or splashes for some platform."
   [type plat]
   (into [:platform {:name plat}]
@@ -339,7 +339,7 @@ linux32, linux64, osx32, osx64, windows32, windows64")))
                                                "blackberry" "ios" "wp8"]))))))))
 
 
-(defn firefoxos-config
+(defn- firefoxos-config
   "Creates the manifest.webapp for firefoxos"
   []
   (io/make-parents (str "resources/mobile/" u/project-name

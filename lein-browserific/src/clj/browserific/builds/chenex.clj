@@ -4,27 +4,30 @@
             [clojure.java.io :as io]
             [clojure.pprint :refer [pprint]]))
 
+(defn- to-set [{:keys [class plat]}]
+  "helper fn to convert the platform into a set"
+  (-> (into #{} class) (conj (keyword plat))))
 
-(defn write-build
+(defn- write-build
   "Writes the chenex build for each platform"
-  [class plat]
+  [{:keys [class plat] :as opts}]
   {:source-paths ["src"]
    :output-path (str "intermediate/" plat)
    :rules {:filetype "cljs"
-           :features #{class (keyword plat)}
+           :features (to-set opts)
            :inner-transforms []
            :outer-transforms []}})
 
-(defn classify-platform
+(defn- classify-platform
   "Tags a platform with: b, d, m, or a special tag
   (for browser, desktop, or mobile)."
   [plat]
   (#(cond
-     (u/browsers %) [:b %]
-     (#{"windows32" "windows64"} %) [:d :windows %]
-     (#{"linux32" "linux64"} %) [:d :linux %]
-     (#{"osx32" "osx64"} %) [:d :osx %]
-     (u/mobile  %) [:m %])
+     (u/browsers %) {:class [:b :windows] :plat %}
+     (#{"windows32" "windows64"} %) {:class [:d :windows] :plat %}
+     (#{"linux32" "linux64"} %) {:class [:d :linux] :plat %}
+     (#{"osx32" "osx64"} %) {:class [:d :osx] :plat %}
+     (u/mobile  %) {:class [:m] :plat %})
    plat))
 
 (defn write-chenex-builds
@@ -33,9 +36,9 @@
   build relevant platform configs."
   [& plat]
   (let [custom (classify-platform (first plat))
-        c-set (set (mapv keyword custom))
+        c-set (to-set custom)
         all-platforms (mapv #(classify-platform %) u/platforms)
-        builds (mapv #(apply write-build %)  all-platforms)]
+        builds (mapv write-build all-platforms)]
     (do (io/make-parents "builds/chenex-builds.clj")
         (spit "builds/chenex-build.clj" (with-out-str (pprint builds)))
         (if plat (spit "builds/chenex-repl.clj" (with-out-str (pprint c-set)))))))

@@ -16,7 +16,6 @@
   [coll item]
   (some #(= item %) coll))
 
-;; FIXME: may need to ensure the cursor uses a vector for conj, not a seq
 (defn- checkbox-entry
   "helper fn for checkboxes that updates their state"
   [atm item]
@@ -107,7 +106,7 @@
         rm (fn []
              (t/rm-item #(reset! % %2) data ""))]
     (fn []
-      [:div (if-not (empty? @data)
+      [:div (if-not (empty? (str @data))
               [:div [:span @data]
                [:button {:on-click #(rm)}
                 "x"]])
@@ -130,7 +129,7 @@
              (t/rm-item (fn [d]
                           (swap! d #(remove (fn [x] (= item x)) %))) data))]
     (fn []
-      [:div (if-not (empty? @data)
+      [:div (if-not (empty? @data) ;watch for numbers, not ISeqable
               (for [item @data]
                 ^{:key item} [:div [:span item]
                               [:button {:on-click #(rm item)} "x"]]))
@@ -178,11 +177,14 @@
                  (conj div ^{:key (gensym)}
                    [:option opt]))
          [:select {:id g1
-                   :on-change (fn []
-                                (t/add-item #(reset! % %2)
-                                  data (-> (.getElementById js/document g1)
-                                             .-value)))}]
-         options)])))
+                   :on-click (fn []
+                               (t/add-item #(reset! % %2)
+                                 data (-> (.getElementById js/document g1)
+                                        .-value)))}]
+         options)
+       [:button {:on-click (fn []
+                             (t/rm-item #(reset! % %2) data ""))}
+        "clear-data"]])))
 
 (defn cordova-pref-c
   "Cordova preference component"

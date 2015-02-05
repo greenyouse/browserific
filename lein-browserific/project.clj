@@ -2,7 +2,7 @@
   :description "A Leiningen build tool for unified app development"
   :url "https://github.com/greenyouse/browserific/lein-browserific"
   :license {:name "GPL 3.0"
-            :url "http://www.eclipse.org/legal/epl-v10.html"}
+            :url "https://www.gnu.org/licenses/quick-guide-gplv3.html"}
   :dependencies [[org.clojure/clojure "1.6.0"]
                  [org.clojure/data.xml "0.0.8"]
                  [cheshire "5.3.1"]

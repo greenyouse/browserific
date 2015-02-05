@@ -86,13 +86,10 @@
      {:type :name :data (reagent/cursor [:desktop :window :icon] config-db) :label "Icon"
       :htxt "Relative path to window's icon."
       :hurl "https://github.com/nwjs/nw.js/wiki/Manifest-format#toolbar"}
-     {:type :name :data (reagent/cursor [:desktop :window :position] config-db) :label "Window Position"
-      :htxt "Either null, center or mouse. Controls where window will be put."
-      :hurl "https://github.com/nwjs/nw.js/wiki/Manifest-format#position"}
-     {:type :name :data (reagent/cursor [:desktop :window :min-height] config-db) :label "Minimum Window Height"
-      :htxt "The minimum height of the main window."
-      :hurl "https://github.com/nwjs/nw.js/wiki/Manifest-format#min_widthmin_height"
-      :number true}
+     {:type :select :data (reagent/cursor [:desktop :window :position] config-db) :label "Window Position"
+      :htxt "Controls where window will be put."
+      :hurl "https://github.com/nwjs/nw.js/wiki/Manifest-format#position"
+      :options ["null" "center" "mouse"]}
      {:type :name :data (reagent/cursor [:desktop :window :height] config-db) :label "Window Height"
       :htxt "The initial height of the main window."
       :hurl "https://github.com/nwjs/nw.js/wiki/Manifest-format#widthheight"

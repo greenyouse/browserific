@@ -9,7 +9,8 @@
             [ring.util.response :as resp]
             [ring.middleware.edn :refer [wrap-edn-params]]
             [clojure.java.io :as io]
-            [ring.adapter.jetty :as jetty]))
+            [ring.adapter.jetty :as jetty]
+            [clojure.pprint :refer [pprint]]))
 
 (defn- edn-response [data & [status]]
   {:status (or status 200)
@@ -25,7 +26,7 @@
 (defn- update-config
   "Saves a copy of the current state back to the config.edn file"
   [{:keys [value]}]
-  (spit u/config-file value)
+  (spit u/config-file (with-out-str (pprint value)))
   (edn-response {:status :ok}))
 
 (defroutes ^:private app-routes
