@@ -167,6 +167,7 @@
                  box] [:br]))
       [:div] boxes)))
 
+;; FIXME: should display the stored config.edn value when loaded
 (defn select-c
   "A select component"
   [{:keys [data options]}]

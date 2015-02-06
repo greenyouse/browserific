@@ -3,16 +3,17 @@
             [clojure.string :as st]))
 
 
-(def ^:private options
+(def options
   "Map of browserific options"
   (let [p (-> "project.clj" slurp read-string (nthrest 3))
-        psplit (partition 2 p)]
-    (reduce #(into %1 [(into [] %2)])
-            {} psplit)))
+        psplit (partition 2 p)
+        m (reduce #(into %1 [(into [] %2)])
+            {} psplit)]
+    (:browserific m)))
 
 (def config-file
   "Path of the selected config.edn file to use"
-  (or (:config (:browserific options)) "src/config.edn"))
+  (or (:config options) "src/config.edn"))
 
 (defn get-config
   "Helper fn for getting data from the config-file"

@@ -3,6 +3,7 @@
             [leiningen.core.main :as main]))
 
 
+;; TODO: make an option for multi but have the default be single
 (def render (renderer "browserific-app"))
 
 (defn browserific-app
@@ -14,8 +15,6 @@
               :year (year)}]
     (->files data
       [".gitignore" (render "gitignore" data)]
-      ["builds/chenex-build.clj" (render "chenex-build.clj" data)]
-      ["builds/browserific-build.clj" (render "browserific-build.clj" data)]
       ["project.clj" (render "project.clj" data)]
       ["README.md" (render "project-README.md" data)]
       ["LICENSE" (render "LICENSE" data)]
@@ -26,14 +25,15 @@
       ["dev/brepl.cljs" (render "brepl.cljs" data)]
       ;; public
       ["resources/public/index.html" (render "index.html" data)]
-      ["resources/public/js/react-0.12.1.js" (render "react-0.12.1.js" data)]
+      ["resources/public/index.css" (render "index.css" data)]
+      ["resources/public/js/react-0.12.2.js" (render "react-0.12.2.js" data)]
       "resources/public/css"
 
       ;; mobile
       ["resources/mobile/{{sanitized}}/hooks/README.md" (render "cordova-README.md" data)]
       ["resources/mobile/{{sanitized}}/www/index.html" (render "mobile-index.html" data)]
-      ["resources/mobile/{{sanitized}}/www/js/react-0.12.1.js" (render "react-0.12.1.js" data)]
-      "resources/mobile/{{sanitized}}/www/css"
+      ["resources/mobile/{{sanitized}}/www/js/react-0.12.2.js" (render "react-0.12.2.js" data)]
+      ["resources/mobile/{{sanitized}}/www/css/index.css" (render "index.css" data)]
       "resources/mobile/{{sanitized}}/www/img"
       "resources/mobile/{{sanitized}}/platforms"
       "resources/mobile/{{sanitized}}/plugins")))

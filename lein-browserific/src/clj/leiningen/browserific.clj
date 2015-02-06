@@ -27,21 +27,22 @@
 (defn- build
   "Write lein-cljsbuilds for all relevant platforms"
   ([]
+   (let [{:keys [draft multi] :as opts} u/options]
      (lmain/info (yellow-text "Writing a new lein-cljsbuild configuration.\n"))
-     (lmain/warn
-      (red-text "Warning: no draft platform specified but building config anyway.\n"))
-     (fs/delete-dir "builds")
-     (bbuilds/write-browserific-builds)
-     (cb/write-chenex-builds))
-  ([custom]
-     (lmain/info (yellow-text "Writing a new lein-cljsbuild configuration.\n"))
-     (if-not (contains? u/platforms custom)
-       (lmain/abort (red-text "Browserific Error: " custom
-                              " is not a valid platform.\n\nOptions are:
-" u/platforms)))
-     (fs/delete-dir "builds")
-     (bbuilds/write-browserific-builds custom)
-     (cb/write-chenex-builds custom)))
+     (cond
+       (and draft (not (contains? u/platforms draft))) ;invalid draft platform
+       (lmain/abort (red-text "Browserific Error: " draft
+                      " is not a valid platform.\n\nOptions are:\n\n" u/platforms))
+       (empty? draft)
+       (do (lmain/warn
+             (red-text "Warning: no draft platform specified but building config anyway.\n"))
+           (fs/delete-dir "builds")
+           (bbuilds/write-browserific-builds)
+           (cb/write-chenex-builds))
+       :else
+       (do (fs/delete-dir "builds")
+           (bbuilds/write-browserific-builds opts)
+           (cb/write-chenex-builds draft))))))
 
 (defn- compile
   "Compile the browserific files"
