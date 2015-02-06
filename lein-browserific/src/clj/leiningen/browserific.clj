@@ -37,7 +37,7 @@
        (do (lmain/warn
              (red-text "Warning: no draft platform specified but building config anyway.\n"))
            (fs/delete-dir "builds")
-           (bbuilds/write-browserific-builds)
+           (bbuilds/write-browserific-builds opts)
            (cb/write-chenex-builds))
        :else
        (do (fs/delete-dir "builds")

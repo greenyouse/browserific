@@ -23,7 +23,7 @@
   (for browser, desktop, or mobile)."
   [plat]
   (#(cond
-     (u/browsers %) {:class [:b :windows] :plat %}
+     (u/browsers %) {:class [:b] :plat %}
      (#{"windows32" "windows64"} %) {:class [:d :windows] :plat %}
      (#{"linux32" "linux64"} %) {:class [:d :linux] :plat %}
      (#{"osx32" "osx64"} %) {:class [:d :osx] :plat %}

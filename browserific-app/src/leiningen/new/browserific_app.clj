@@ -3,9 +3,9 @@
             [leiningen.core.main :as main]))
 
 
-;; TODO: make an option for multi but have the default be single
 (def render (renderer "browserific-app"))
 
+;; TODO: make desktop and extension folders too?
 (defn browserific-app
   "A template for browserific projects"
   [name & args]

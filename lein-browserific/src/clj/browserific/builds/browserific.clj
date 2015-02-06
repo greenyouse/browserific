@@ -77,40 +77,37 @@
   "Creates a builds/builds.clj file full of all the cljsbuild
   configurations. Also reads config.edn to only build relevant
   platform configs."
-  ([]
-   (let [builds {:builds (reduce #(into % (write-platform %2 false))
-                           [] u/platforms)}]
-     (do (io/make-parents "builds/browserific-build.clj")
-         (spit "builds/browserific-build.clj" (with-out-str (pprint builds))))))
-  ([{:keys [draft multi]}]
-   (println (str draft " -- " multi))
-   (let [custom-build (if multi
-                        [{:id "draft-background"
-                          :source-paths ["dev" (str "intermediate/" draft "/background")]
-                          :compiler {:output-to "resources/public/js/background.js"
-                                     :output-dir "resources/public/js/background"
-                                     :source-map true
-                                     :optimizations :none
-                                     :asset-path "js/background"
-                                     :main (symbol (str u/project-name ".background.core"))}}
-                         {:id "draft-content"
-                          :source-paths ["dev" (str "intermediate/" draft "/content")]
-                          :compiler {:output-to "resources/public/js/content.js"
-                                     :output-dir "resources/public/js/content"
-                                     :source-map true
-                                     :optimizations :none
-                                     :asset-path "js/content"
-                                     :main (symbol (str u/project-name ".content.core"))}}]
-                        {:id "draft"
-                         :source-paths ["dev" (str "intermediate/" draft)]
-                         :compiler {:output-to "resources/public/js/app.js"
-                                    :output-dir "resources/public/js/out"
+  [{:keys [draft multi]}]
+  (println (str draft " -- " multi))
+  (let [custom-build (if multi
+                       [{:id "draft-background"
+                         :source-paths ["dev" (str "intermediate/" draft "/background")]
+                         :compiler {:output-to "resources/public/js/background.js"
+                                    :output-dir "resources/public/js/background"
                                     :source-map true
                                     :optimizations :none
-                                    :asset-path "js/out"
-                                    :main (symbol (str u/project-name ".core"))}})
-         builds {:builds (reduce #(into % (write-platform %2 multi))
-                           (if draft [custom-build] [])
-                           u/platforms)}]
-     (do (io/make-parents "builds/browserific-build.clj")
-         (spit "builds/browserific-build.clj" (with-out-str (pprint builds)))))))
+                                    :asset-path "js/background"
+                                    :main (symbol (str u/project-name ".background.core"))}}
+                        {:id "draft-content"
+                         :source-paths ["dev" (str "intermediate/" draft "/content")]
+                         :compiler {:output-to "resources/public/js/content.js"
+                                    :output-dir "resources/public/js/content"
+                                    :source-map true
+                                    :optimizations :none
+                                    :asset-path "js/content"
+                                    :main (symbol (str u/project-name ".content.core"))}}]
+                       {:id "draft"
+                        :source-paths ["dev" (str "intermediate/" draft)]
+                        :compiler {:output-to "resources/public/js/app.js"
+                                   :output-dir "resources/public/js/out"
+                                   :source-map true
+                                   :optimizations :none
+                                   :asset-path "js/out"
+                                   :main (symbol (str u/project-name ".core"))}})
+        builds {:builds (reduce #(into % (if (multi %2)
+                                           (write-platform %2 true)
+                                           (write-platform %2 false)))
+                          (if draft [custom-build] [])
+                          u/platforms)}]
+    (do (io/make-parents "builds/browserific-build.clj")
+        (spit "builds/browserific-build.clj" (with-out-str (pprint builds))))))
