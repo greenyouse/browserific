@@ -121,7 +121,7 @@
       :htxt "Whether the window is resizable."
       :hurl "https://github.com/nwjs/nw.js/wiki/Manifest-format#resizable"}
      {:type :checkbox :data (reagent/cursor [:desktop :window :always-on-top] config-db) :label "Always On Top?"
-      :htxt "Whether the window should always stay on top of."
+      :htxt "Whether the window should always stay on top of other windows."
       :hurl "https://github.com/nwjs/nw.js/wiki/Manifest-format#always-on-top"}
      {:type :checkbox :data (reagent/cursor [:desktop :window :fullscreen] config-db) :label "Fullscreen?"
       :htxt "Whether the window is fullscreen."

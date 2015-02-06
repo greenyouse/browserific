@@ -78,7 +78,6 @@
   configurations. Also reads config.edn to only build relevant
   platform configs."
   [{:keys [draft multi]}]
-  (println (str draft " -- " multi))
   (let [custom-build (if multi
                        [{:id "draft-background"
                          :source-paths ["dev" (str "intermediate/" draft "/background")]

@@ -19,17 +19,6 @@
             [browserific.config.components :as co]
             [reagent.core :as reagent :refer [atom]]))
 
-;; FIXME: weird cljsbuild error with hyphens (amazon-fire, windows-phone)
-;; I really don't want to debug whatever is happening but a workaround
-;; is to delete amazon-fire and windows-phone in the ns deps. Then
-;; compile once (a couple warnings will be emitted about
-;; amazon-fire-page etc.), add the lines back, and compile like
-;; normal. This works but I have not idea why there is an error in the
-;; first place. Guessing cljsubild has a subtle bug that causes
-;; this. Anyone want to look at this?
-;; FIXME: Why is this incompatible with cljs 2760?
-
-
 (enable-console-print!)
 
 (defonce page

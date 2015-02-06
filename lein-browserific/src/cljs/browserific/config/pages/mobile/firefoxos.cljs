@@ -16,7 +16,7 @@
       :multi-c (multi-input-template :vec [{:type :name :label "src"}
                                            {:type :name :label "size"}])}
      {:type :select :data (reagent/cursor [:mobile :firefoxos :type] config-db) :label "Type"
-      :htxt "The app's type, which defines its level of access to sensitive device WebAPIs. If you do not define the type, it will default to web as the type."
+      :htxt "The app's type, which defines its level of access to sensitive device WebAPIs. If you do not define the type, it will default to web."
       :hurl "https://developer.mozilla.org/en-US/Apps/Build/Manifest#type"
       :options ["web" "privileged" "certified"]}
      ;; NOTE: Web Activity filters aren't 100% implemented, they only allow for strings,

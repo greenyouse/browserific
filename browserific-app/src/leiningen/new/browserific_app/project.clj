@@ -18,6 +18,8 @@
             [lein-auto "0.1.1"]
             [lein-figwheel "0.2.2-SNAPSHOT"]]
 
+  :browserific {}
+
   :chenex {:builds ~(-> "builds/chenex-build.clj" slurp read-string)}
 
   :cljsbuild ~(-> "builds/browserific-build.clj" slurp read-string))

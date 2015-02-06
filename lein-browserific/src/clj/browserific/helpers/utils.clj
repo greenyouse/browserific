@@ -2,14 +2,15 @@
   (:require [leiningen.core.main :as l]
             [clojure.string :as st]))
 
-
+;; TODO: look in all profiles, any other spots I missed?
 (def options
   "Map of browserific options"
   (let [p (-> "project.clj" slurp read-string (nthrest 3))
         psplit (partition 2 p)
         m (reduce #(into %1 [(into [] %2)])
             {} psplit)]
-    (:browserific m)))
+    (or (:browserific m)
+      (get-in m [:profiles :dev :browserific]))))
 
 (def config-file
   "Path of the selected config.edn file to use"

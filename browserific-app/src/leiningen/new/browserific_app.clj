@@ -18,6 +18,8 @@
       ["project.clj" (render "project.clj" data)]
       ["README.md" (render "project-README.md" data)]
       ["LICENSE" (render "LICENSE" data)]
+      ["builds/browserific-build.clj" (render "browserific-build.clj" data)]
+      ["builds/chenex-build.clj" (render "chenex-build.clj" data)]
       ["src/config.edn" (render "config.edn" data)]
       ["src/{{sanitized}}/background/background.cljx" (render "background.cljx" data)]
       ["src/{{sanitized}}/content/content.cljx" (render "content.cljx" data)]
@@ -26,13 +28,11 @@
       ;; public
       ["resources/public/index.html" (render "index.html" data)]
       ["resources/public/index.css" (render "index.css" data)]
-      ["resources/public/js/react-0.12.2.js" (render "react-0.12.2.js" data)]
       "resources/public/css"
 
       ;; mobile
       ["resources/mobile/{{sanitized}}/hooks/README.md" (render "cordova-README.md" data)]
       ["resources/mobile/{{sanitized}}/www/index.html" (render "mobile-index.html" data)]
-      ["resources/mobile/{{sanitized}}/www/js/react-0.12.2.js" (render "react-0.12.2.js" data)]
       ["resources/mobile/{{sanitized}}/www/css/index.css" (render "index.css" data)]
       "resources/mobile/{{sanitized}}/www/img"
       "resources/mobile/{{sanitized}}/platforms"

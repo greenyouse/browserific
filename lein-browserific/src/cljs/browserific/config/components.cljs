@@ -173,7 +173,9 @@
   [{:keys [data options]}]
   (let [g1 (gensym)]
     (fn []
-      [:div [:br]
+      [:div (if-not (empty? @data) ;watch for numbers, not ISeqable
+              [:div [:span @data]])
+       [:br]
        (reduce (fn [div opt]
                  (conj div ^{:key (gensym)}
                    [:option opt]))
