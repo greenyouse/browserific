@@ -4,6 +4,8 @@
             [clojure.java.io :as io]
             [clojure.pprint :refer [pprint]]))
 
+;; TODO: split browser extensions using gclosure modules
+;; TODO: add :cache-analysis
 ;; FIXME: watch out! the browser extensions may need a web_accessible_resource (aka permissions)
 ;; in manifest.json (or whatever) pointing to the sourcemap file
 ;; http://stackoverflow.com/questions/15097945/do-source-maps-work-for-chrome-extensions
@@ -12,7 +14,9 @@
   "A general template for lein-cljsbuild profiles"
   [env platform]
   (fn [id profile type]
-    (let [root (str "resources/" env "/" platform "/js/" )
+    (let [root (if (= env "mobile")
+                 (str "resources/" env "/" u/project-name "/merges/" platform "/js/")
+                 (str "resources/" env "/" platform "/js/"))
           to  (str root id ".js")
           main (cond
                  (= "app" id) (symbol (str u/project-name ".core"))
@@ -20,7 +24,7 @@
                  (= "background" id) (symbol (str u/project-name ".background.core")))
           src (if (not= "app" id) (str "intermediate/" platform "/" id)
                   (str "intermediate/" platform))
-          asset (str "js/" env)
+          asset (str "js/" profile "-" id)
           assoc-build (fn [coll]
                         (reduce (fn [acc [k v]]
                                   (assoc-in acc k v))
@@ -103,9 +107,7 @@
                                    :optimizations :none
                                    :asset-path "js/out"
                                    :main (symbol (str u/project-name ".core"))}})
-        builds {:builds (reduce #(into % (if (multi %2)
-                                           (write-platform %2 true)
-                                           (write-platform %2 false)))
+        builds {:builds (reduce #(into % (write-platform %2 multi))
                           (if draft [custom-build] [])
                           u/platforms)}]
     (do (io/make-parents "builds/browserific-build.clj")

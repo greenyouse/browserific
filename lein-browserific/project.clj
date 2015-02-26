@@ -11,18 +11,14 @@
                  [ring "1.3.2"]
                  [fogus/ring-edn "0.2.0"]
                  [compojure "1.2.1"]
-                 [com.greenyouse/chenex "0.1.0"]
                  [org.clojure/core.async "0.1.346.0-17112a-alpha"]
                  ;; cljs
-                 [org.clojure/clojurescript "0.0-2371"] ;2760
+                 [org.clojure/clojurescript "0.0-2371"]
                  [reagent "0.5.0-alpha"]]
 
   :eval-in-leiningen true
 
-  ;; for chenex
-  :plugins [[com.greenyouse/chenex "0.1.0"]]
-  :profiles {:default [:base :system :user :provided :dev :plugin.chenex/default]
-             :dev {:dependencies [[javax.servlet/servlet-api "2.5"]]
+  :profiles {:dev {:dependencies [[javax.servlet/servlet-api "2.5"]]
                    :plugins [[lein-cljsbuild "1.0.4"]
                              [lein-ring "0.9.1"]]}}
 
