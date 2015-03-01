@@ -1,0 +1,9 @@
+/* This css is from Mozilla's Gaia project
+   https://github.com/mozilla-b2g/gaia/tree/master/shared/style */
+@import url("gaia/buttons.css");
+@import url("gaia/headers.css");
+@import url("gaia/lists.css");
+@import url("gaia/gaia-icons-embedded.css");
+@import url("gaia/toolbars.css");
+@import url("gaia/input_areas.css");
+@import url("custom.css");

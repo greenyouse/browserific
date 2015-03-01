@@ -1,0 +1,42 @@
+{:description "A little app for writing notes",
+ :license "EPL 1.0",
+ :name "notes",
+ :default-locale "en_US",
+ :author {:author-name "greenyouse", :author-id "com.greenyouse"},
+ :extensions {:platforms ()},
+ :desktop
+ {:dom-storage-quota 2,
+  :repositories {0 {:type ""}},
+  :window
+  {:min-width 400,
+   :min-height 400,
+   :width 1024,
+   :icon "icon.png",
+   :title "Notes",
+   :resizable true,
+   :position "center",
+   :height 800},
+  :keywords ("helpful" "notes"),
+  :main "index.html",
+  :platforms ("linux32")},
+ :mobile
+ {:content "/index.html",
+  :preferences {:orientation "default"},
+  :icons {:global {:src "icon.png"}},
+  :firefoxos
+  {:permissions
+   {"storage" {:description "Used for storing notes", :access ""}},
+   :orientation "portrait",
+   :icons
+   ({:src "img/icons/icon16x16.png", :size "16"}
+    {:src "img/icons/icon48x48.png", :size "48"}
+    {:src "img/icons/icon64x64.png", :size "64"}
+    {:src "img/icons/icon128x128.png", :size "128"}),
+   :fullscreen true,
+   :locales
+   {"es"
+    {:description "Una aplicación pequeña para las notas",
+     :name "notas"}}},
+  :id "com.greenyouse.notes",
+  :platforms ("firefoxos")},
+ :version "0.1.0"}

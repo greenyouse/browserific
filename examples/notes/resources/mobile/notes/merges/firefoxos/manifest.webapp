@@ -1,0 +1,30 @@
+{
+  "description" : "A little app for writing notes",
+  "permissions" : {
+    "storage" : {
+      "description" : "Used for storing notes",
+      "access" : ""
+    }
+  },
+  "name" : "notes",
+  "orientation" : "portrait",
+  "default_locale" : "en_US",
+  "icons" : {
+    "128" : "img/icons/icon128x128.png",
+    "64" : "img/icons/icon64x64.png",
+    "48" : "img/icons/icon48x48.png",
+    "16" : "img/icons/icon16x16.png"
+  },
+  "launch_path" : "/index.html",
+  "fullscreen" : true,
+  "locales" : {
+    "es" : {
+      "description" : "Una aplicación pequeña para las notas",
+      "name" : "notas"
+    }
+  },
+  "developer" : {
+    "name" : "greenyouse"
+  },
+  "version" : "0.1.0"
+}
