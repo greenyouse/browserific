@@ -17,15 +17,18 @@
     (let [root (case env
                  "mobile" (str "resources/" env "/" u/project-name "/merges/" platform "/js/")
                  "desktop" (str "resources/" env "/deploy/" platform "/js/")
-                 :else (str "resources/" env "/" platform "/js/"))
+                 ;;FIXME: use correct output path for extensions
+                 "extension" (str "resources/" env "/" platform "/" u/project-name "/js/"))
           to  (str root id ".js")
-          main (cond
-                (= "app" id) (symbol (str u/project-name ".core"))
-                (= "content" id) (symbol (str u/project-name ".content.core"))
-                (= "background" id) (symbol (str u/project-name ".background.core")))
+          main (case id
+                 "app"  (symbol (str u/project-name ".core"))
+                 "content"  (symbol (str u/project-name ".content.core"))
+                 "background"  (symbol (str u/project-name ".background.core")))
           src (if (not= "app" id) (str "intermediate/" platform "/" id)
                   (str "intermediate/" platform))
           asset (str "js/" profile "-" id)
+          nodejs (if (= env "desktop")
+                   [[:target] :nodejs])
           assoc-build (fn [coll]
                         (reduce (fn [acc [k v]]
                                   (assoc-in acc k v))
@@ -34,6 +37,7 @@
         "dev" (assoc-build
                [[[:compiler :optimizations] :none]
                 [[:compiler :main] main]
+                nodejs
                 [[:compiler :output-to] to]
                 [[:compiler :output-dir] (str root profile "-" id)]
                 [[:compiler :asset-path] asset]
@@ -44,6 +48,7 @@
         "test" (assoc-build
                  [[[:compiler :optimizations] :none]
                   [[:compiler :main] main]
+                  nodejs
                   [[:compiler :output-dir] (str root profile "-" id "-test")]
                   [[:compiler :source-map] true]
                   [[:source-paths] [src (str"test/" platform)]]
@@ -52,6 +57,7 @@
         "release" (assoc-build
                     [[[:compiler :optimizations] :advanced]
                      [[:compiler :main] main]
+                     nodejs
                      [[:compiler :output-to] to]
                      [[:compiler :output-dir] (str root profile "-" id "-release")]
                      [[:compiler :source-map] (str to ".map")]
