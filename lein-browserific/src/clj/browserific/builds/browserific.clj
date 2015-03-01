@@ -14,31 +14,32 @@
   "A general template for lein-cljsbuild profiles"
   [env platform]
   (fn [id profile type]
-    (let [root (if (= env "mobile")
-                 (str "resources/" env "/" u/project-name "/merges/" platform "/js/")
-                 (str "resources/" env "/" platform "/js/"))
+    (let [root (case env
+                 "mobile" (str "resources/" env "/" u/project-name "/merges/" platform "/js/")
+                 "desktop" (str "resources/" env "/deploy/" platform "/js/")
+                 :else (str "resources/" env "/" platform "/js/"))
           to  (str root id ".js")
           main (cond
-                 (= "app" id) (symbol (str u/project-name ".core"))
-                 (= "content" id) (symbol (str u/project-name ".content.core"))
-                 (= "background" id) (symbol (str u/project-name ".background.core")))
+                (= "app" id) (symbol (str u/project-name ".core"))
+                (= "content" id) (symbol (str u/project-name ".content.core"))
+                (= "background" id) (symbol (str u/project-name ".background.core")))
           src (if (not= "app" id) (str "intermediate/" platform "/" id)
                   (str "intermediate/" platform))
           asset (str "js/" profile "-" id)
           assoc-build (fn [coll]
                         (reduce (fn [acc [k v]]
                                   (assoc-in acc k v))
-                          {} coll))]
+                                {} coll))]
       (case type
         "dev" (assoc-build
-                [[[:compiler :optimizations] :none]
-                 [[:compiler :main] main]
-                 [[:compiler :output-to] to]
-                 [[:compiler :output-dir] (str root profile "-" id)]
-                 [[:compiler :asset-path] asset]
-                 [[:compiler :source-map] true]
-                 [[:source-paths] ["dev" src]]
-                 [[:id] (str profile "-dev")]])
+               [[[:compiler :optimizations] :none]
+                [[:compiler :main] main]
+                [[:compiler :output-to] to]
+                [[:compiler :output-dir] (str root profile "-" id)]
+                [[:compiler :asset-path] asset]
+                [[:compiler :source-map] true]
+                [[:source-paths] ["dev" src]]
+                [[:id] (str profile "-dev")]])
 
         "test" (assoc-build
                  [[[:compiler :optimizations] :none]
