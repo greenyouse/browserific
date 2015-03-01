@@ -34,6 +34,7 @@
      {:type :strings :data (reagent/cursor [:mobile :permissions] config-db) :label "Permissions"
       :htxt "A whitelist of domains that can connect with your app."
       :hurl "https://cordova.apache.org/docs/en/4.0.0/guide_appdev_whitelist_index.md.html#Whitelist%20Guide"}
+     ;; FIXME: should have a default of index.html
      {:type :name :data (reagent/cursor [:mobile :content] config-db) :label "Content"
       :htxt "The optional <content> element defines the app's starting page in the top-level web assets directory. The default value is index.html, which customarily appears in a project's top-level www directory."
       :hurl "https://cordova.apache.org/docs/en/4.0.0/config_ref_index.md.html#The%20config.xml%20File"}]))

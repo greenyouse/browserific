@@ -2,6 +2,7 @@
   (:require [leiningen.new.templates :refer [renderer name-to-path year ->files]]
             [leiningen.core.main :as main]))
 
+;; TODO: maybe we could symlink resources/public to a specific platform?
 
 (def render (renderer "browserific-app"))
 
