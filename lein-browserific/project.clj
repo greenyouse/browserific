@@ -12,13 +12,16 @@
                  [fogus/ring-edn "0.2.0"]
                  [compojure "1.2.1"]
                  [org.clojure/core.async "0.1.346.0-17112a-alpha"]
+                 [com.greenyouse/chenex "0.1.0"]
                  ;; cljs
-                 [org.clojure/clojurescript "0.0-2371"]
-                 [reagent "0.5.0-alpha"]]
+                 [org.clojure/clojurescript "0.0-2850"] ;2371
+                 [reagent "0.5.0-alpha"]
+                 [cljsjs/react "0.12.2-5"]]
 
   :eval-in-leiningen true
 
-  :profiles {:dev {:dependencies [[javax.servlet/servlet-api "2.5"]]
+  :profiles {:dev {:dependencies [[javax.servlet/servlet-api "2.5"]
+                                  [weasel "0.6.0"]]
                    :plugins [[lein-cljsbuild "1.0.4"]
                              [lein-ring "0.9.1"]]}}
 
@@ -32,9 +35,9 @@
   :cljsbuild {
               :builds [{:id "dev"
                         :source-paths ["dev" "src/cljs"]
-                        :compiler {
-                                   :output-to "resources/public/js/client.js"
+                        :compiler {:output-to "resources/public/js/client.js"
                                    :output-dir "resources/public/js/out"
                                    :optimizations :none
                                    :source-map true
-                                   :externs ["react/externs/react.js"]}}]})
+                                   :asset-path "js/out"
+                                   :main browserific.config.core}}]})

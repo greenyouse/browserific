@@ -4,6 +4,8 @@
             [reagent.core :as reagent])
   (:require-macros [browserific.config.macros :refer [multi-input-template]]))
 
+;; TODO: I should really move those chrome/opera specific options to a chrome/opera page. Same
+;; goes for some of the other stuff like browser icons.
 (defn browser-page
   "The page for browser options"
   []
@@ -16,27 +18,6 @@
      {:type :checkbox :data (reagent/cursor [:extensions :private] config-db) :label "Private?"
       :htxt "Whether to support private browsering mode (for Firefox + Safari)."
       :hurl "https://developer.mozilla.org/en-US/Add-ons/SDK/High-Level_APIs/private-browsing"}
-     {:type :select :data (reagent/cursor [:extensions :action :type] config-db) :label "Action Type"
-      :htxt "Browser actions allow for putting stuff in the browser chrome (like adding icons to a toolbar) while Page actions only interact with a webpage (for DOM interaction). Only for Chrome + Opera."
-      :hurl ["https://dev.opera.com/extensions/browserAction.html" "https://dev.opera.com/extensions/pageAction.html"]
-      :options ["browser" "page"]}
-     {:type :multi :data (reagent/cursor [:extensions :action :default-icon] config-db) :label "Action Icons"
-      :htxt "Relative path to a icon PNG file for the action. You're encouraged to use both 19px and 38px icons but only one is required. Only for Chrome + Opera."
-      :hurl ["https://developer.chrome.com/extensions/browserAction#icon" "https://developer.chrome.com/extensions/pageAction"]
-      :multi-c (multi-input-template :vec [{:type :name :label "src"}
-                              {:type :name :label "size"}])}
-     {:type :name :data (reagent/cursor [:extensions :action :default-title] config-db) :label "Action Title"
-      :htxt "A title for the action that will be shown in a tooltip. Only for Chrome + Opera."
-      :hurl "https://developer.chrome.com/extensions/browserAction#tooltip"}
-     {:type :name :data (reagent/cursor [:extensions :action :default-popup] config-db) :label "Action Popup"
-      :htxt "If a browser action has a popup, the popup appears when the user clicks the icon. The popup can contain any HTML contents that you like, and it's automatically sized to fit its contents. Only for Chrome + Opera."
-      :hurl "https://developer.chrome.com/extensions/browserAction#popups"}
-     {:type :strings :data (reagent/cursor [:extensions :background :scripts] config-db) :label "Background Scripts"
-      :htxt "Whether to use a background page or an event page. Only for Chrome + Opera."
-      :hurl ["https://developer.chrome.com/extensions/background_pages" "https://developer.chrome.com/extensions/event_pages"]}
-     {:type :checkbox :data (reagent/cursor [:extensions :background :persistent] config-db) :label "Persistent Background?"
-      :htxt "Set this to true if using a background page and false for an event page. Only for Chrome + Opera."
-      :hurl ["https://developer.chrome.com/extensions/background_pages" "https://developer.chrome.com/extensions/event_pages"]}
      {:type :strings :data (reagent/cursor [:extensions :content :matches] config-db) :label "Content Whitelist"
       :htxt "Specifies which pages a content script will be injected into."
       :hurl ["https://developer.chrome.com/extensions/content_scripts" "https://developer.apple.com/library/safari/documentation/Tools/Conceptual/SafariExtensionGuide/ExtensionPermissions/ExtensionPermissions.html#//apple_ref/doc/uid/TP40009977-CH8-SW7"]}
@@ -91,18 +72,39 @@
      {:type :name :data (reagent/cursor [:extensions :update-url :safari] config-db) :label "Safari Update URL"
       :htxt "Updates your safari extensions with the given URL."
       :hurl "https://developer.apple.com/library/safari/documentation/Tools/Conceptual/SafariExtensionGuide/UpdatingExtensions/UpdatingExtensions.html#//apple_ref/doc/uid/TP40009977-CH12-SW1"}
-     {:type :strings :data (reagent/cursor [:extensions :web-accessible-resources] config-db) :label "Web Accessible Resources"
-      :htxt "An array of strings specifying the paths of packaged resources that are expected to be usable in the context of a web page. These paths are relative to the package root, and may contain wildcards."
-      :hurl "https://developer.chrome.com/extensions/manifest/web_accessible_resources"}
-     {:type :select :data (reagent/cursor [:extensions :incognito] config-db) :label "Incognito"
-      :htxt "Use the \"incognito\" manifest key with either \"spanning\" or \"split\" to specify how this extension will behave if allowed to run in incognito mode. Only extensions can choose. Apps will always use the default value for the app type; \"spanning\" for Chrome apps and \"split\" for installable web and legacy packaged apps."
-      :hurl "https://developer.chrome.com/extensions/manifest/incognito"}
-     {:type :strings :data (reagent/cursor [:extensions :requirements :3D :features] config-db) :label "3D Features"
-      :htxt " Technologies required by the app or extension. Hosting sites such as the Chrome Web Store may use this list to dissuade users from installing apps or extensions that will not work on their computer. Supported requirements currently include \"3D\" and \"plugins\"; additional requirements checks may be added in the future. "
-      :hurl "https://developer.chrome.com/extensions/manifest/requirements"}
      {:type :strings :data (reagent/cursor [:extensions :sandbox :page] config-db) :label "Sandbox Pages"
       :htxt "Defines an collection of app or extension pages that are to be served in a sandboxed unique origin."
       :hurl "https://developer.chrome.com/extensions/manifest/sandbox"}
      {:type :name :data (reagent/cursor [:extensions :sandbox :content-security-policy] config-db) :label "Content Security Policy"
       :htxt "Enter a Content Security Policy for the sandboxed pages. If none is given, the default is sandbox allow-scripts allow-forms."
-      :hurl ["https://developer.chrome.com/extensions/contentSecurityPolicy" "https://developer.chrome.com/extensions/manifest/sandbox"]}]))
+      :hurl ["https://developer.chrome.com/extensions/contentSecurityPolicy" "https://developer.chrome.com/extensions/manifest/sandbox"]}
+     {:type :strings :data (reagent/cursor [:extensions :web-accessible-resources] config-db) :label "Web Accessible Resources"
+      :htxt "An array of strings specifying the paths of packaged resources that are expected to be usable in the context of a web page. These paths are relative to the package root, and may contain wildcards."
+      :hurl "https://developer.chrome.com/extensions/manifest/web_accessible_resources"}
+     {:type :select :data (reagent/cursor [:extensions :action :type] config-db) :label "Action Type"
+      :htxt "Browser actions allow for putting stuff in the browser chrome (like adding icons to a toolbar) while Page actions only interact with a webpage (for DOM interaction). Only for Chrome + Opera."
+      :hurl ["https://dev.opera.com/extensions/browserAction.html" "https://dev.opera.com/extensions/pageAction.html"]
+      :options ["browser" "page"]}
+     {:type :multi :data (reagent/cursor [:extensions :action :default-icon] config-db) :label "Action Icons"
+      :htxt "Relative path to a icon PNG file for the action. You're encouraged to use both 19px and 38px icons but only one is required. Only for Chrome + Opera."
+      :hurl ["https://developer.chrome.com/extensions/browserAction#icon" "https://developer.chrome.com/extensions/pageAction"]
+      :multi-c (multi-input-template :vec [{:type :name :label "src"}
+                                           {:type :name :label "size"}])}
+     {:type :name :data (reagent/cursor [:extensions :action :default-title] config-db) :label "Action Title"
+      :htxt "A title for the action that will be shown in a tooltip. Only for Chrome + Opera."
+      :hurl "https://developer.chrome.com/extensions/browserAction#tooltip"}
+     {:type :name :data (reagent/cursor [:extensions :action :default-popup] config-db) :label "Action Popup"
+      :htxt "If a browser action has a popup, the popup appears when the user clicks the icon. The popup can contain any HTML contents that you like, and it's automatically sized to fit its contents. Only for Chrome + Opera."
+      :hurl "https://developer.chrome.com/extensions/browserAction#popups"}
+     {:type :strings :data (reagent/cursor [:extensions :background :scripts] config-db) :label "Background Scripts"
+      :htxt "Whether to use a background page or an event page. Only for Chrome + Opera."
+      :hurl ["https://developer.chrome.com/extensions/background_pages" "https://developer.chrome.com/extensions/event_pages"]}
+     {:type :checkbox :data (reagent/cursor [:extensions :background :persistent] config-db) :label "Persistent Background?"
+      :htxt "Set this to true if using a background page and false for an event page. Only for Chrome + Opera."
+      :hurl ["https://developer.chrome.com/extensions/background_pages" "https://developer.chrome.com/extensions/event_pages"]}
+     {:type :select :data (reagent/cursor [:extensions :incognito] config-db) :label "Incognito"
+      :htxt "Use the \"incognito\" manifest key with either \"spanning\" or \"split\" to specify how this extension will behave if allowed to run in incognito mode. Only extensions can choose. Apps will always use the default value for the app type; \"spanning\" for Chrome apps and \"split\" for installable web and legacy packaged apps."
+      :hurl "https://developer.chrome.com/extensions/manifest/incognito"}
+     {:type :strings :data (reagent/cursor [:extensions :requirements :3D :features] config-db) :label "3D Features"
+      :htxt " Technologies required by the app or extension. Hosting sites such as the Chrome Web Store may use this list to dissuade users from installing apps or extensions that will not work on their computer. Supported requirements currently include \"3D\" and \"plugins\"; additional requirements checks may be added in the future. "
+      :hurl "https://developer.chrome.com/extensions/manifest/requirements"}]))

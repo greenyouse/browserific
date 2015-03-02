@@ -17,7 +17,10 @@
             [browserific.config.pages.browser.firefox :refer [firefox-page]]
             [browserific.config.pages.browser.safari :refer [safari-page]]
             [browserific.config.components :as co]
-            [reagent.core :as reagent :refer [atom]]))
+            [reagent.core :as reagent :refer [atom]]
+            cljsjs.react))
+
+;; NOTE: if you want to develop on this, use the server from `lein browserific config`
 
 (enable-console-print!)
 
