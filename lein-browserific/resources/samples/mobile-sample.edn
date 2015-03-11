@@ -44,75 +44,78 @@
           ;; These are various cordova preferences. The pattern is a map with
           ;; :name and :value. For more options see:
           ;; https://cordova.apache.org/docs/en/4.0.0/config_ref_index.md.html#The%20config.xml%20File
-          :preferences {; global, all platforms
-                        :global {:fullscreen "true"
-                                 :orientation "default"}
+          :preferences {;; global
+                        :fullscreen "true"
+                        :orientation "default"
 
-                        ;; amazon-fire prefs
-                        :amazon-fire {:KeepRunning "false"
-                                      :LoadUrlTimeout "10000"
-                                      :Splashscreen "mySplash"
-                                      :SplashScreenDelay "true"
-                                      :LoadingDialog "Please wait, the data is loading"
-                                      :LoadingPageDialog "Please wait, the data is loading"
-                                      :ErrorUrl "error.html"
-                                      :ShowTitle "true"
-                                      :LogLevel "VERBOSE"}
+                        ;; Amazon-Fire + Android
+                        :KeepRunning "false"
+                        :LoadUrlTimeout "10000"
+                        :Splashscreen "mySplash"
+                        :SplashScreenDelay "true"
+                        :LoadingDialog "My Title, My Message"
+                        :LoadingPageDialog "My Title, My Message"
+                        :ErrorUrl "myErrorPage.html"
+                        :ShowTitle "true"
+                        :LogLevel "VERBOSE"
 
-                        ;; android prefs
-                        :android {:KeepRunning "false"
-                                  :LoadUrlTimeout "10000"
-                                  :Splashscreen "mySplash"
-                                  :SplashScreenDelay "true"
-                                  :InAppBrowserStorageEnabled "true"
-                                  :LoadingDialog "My Title, My Message"
-                                  :LoadingPageDialog "My Title, My Message"
-                                  :ErrorUrl "myErrorPage.html"
-                                  :ShowTitle "true"
-                                  :LogLevel "VERBOSE"
-                                  :AndroidLaunchMode "SingleTop"}
+                        ;; Android only
+                        :InAppBrowserStorageEnabled "true"
+                        :AndroidLaunchMode "SingleTop"
 
-                        ;; blackberry prefs
-                        :blackberry {:ChildBrowser "disable"
-                                     :PopupBlocker "enable"
-                                     :WebSecurity "disable"
-                                     :BackgroundColor "0xff0000ff"
-                                     :HideKeyboardFromAccessoryBar "true"}
+                        ;; Android + Blackberry
+                        :BackgroundColor "0xff0000ff"
 
-                        ;; iOS prefs
-                        :ios {:EnableViewportScale "true"
-                              :MediaPlaybackRequiresUserAction "true"
-                              :AllowInlineMediaPlayback "true"
-                              :BackupWebStorage "local"
-                              :TopActivityIndicator "white"
-                              :KeyboardDisplayRequiresUserAction "false"
-                              :SuppressesIncrementalRendering "true"
-                              :GapBetweenPages "0"
-                              :PageLength "0"
-                              :PaginationBreakingMode "page"
-                              :PaginationMode "unpaginated"
-                              :UIWebViewDecelerationSpeed "fast"
-                              :DisallowOverscroll "true"
-                              :HideKeyboardFromAccessoryBar "true"}
+                        ;; Blackberry
+                        :ChildBrowser "disable"
+                        :PopupBlocker "enable"
+                        :WebSecurity "disable"
 
-                        ;; windows phone prefs
-                        :wp8 {:windows-target-version "8.1"}}
+                        ;; Blackberry + iOS
+                        :HideKeyboardFromAccessoryBar "true"
+
+                        ;; Android + iOS
+                        :DisallowOverscroll "true"
+
+                        ;; iOS only
+                        :EnableViewportScale "true"
+                        :MediaPlaybackRequiresUserAction "true"
+                        :AllowInlineMediaPlayback "true"
+                        :BackupWebStorage "local"
+                        :TopActivityIndicator "white"
+                        :KeyboardDisplayRequiresUserAction "false"
+                        :SuppressesIncrementalRendering "true"
+                        :GapBetweenPages "0"
+                        :PageLength "0"
+                        :PaginationBreakingMode "page"
+                        :PaginationMode "unpaginated"
+                        :UIWebViewDecelerationSpeed "fast"
+
+                        ;; Windows Phone only
+                        :windows-target-version "8.1"}
 
           ;; Icon files tend vary for each platform. This is a list of
           ;; all necessary formats:
           :icons {:global {:src "icon.png"}
+
+                  :amazon-fire [{:src "res/icon/amazon-fire/icon-36-ldpi.png" :density "ldpi"}
+                                {:src "res/icon/amazon-fire/icon-48-mdpi.png" :density "mdpi"}
+                                {:src "res/icon/amazon-fire/icon-72-hdpi.png" :density "hdpi"}
+                                {:src "res/icon/amazon-fire/icon-96-xhdpi.png" :density "xhdpi"}]
+
                   :android [{:src "res/icon/android/icon-36-ldpi.png" :density "ldpi"}
                             {:src "res/icon/android/icon-48-mdpi.png" :density "mdpi"}
                             {:src "res/icon/android/icon-72-hdpi.png" :density "hdpi"}
                             {:src "res/icon/android/icon-96-xhdpi.png" :density "xhdpi"}]
+
+                  :blackberry [{:src "res/icon/blackberry/icon-80.png"}]
 
                   :ios  [{:src "src/icon/ios/icon-57.png" :width "54" :height "54"}
                          {:src "src/icon/ios/icon-72.png" :width "72" :height "72"}
                          {:src "src/icon/ios/icon-57-2x.png" :width "114" :height "114"}
                          {:src "src/icon/ios/icon-72-2x.png" :width "144" :height "144"}]
 
-                  :blackberry [{:src "res/icon/blackberry/icon-80.png"}
-                               {:src "res/icon/blackberry/icon-80.png"}]
+                  :tizen [{:src "res/icon/tizen/icon-128.png" :width "128" :height "128"}]
 
                   :wp8 [{:src "res/icon/windows-phone/icon-48.png"}
                         {:src "res/icon/windows-phone/icon-173.png"}]}
