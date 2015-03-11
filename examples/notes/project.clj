@@ -23,7 +23,7 @@
 
   :profiles {:default [:base :system :user :provided :dev :plugin.chenex/default]}
 
-  :browserific {:draft "firefoxos"}
+  :browserific {:draft "linux32"}
 
   :chenex {:builds ~(-> "builds/chenex-build.clj" slurp read-string)}
 

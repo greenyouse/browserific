@@ -85,7 +85,9 @@
   "A list of the items"
   [{:keys [link data]}]
   (letfn [(text-title [txt]
-            (str (subs txt 0 10) "... "))]
+            (if (< 10 (count txt))
+              (str (subs txt 0 10) "... ")
+              (str txt)))]
     (fn []
       (chenex/in-case!
        [:firefoxos] [:section {:data-type "list"}
@@ -100,17 +102,17 @@
                                              [:p (text-title text)]
                                              [:p [:strong title]])]]))
                              [:ul] data)]
-       :else [:section {:id "list"}
-              (reduce (fn [ul [id title text]]
-                        (conj ul ^{:key (gensym)}
-                              [:li [:a {:href link
-                                        :on-click #(to-entry id title text)}
-                                    (if-not (nil? title)
-                                      [:p [:strong title]]
-                                      [:p (text-title text)])]
-                               ;; do a timestamp here?
-                               ]))
-                      [:ul] data)]))))
+       [:d] [:section {:id "list"}
+             (reduce (fn [ul [id title text]]
+                       (conj ul ^{:key (gensym)}
+                             [:dt  {:href link
+                                    :on-click #(to-entry id title text)}
+                              (if-not (nil? title)
+                                [:p [:strong title]])
+                              [:dd (text-title text)]
+                              ;; do a timestamp here?
+                              ]))
+                     [:dl {:class "dl-horizontal"}] data)]))))
 
 ;;; mobile
 ;; [cloud upload] [trash] [new note]

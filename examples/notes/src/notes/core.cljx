@@ -128,9 +128,10 @@
   (reagent/render-component [notes-screen]
                             (.getElementById js/document "app")))
 
-;;FIXME: make sure chenex keeps the export metadata
-(defn ^:export setup []
-  (chenex/in-case!
-   [:m] (.addEventListener js/document "deviceready" on-device-ready false)
-   [:d] (reagent/render-component [notes-screen]
-                                   (.getElementById js/document "app"))))
+(with-meta
+  (defn setup []
+    (chenex/in-case!
+     [:m] (.addEventListener js/document "deviceready" on-device-ready false)
+     [:d] (reagent/render-component [notes-screen]
+                                    (.getElementById js/document "app"))))
+  {:export true})
