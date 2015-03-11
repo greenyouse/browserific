@@ -1,34 +1,23 @@
-# Browserific-app template
---------------------------
-A Leiningen template for making new browserific ClojureScript apps.
+# browserific-app template
+
+A Leiningen template for making new apps with browserific.
 
 ## Usage
 
-This template uses [Om](https://github.com/swannodette/om) by default
+This template uses [Reagent](https://github.com/reagent-project/reagent) by default
 because I like to use it in my own apps. To get a basic project with
-browserific, Om, and a few other goodies enter this:
+browserific, Reagent, and a few other goodies enter this:
 
 ```sh
-$ lein new browserific-app app-name
-```
-
-If using [sablono](https://github.com/r0man/sablono),
-[kioo](https://github.com/ckirkendall/kioo), or
-[secretary](https://github.com/gf3/secretary) are more your style, you
-can include those too! Add a vector after the project name with keys
-for each tool you want to use. Here's an example of a project with
-sablono and secretary:
-
-```sh
-$ lein new browserific-app example [:sablono :secretary]
+$ lein new browserific-app [app-name]
 ```
 
 All of the builds for lein-cljsbuild are stored outside of `project.clj`
-in a special file called `builds.clj`. This is meant to save you from
-micro-managing builds for all the platform (there are 16 target
-platforms and counting so far :D). 
+in a special directory called `builds`. This is meant to save you from
+micro-managing builds for all the platforms (there are 19 and counting
+so far :D).   
 
-To populate `builds.clj`, first build your `config.edn` file using
+To populate `builds`, first build your `config.edn` file using
 lein-browserific:
 
 ```sh
@@ -41,8 +30,8 @@ After that, run the `build` command from lein-browserific:
 lein browserific build
 ```
 
-The build command will auto-generate builds for all of the platforms you
-specified in the configuration. See
+The `build` command will auto-generate builds for all of the platforms
+you specified in the configuration. See
 [lein-browserific](https://github.com/greenyouse/browserific/lein-browserific)
 for more information. 
 

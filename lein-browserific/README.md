@@ -1,39 +1,54 @@
-# lein-Browserific
+# lein-browserific
 
-A Leiningen plugin for ClojureScript app developement.
+A Leiningen plugin for ClojureScript app development.
 
 ## Status
 
-This plugin is nearly done, however, the config GUI and internal
-structure leave a bit to be desired. I plan on pushing out the first
-version after finishing firefoxos details. 
-
-Beware, this plugin is very experimental and guaranteed to change
-over time (pre-alpha quality)! 
+This plugin is finished for mobile and desktop as alpha
+software. Browser extensions need some more work though.
 
 ## Installation
 
-This project has not been released yet, so it will need to be cloned and
-installed manually for now.
+Add this dependency to your project.clj:
+```clj
+[lein-browserific "0.1.0-alpha"]
+```
 
 ## Basic Configuration
 
-There are two options to be aware of for the project.clj file:
+There are four options to be aware of for the project.clj file:
 
 ```clj
 :browserific {:config "some/location/config.edn"
-              :source-paths "another/spot"}
+              :source-paths "another/spot"
+              :multi true
+              :draft "safari"}
 ```
 
-`:config` denotes a special location for the app's configuration
-file. If no option is specified, the default is to use `src/config.edn`.
+- `:config` - 
+  denotes a special location for the app's configuration
+  file (defaults to `src/config.edn`).
+  
+- `:source-paths` - 
+  points to the ClojureScript files of your app (default location is
+  `src`).
+  
+- `:multi` - 
+  is used for developing browser extensions and expects
+  `src/{{app-name}}/content` and `src/{{app-name}}/background` which
+  compile into an extension's content.js and background.js,
+  respectively. Otherwise, `src/{{app-name}}` is used (defaults to
+  false). 
 
-`:source-paths` points to the ClojureScript files of your app. The
-default location is `src`.
+- `:draft` -
+  sets the chenex repl (`builds/chenex-repl.clj`) to the specified
+  platform and creates a special cljsbuild `draft` profile that outputs
+  to `resources/public`. This is meant to help prototype your app before
+  deploying it to a native environment. (default is nil) 
+  
 
-
-Before you get coding, you'll need to build the project's configuration
-file and set up lein-cljsbuild. 
+Before you get coding, you'll need to build the project's `config.edn`
+and set up lein-cljsbuild + chenex.
 
 To start the configuration GUI, run:
 
@@ -41,19 +56,17 @@ To start the configuration GUI, run:
 lein browserific config 
 ```
 
-and then navigate to http://localhost:50000 with a web browser. The menu
-updates your `config.edn` asynchronously while you type, so don't worry
-about hitting a `save` button. You can close the window and stop the
-server when you've finished filling in the configuration.
+The menu updates your `config.edn` asynchronously while you work, so
+don't worry about hitting a `save` button. You can close the window and
+stop the server when you've finished filling in the configuration. 
 
-Next, create builds for lein-cljsbuild with:
+Next, create the builds with:
 
 ```sh
 lein browserific build
 ```
 
-This populates the `builds.clj` file with all of the relevant platforms
-that you set during the configuration.
+This populates the `builds` directory for lein-cljsbuild and chenex.
 
 ## Usage
 
