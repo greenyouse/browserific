@@ -37,4 +37,4 @@ are welcome though.
 
 Copyright © 2014 Ed Babcock
 
-Distributed under the Eclipse Public License version 1.0.
+Distributed under the GNU General Public License version 3.0
