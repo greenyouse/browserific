@@ -2,8 +2,8 @@
 
 Browserific is a framework for building apps in ClojureScript. 
 
-This is intended to be a one-stop for ClojureScript apps that run
-on mobile, desktop, or as browser-extensions (wip). Currently,
+This is intended to be a one-stop shop for ClojureScript apps that 
+run on mobile, desktop, or as browser-extensions (wip). Currently,
 browserific targets Cordova for mobile, NodeJS for desktop, and
 FirefoxOS (mobile). Browser extensions that run on Chrome, Firefox, 
 Opera, and Safari are future goals for this project.
