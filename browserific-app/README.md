@@ -63,4 +63,4 @@ for more information.
 
 Copyright © 2014 Ed Babcock
 
-Distributed under the GNU General Public License version 3.0
+Distributed under the BSD 2-Clause License
