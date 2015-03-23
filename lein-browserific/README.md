@@ -16,37 +16,6 @@ Add this dependency to your project.clj:
 
 ## Basic Configuration
 
-There are four options to be aware of for the project.clj file:
-
-```clj
-:browserific {:config "some/location/config.edn"
-              :source-paths "another/spot"
-              :multi true
-              :draft "safari"}
-```
-
-- `:config` - 
-  denotes a special location for the app's configuration
-  file (defaults to `src/config.edn`).
-  
-- `:source-paths` - 
-  points to the ClojureScript files of your app (default location is
-  `src`).
-  
-- `:multi` - 
-  is used for developing browser extensions and expects
-  `src/{{app-name}}/content` and `src/{{app-name}}/background` which
-  compile into an extension's content.js and background.js,
-  respectively. Otherwise, `src/{{app-name}}` is used (defaults to
-  false). 
-
-- `:draft` -
-  sets the chenex repl (`builds/chenex-repl.clj`) to the specified
-  platform and creates a special cljsbuild `draft` profile that outputs
-  to `resources/public`. This is meant to help prototype your app before
-  deploying it to a native environment. (default is nil) 
-  
-
 Before you get coding, you'll need to build the project's `config.edn`
 and set up lein-cljsbuild + chenex.
 
@@ -102,6 +71,38 @@ lein browserific sample
 lein browserific mobile
 ```
 Of course, this is not recommended, however, it's there if you need it :-)
+
+
+There are four options to be aware of for the project.clj file:
+
+```clj
+:browserific {:config "some/location/config.edn"
+              :source-paths "another/spot"
+              :multi true
+              :draft "safari"}
+```
+
+- `:config` - 
+  denotes a special location for the app's configuration
+  file (defaults to `src/config.edn`).
+  
+- `:source-paths` - 
+  points to the ClojureScript files of your app (default location is
+  `src`).
+  
+- `:multi` - 
+  is used for developing browser extensions and expects
+  `src/{{app-name}}/content` and `src/{{app-name}}/background` which
+  compile into an extension's content.js and background.js,
+  respectively. Otherwise, `src/{{app-name}}` is used (defaults to
+  false). 
+
+- `:draft` -
+  sets the chenex repl (`builds/chenex-repl.clj`) to the specified
+  platform and creates a special cljsbuild `draft` profile that outputs
+  to `resources/public`. This is meant to help prototype your app before
+  deploying it to a native environment. (default is nil) 
+  
 
 
 ## License
