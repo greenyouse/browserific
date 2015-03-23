@@ -32,7 +32,7 @@ lein browserific build
 
 The `build` command will auto-generate builds for all of the platforms
 you specified in the configuration. See
-[lein-browserific](https://github.com/greenyouse/browserific/lein-browserific)
+[lein-browserific](https://github.com/greenyouse/browserific/tree/master/lein-browserific)
 for more information. 
 
 
