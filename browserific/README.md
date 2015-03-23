@@ -11,4 +11,4 @@ Not started yet.
 
 Copyright © 2014 Ed Babcock
 
-Distributed under the BSD 2-Clause License
+Distributed under the Eclipse Public License v1.0

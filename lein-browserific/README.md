@@ -108,4 +108,4 @@ Of course, this is not recommended, however, it's there if you need it :-)
 
 Copyright © 2014 Ed Babcock
 
-Distributed under the GNU General Public License version 3.0
+Distributed under the Eclipse Public License v1.0
