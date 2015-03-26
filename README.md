@@ -9,6 +9,37 @@ extensions that run on Chrome, Firefox, Opera, and Safari are future
 goals for this project. 
 
 
+## Quick + Dirty Setup
+
+Make a new browserific project:
+```sh
+lein new browserific-app awesome-project
+```
+
+Set the configuration stuff for browserific:
+```sh
+lein browserific config
+```
+
+Generate build info:
+```sh
+lein browserific build
+```
+
+Run the compiler commands in separate shells:
+```sh
+lein auto browserific compile
+lein cljsbuild auto [platform-dev]
+```
+
+Write app.
+
+Deploy it:
+```sh
+cd resources/[platform-dir]
+[insert Cordova or NW.js commands here]
+```
+
 ## Status
 
 So far the `browserific-app` template and `lein-browserific` plugin are

@@ -1,4 +1,4 @@
-(defproject lein-browserific "0.1.0-alpha"
+(defproject lein-browserific "0.1.1-alpha"
   :description "A Leiningen build tool for unified app development"
   :url "https://github.com/greenyouse/browserific/lein-browserific"
   :license {:name "Eclipse Public License"
@@ -12,11 +12,10 @@
                  [fogus/ring-edn "0.2.0"]
                  [compojure "1.2.1"]
                  [org.clojure/core.async "0.1.346.0-17112a-alpha"]
-                 [com.greenyouse/chenex "0.1.0"]
+                 [com.greenyouse/chenex "0.1.2"]
                  ;; cljs
-                 [org.clojure/clojurescript "0.0-2850"] ;2371
-                 [reagent "0.5.0-alpha"]
-                 [cljsjs/react "0.12.2-5"]]
+                 [org.clojure/clojurescript "0.0-3119"]
+                 [reagent "0.5.0"]]
 
   :eval-in-leiningen true
 
