@@ -1,5 +1,5 @@
 (ns {{name}}.core
-    (:require-macros [greenyouse.chenex :as chenex]))
+    (:require [greenyouse.chenex :as chenex]))
 
 (enable-console-print!)
 
