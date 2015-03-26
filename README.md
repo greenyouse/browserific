@@ -16,6 +16,8 @@ ready as alpha software, however, the `browserific` library is just
 getting started.
 
 
+[![Clojars Project](http://clojars.org/lein-browserific/latest-version.svg)](http://clojars.org/lein-browserific)
+
 ## Contributing
 
 I set up a [Trello](https://trello.com/b/hDlRgiHo/browserific) board
