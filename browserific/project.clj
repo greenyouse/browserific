@@ -1,6 +1,6 @@
 (defproject browserific "0.1.0-SNAPSHOT"
   :description "A library to abstract app framework APIs"
-  :url "https://github.com/greenyouse/browserific/browserific"
+  :url "https://github.com/greenyouse/browserific/tree/master/browserific"
   :license {:name "EPL 1.0"
             :url  "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies [[org.clojure/clojure "1.6.0"]
