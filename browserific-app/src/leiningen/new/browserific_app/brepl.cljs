@@ -1,4 +1,6 @@
-(ns brepl
-  (:require [weasel.repl :as ws-repl]))
+(ns {{name}}.brepl
+  (:require [weasel.repl :as repl]))
 
-(ws-repl/connect "http://localhost:9001/repl")
+
+(when-not (repl/alive?)
+  (repl/connect "ws://localhost:9001"))

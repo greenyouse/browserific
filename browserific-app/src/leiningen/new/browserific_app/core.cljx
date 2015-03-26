@@ -1,6 +1,5 @@
 (ns {{name}}.core
-    (:require cljsjs.react)
-    (:require-macros [chenex.macros :as chenex]))
+    (:require-macros [greenyouse.chenex :as chenex]))
 
 (enable-console-print!)
 
