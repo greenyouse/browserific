@@ -1,7 +1,7 @@
 (ns browserific.config.server
   "This server is for the config.edn GUI. It loads the state
   of the config.edn file and saves a snapshot of the state
-  each time configuration option gets edited."
+  each time a configuration option gets edited."
   (:require [browserific.helpers.utils :as u]
             [compojure.handler :as handler]
             [compojure.route :as route]

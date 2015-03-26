@@ -3,4 +3,4 @@
 
 (enable-console-print!)
 
-(js/console.log "Make something fun!")
+(println "Make something fun!")
