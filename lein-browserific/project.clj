@@ -12,7 +12,7 @@
                  [fogus/ring-edn "0.2.0"]
                  [compojure "1.2.1"]
                  [org.clojure/core.async "0.1.346.0-17112a-alpha"]
-                 [com.greenyouse/chenex "0.1.0"]
+                 [com.greenyouse/chenex "0.1.1"]
                  ;; cljs
                  [org.clojure/clojurescript "0.0-2850"] ;2371
                  [reagent "0.5.0-alpha"]

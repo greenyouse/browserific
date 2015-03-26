@@ -15,8 +15,7 @@
    :output-path (str "intermediate/" plat)
    :rules {:filetype "cljs"
            :features (to-set opts)
-           :inner-transforms []
-           :outer-transforms []}})
+           :inner-transforms []}})
 
 (defn- classify-platform
   "Tags a platform with: b, d, m, or a special tag

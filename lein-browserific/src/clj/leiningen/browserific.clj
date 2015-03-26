@@ -9,7 +9,7 @@
             [browserific.builds.browserific :as bbuilds]
             [browserific.builds.chenex :as cb]
             [clojure.java.browse :as b]
-            [chenex.core :as cc])
+            [greenyouse.chenex.core :as cc])
   (:refer-clojure :exclude [compile])
   (:import java.io.File))
 
