@@ -7,12 +7,6 @@ A Leiningen plugin for ClojureScript app development.
 This plugin is finished for mobile and desktop as alpha
 software. Browser extensions need some more work though.
 
-## Installation
-
-Add this dependency to your project.clj:
-```clj
-[lein-browserific "0.1.0-alpha"]
-```
 
 ## Basic Configuration
 
