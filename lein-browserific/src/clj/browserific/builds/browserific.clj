@@ -24,8 +24,8 @@
                  "app"  (symbol (str u/project-name ".core"))
                  "content"  (symbol (str u/project-name ".content.core"))
                  "background"  (symbol (str u/project-name ".background.core")))
-          src (if (not= "app" id) (str "intermediate/" platform "/" id)
-                  (str "intermediate/" platform))
+          src (if (not= "app" id) (str "target/intermediate/" platform "/" id)
+                  (str "target/intermediate/" platform))
           asset (str "js/" profile "-" id)
           nodejs (if (= env "desktop")
                    [[:target] :nodejs])
@@ -91,7 +91,7 @@
   [{:keys [draft multi]}]
   (let [custom-build (if multi
                        [{:id "draft-background"
-                         :source-paths ["dev" (str "intermediate/" draft "/background")]
+                         :source-paths ["dev" (str "target/intermediate/" draft "/background")]
                          :compiler {:output-to "resources/public/js/background.js"
                                     :output-dir "resources/public/js/background"
                                     :source-map true
@@ -99,7 +99,7 @@
                                     :asset-path "js/background"
                                     :main (symbol (str u/project-name ".background.core"))}}
                         {:id "draft-content"
-                         :source-paths ["dev" (str "intermediate/" draft "/content")]
+                         :source-paths ["dev" (str "target/intermediate/" draft "/content")]
                          :compiler {:output-to "resources/public/js/content.js"
                                     :output-dir "resources/public/js/content"
                                     :source-map true
@@ -107,7 +107,7 @@
                                     :asset-path "js/content"
                                     :main (symbol (str u/project-name ".content.core"))}}]
                        {:id "draft"
-                        :source-paths ["dev" (str "intermediate/" draft)]
+                        :source-paths ["dev" (str "target/intermediate/" draft)]
                         :compiler {:output-to "resources/public/js/app.js"
                                    :output-dir "resources/public/js/out"
                                    :source-map true

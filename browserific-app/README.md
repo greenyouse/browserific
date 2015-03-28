@@ -46,7 +46,7 @@ for more information.
     ├── public
     ├── desktop
     └── mobile
-├── intermediate
+├── target/intermediate
     └── [browser vendor]
 ├── src
     ├── background

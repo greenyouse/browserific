@@ -12,7 +12,7 @@
   "Writes the chenex build for each platform"
   [{:keys [class plat] :as opts}]
   {:source-paths ["src"]
-   :output-path (str "intermediate/" plat)
+   :output-path (str "target/intermediate/" plat)
    :rules {:filetype "cljs"
            :features (to-set opts)
            :inner-transforms []}})
