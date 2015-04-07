@@ -73,11 +73,11 @@
     (-> (io/resource "samples/all-samples.edn") slurp lmain/info)))
 
 (defn- config
-  "Launch a server over port 50000 that has a GUI for building a config.edn file"
+  "Launch a server over port 4242 that has a GUI for building a config.edn file"
   []
-  (lmain/info (yellow-text "Starting a new browserific config server on port 50000."))
+  (lmain/info (yellow-text "Starting a new browserific config server on port 4242."))
   (future (Thread/sleep 2000)
-          (b/browse-url "http://localhost:50000"))
+          (b/browse-url "http://localhost:4242"))
   (server/config-server))
 
 (defn browserific

@@ -43,4 +43,4 @@
 
 (defn config-server
   "Start a server for the config page" []
-  (jetty/run-jetty #'app {:port 50000 :host "localhost"}))
+  (jetty/run-jetty #'app {:port 4242 :host "localhost"}))
