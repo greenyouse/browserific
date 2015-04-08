@@ -15,7 +15,8 @@
                  [com.greenyouse/chenex "0.1.4"]
                  ;; cljs
                  [org.clojure/clojurescript "0.0-3119"]
-                 [reagent "0.5.0"]]
+                 [reagent "0.5.0-alpha"]
+                 [cljsjs/react "0.12.2-5"]]
 
   :eval-in-leiningen true
 

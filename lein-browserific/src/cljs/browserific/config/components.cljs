@@ -2,7 +2,8 @@
   (:refer-clojure :exclude [atom])
   (:require [browserific.config.trans :as t]
             [cljs.reader :as reader]
-            [reagent.core :as reagent :refer [atom]]))
+            [reagent.core :as reagent :refer [atom]])
+  (:require-macros [browserific.config.macros :as m]))
 
 (defn- display
   "helper fn to hide/show an element using inline css"
@@ -64,16 +65,15 @@
                        ["Firefox"] ["Safari"]])]]))])
 
 ;; TODO: beautify this with images :D
-;; FIXME: track down the `false` err-msg from react.js
 (defn help-c
   "Help component"
   [{:keys [text url]}]
   (let [helper (atom false)]
     (fn []
       [:div
-       [:div [:button {:on-click #(reset! helper true)} "?"]
+       [:div [:button {:on-click (m/handler-fn (reset! helper true))} "?"]
         [:button.close-btn {:style (display @helper)
-                            :on-click #(reset! helper false)}
+                            :on-click (m/handler-fn (reset! helper false))}
          "xclosex"]]
        [:div.help {:style (display @helper)}
         [:p text]
@@ -139,7 +139,6 @@
        [:button {:on-click #(save)}
         "Add"]])))
 
-;; FIXME: more err-msgs with the checkbox
 (defn checkbox-c
   "Checkbox component"
   [{:keys [data default]}]
@@ -152,7 +151,7 @@
                           (true? @data) "checked"
                           (false? @data) false
                           (true? default) "checked")
-               :on-click check}])))
+               :on-change check}])))
 
 (defn checkbox-list-c
   "A component that has a list of checkboxes"
@@ -163,11 +162,10 @@
                 [:input {:type "checkbox"
                          :checked (if (member? @data box)
                                     "checked" false)
-                         :on-click #(checkbox-entry data box)}
+                         :on-change #(checkbox-entry data box)}
                  box] [:br]))
       [:div] boxes)))
 
-;; FIXME: should display the stored config.edn value when loaded
 (defn select-c
   "A select component"
   [{:keys [data options]}]

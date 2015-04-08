@@ -150,3 +150,11 @@
   (let [m (multi-input-template :map [{:type :name :label "something"}
                                       {:type :checkbox :label "moar"}])]
     (m {:data (atom [])})))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Handler macro
+
+;; from the reagent wiki
+(defmacro handler-fn [& body]
+  `(fn [~'event] ~@body nil))  ; force return nil
