@@ -1,4 +1,4 @@
-(defproject lein-browserific "0.1.2-alpha"
+(defproject lein-browserific "0.1.2-alpha2"
   :description "A Leiningen build tool for unified app development"
   :url "https://github.com/greenyouse/browserific/tree/master/lein-browserific"
   :license {:name "Eclipse Public License"
