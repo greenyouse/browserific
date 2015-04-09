@@ -15,12 +15,14 @@
             [com.greenyouse/chenex "0.1.4"]
             [com.cemerick/clojurescript.test "0.3.3"]
             [lein-browserific "0.1.2-alpha2"]
-            [lein-auto "0.1.1"]
+            [lein-auto "0.1.2"]
             [lein-figwheel "0.2.5"]]
 
   :profiles {:default [:base :system :user :provided :dev :plugin.chenex/default]
              :dev {:dependencies [[weasel "0.6.0"]
                                   [figwheel "0.2.5"]]}}
+
+  :auto {:default {:paths ["src"]}}
 
   :browserific {}
 
