@@ -4,9 +4,13 @@
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies [[org.clojure/clojure "1.6.0"]
-                 [org.clojure/clojurescript "0.0-3119"]
+                 [org.clojure/clojurescript "0.0-3126"]
                  [org.clojure/core.async "0.1.346.0-17112a-alpha"]
-                 [com.greenyouse/pldb-cache "0.1.0-webstorage"]
+                 [com.greenyouse/multco "0.1.2-alpha"]
+                 ;; multco can handle core.logic's pldb, bacwn, or datascript
+                 [org.clojure/core.logic "0.8.10"]
+                 ;[fogus/bacwn "0.4.0"]
+                 ;[datascript "0.10.0"]
                  [com.greenyouse/chenex "0.1.4"]
                  [reagent "0.5.0"]]
 
