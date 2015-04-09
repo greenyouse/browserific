@@ -4,9 +4,8 @@ A Leiningen template for making new apps with browserific.
 
 ## Usage
 
-This template uses [Reagent](https://github.com/reagent-project/reagent) by default
-because I like to use it in my own apps. To get a basic project with
-browserific, Reagent, and a few other goodies enter this:
+To get a basic project with browserific, Reagent, and a few other
+goodies enter this: 
 
 ```sh
 $ lein new browserific-app [app-name]
