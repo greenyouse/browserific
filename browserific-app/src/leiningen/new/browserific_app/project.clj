@@ -17,7 +17,7 @@
   :plugins [[lein-cljsbuild "1.0.5"]
             [com.greenyouse/chenex "0.1.4"]
             [com.cemerick/clojurescript.test "0.3.3"]
-            [lein-browserific "0.1.2-alpha"]
+            [lein-browserific "0.1.2-alpha2"]
             [lein-auto "0.1.1"]
             [lein-figwheel "0.2.5"]]
 
