@@ -1,4 +1,4 @@
-(defproject lein-browserific "0.1.2-alpha2"
+(defproject lein-browserific "0.1.2-alpha3"
   :description "A Leiningen build tool for unified app development"
   :url "https://github.com/greenyouse/browserific/tree/master/lein-browserific"
   :license {:name "Eclipse Public License"
@@ -12,7 +12,7 @@
                  [fogus/ring-edn "0.2.0"]
                  [compojure "1.2.1"]
                  [org.clojure/core.async "0.1.346.0-17112a-alpha"]
-                 [com.greenyouse/chenex "0.1.4"]
+                 [com.greenyouse/chenex "0.2.0"]
                  ;; cljs
                  [org.clojure/clojurescript "0.0-3119"]
                  [reagent "0.5.0-alpha"]
@@ -22,7 +22,7 @@
 
   :profiles {:dev {:dependencies [[javax.servlet/servlet-api "2.5"]
                                   [weasel "0.6.0"]]
-                   :plugins [[lein-cljsbuild "1.0.4"]
+                   :plugins [[lein-cljsbuild "1.0.5"]
                              [lein-ring "0.9.1"]]}}
 
   :ring {:handler browserific.config.server/app}
