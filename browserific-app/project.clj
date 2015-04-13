@@ -1,4 +1,4 @@
-(defproject browserific-app/lein-template "0.1.9"
+(defproject browserific-app/lein-template "0.2.0"
   :description "A Leiningen template for Browserific ClojureScript apps"
   :url "https://github.com/greenyouse/browserific/tree/master/browserific-app"
   :license {:name "BSD 2-Clause"
