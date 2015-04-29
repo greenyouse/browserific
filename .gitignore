@@ -11,3 +11,4 @@ pom.xml.asc
 /resources
 dev
 /browserific/dev/brepl.cljs
+/lein-browserific/src/clj/browserific/builds/browserific.clj

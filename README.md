@@ -42,12 +42,13 @@ cd resources/[platform-dir]
 
 ## Status
 
-So far the `browserific-app` template and `lein-browserific` plugin are
-ready as alpha software, however, the `browserific` library is just 
-getting started.
+So far the `browserific-app` template, `lein-browserific` plugin, and
+the `browserific` library are ready as alpha software.
 
+[![Clojars Project](http://clojars.org/browserific/latest-version.svg)](http://clojars.org/browserific)
 
 [![Clojars Project](http://clojars.org/lein-browserific/latest-version.svg)](http://clojars.org/lein-browserific)
+
 
 ## Contributing
 
@@ -61,6 +62,8 @@ parts. My plan is to work through desktop and mobile first and then
 focus on the extensions. Any extension work in the meantime would be
 much appreciated! 
 
-Please give me some time to work on the `browserific` library portion
-before submitting pull requests for it. Ideas or design input on this
-are welcome though.
+This project is meant to
+[assimilate](https://www.youtube.com/watch?v=AyenRCJ_4Ww) any noteworthy
+frameworks, so if you have suggestions, file an issue to let me
+know. Facebook's ReactNative, Mozilla's OpenWebApps, and Google's Chrome
+Apps are potential candidates for the future.
