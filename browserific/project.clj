@@ -1,4 +1,4 @@
-(defproject browserific "0.1.2-alpha4"
+(defproject browserific "0.1.2-SNAPSHOT"
   :description "A library for JS framework interop"
   :url "https://github.com/greenyouse/browserific/tree/master/browserific"
   :license {:name "EPL 1.0"

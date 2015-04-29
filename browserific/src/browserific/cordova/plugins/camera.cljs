@@ -16,11 +16,11 @@
   * opts -- a map of camera options (see docs)
 
    quirks:
-   - AmazonFire: Amazon Fire OS uses intents to launch the camera activity on
-                 the device to capture images, and on phones with low memory,
-                 the Cordova activity may be killed. In this scenario, the
-                 image may not appear when the cordova activity is restored.
-   - Android: Same problem as AmazonFire
+   - Amazon-FireOS: uses intents to launch the camera activity on
+                    the device to capture images, and on phones with low memory,
+                    the Cordova activity may be killed. In this scenario, the
+                    image may not appear when the cordova activity is restored.
+   - Android: Same problem as Amazon-FireOS
    - FirefoxOS: Uses WebActivies.
    - iOS: Has a special CameraUseGeolocation option. JS alerts in the callbacks
           cause problems, wrap them in setTimeouts instead. Also has a special

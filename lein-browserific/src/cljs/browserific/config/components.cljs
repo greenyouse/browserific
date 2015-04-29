@@ -56,7 +56,7 @@
      (menu [:ul]
        [["General"] ["Desktop"]
         ["Mobile" (menu [:ul]
-                    [["Mobile-General"] ["Amazon-Fire"]
+                    [["Mobile-General"] ["Amazon-FireOS"]
                      ["Android"] ["Blackberry"]
                      ["iOS"] ["Tizen"] ["Windows-Phone"] ["FirefoxOS"]])]
         ["Browsers" (menu [:ul]

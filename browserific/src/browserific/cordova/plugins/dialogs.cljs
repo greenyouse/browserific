@@ -80,7 +80,7 @@
   * times -- the number of times to repeat the beep.
 
   quirks:
-  - amazon-fire: Plays the default notification sound.
+  - amazon-fireos: Plays the default notification sound.
   - android: Plays the default notification ringtone.
   - tizen: Tizen implements beeps by playing an audio file via the media
            API. The beep file must be short, must be located in a sounds

@@ -32,7 +32,7 @@ linux32, linux64, osx32, osx64, windows32, windows64")))
     (doseq [mobile mobiles]
       (checker mobile u/mobile
                (str "Browserific Error: mobile system " mobile " not supported, options are:
- amazon-fire, android, blackberry, firefoxos, ios, ubuntu, wp7, wp8, tizen")))))
+ amazon-fireos, android, blackberry, firefoxos, ios, ubuntu, wp7, wp8, tizen")))))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -333,9 +333,9 @@ linux32, linux64, osx32, osx64, windows32, windows64")))
               (map (fn [[name val]]
                      [:preference {:name (subs (str name) 1) :value val}])
                 (get-config [:mobile :preferences])))
-            (into (map #(get-image :icon %) ["amazon-fire" "android"
+            (into (map #(get-image :icon %) ["amazon-fireos" "android"
                                              "blackberry" "ios" "tizen" "wp8"]))
-            (into (map #(get-image :splash %) ["amazon-fire" "android"
+            (into (map #(get-image :splash %) ["amazon-fireos" "android"
                                                "blackberry" "ios" "wp8"]))))))))
 
 

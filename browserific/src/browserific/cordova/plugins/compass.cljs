@@ -25,7 +25,7 @@
   * opts -- a map with :filter and :frequency options (see docs)
 
   quirks:
-  - amazon-fire: filter is not supported
+  - amazon-fireos: filter is not supported
   - anroid: filter is not supported
   - firefoxos: filter is not supported
   - ios: Only one watchHeading can be in effect. Watching heading changes with a filter is more efficient than with time intervals.

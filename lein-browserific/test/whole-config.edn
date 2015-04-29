@@ -187,14 +187,14 @@
  :mobile {
           :id "com.example.tester"
 
-          :platforms ["amazon-fire" "android" "blackberry" "firefoxos" "ios"
+          :platforms ["amazon-fireos" "android" "blackberry" "firefoxos" "ios"
                       "ubuntu" "wp7" "wp8" "tizen"]
 
           :preferences {;; global
                         :fullscreen "true"
                         :orientation "default"
 
-                        ;; Amazon-Fire + Android
+                        ;; Amazon-FireOS + Android
                         :KeepRunning "false"
                         :LoadUrlTimeout "10000"
                         :Splashscreen "mySplash"
@@ -242,10 +242,10 @@
 
           :icons {:global {:src "icon.png"}
 
-                  :amazon-fire [{:src "res/icon/amazon-fire/icon-36-ldpi.png" :density "ldpi"}
-                                {:src "res/icon/amazon-fire/icon-48-mdpi.png" :density "mdpi"}
-                                {:src "res/icon/amazon-fire/icon-72-hdpi.png" :density "hdpi"}
-                                {:src "res/icon/amazon-fire/icon-96-xhdpi.png" :density "xhdpi"}]
+                  :amazon-fireos [{:src "res/icon/amazon-fireos/icon-36-ldpi.png" :density "ldpi"}
+                                {:src "res/icon/amazon-fireos/icon-48-mdpi.png" :density "mdpi"}
+                                {:src "res/icon/amazon-fireos/icon-72-hdpi.png" :density "hdpi"}
+                                {:src "res/icon/amazon-fireos/icon-96-xhdpi.png" :density "xhdpi"}]
 
                   :android [{:src "res/icon/android/icon-36-ldpi.png" :density "ldpi"}
                             {:src "res/icon/android/icon-48-mdpi.png" :density "mdpi"}

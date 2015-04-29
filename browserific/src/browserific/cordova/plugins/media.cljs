@@ -5,45 +5,45 @@
 (defn get-position
   "Returns the current position within an audio file.
 
-  Doesn't work on Amazon-Fire or FirefoxOS
+  Doesn't work on Amazon-FireOS or FirefoxOS
 
   * media -- a media object, (js/Media. src mediaSuccess [err] [status])
   * sucess -- onSuccess callback that gives the current position in seconds
   * err -- onError callback"
   [media success & err]
   (let [e (first err)]
-    (chenex/ex! [:amazon-fire :firefoxos]
+    (chenex/ex! [:amazon-fireos :firefoxos]
       (.getCurrentPosition media success e))))
 
-(comment (throw (js/Error. "Browserific Error: media/get-position does not work on amazon-fire or firefoxos")))
+(comment (throw (js/Error. "Browserific Error: media/get-position does not work on amazon-fireos or firefoxos")))
 
 (defn get-duration
   "Returns the duration of an audio file in seconds. If the duration is
   unknown, it returns a value of -1.
 
-  Doesn't work on Amazon-Fire or FirefoxOS
+  Doesn't work on Amazon-FireOS or FirefoxOS
 
   * media -- a media object, (js/Media. src mediaSuccess [err] [status])"
   [media]
-  (chenex/ex! [:amazon-fire :firefoxos] (.getDuration media)))
+  (chenex/ex! [:amazon-fireos :firefoxos] (.getDuration media)))
 
-(comment (throw (js/Error. "Browserific Error: media/get-duration does not work on amazon-fire or firefoxos")))
+(comment (throw (js/Error. "Browserific Error: media/get-duration does not work on amazon-fireos or firefoxos")))
 
 (defn pause
   "Pause playback of an audio file.
 
-  Doesn't work on Amazon-Fire or FirefoxOS
+  Doesn't work on Amazon-FireOS or FirefoxOS
 
   * media -- a media object, (js/Media. src mediaSuccess [err] [status]) "
   [media]
-  (chenex/ex! [:amazon-fire :firefoxos] (.pause media)))
+  (chenex/ex! [:amazon-fireos :firefoxos] (.pause media)))
 
-(comment (throw (js/Error. "Browserific Error: media/pause does not work on amazon-fire or firefoxos")))
+(comment (throw (js/Error. "Browserific Error: media/pause does not work on amazon-fireos or firefoxos")))
 
 (defn play
   "Start or resume playing an audio file.
 
-  Doesn't work on Amazon-Fire or FirefoxOS
+  Doesn't work on Amazon-FireOS or FirefoxOS
 
   * media -- a media object, (js/Media. src mediaSuccess [err] [status])
 
@@ -51,27 +51,27 @@
   - ios: There are some additional play options, however they're not included
          (see docs)"
   [media]
-  (chenex/ex! [:amazon-fire :firefoxos] (.play media)))
+  (chenex/ex! [:amazon-fireos :firefoxos] (.play media)))
 
-(comment (throw (js/Error. "Browserific Error: media/play does not work on amazon-fire or firefoxos")))
+(comment (throw (js/Error. "Browserific Error: media/play does not work on amazon-fireos or firefoxos")))
 
 (defn release
   "Releases the underlying operating system's audio resources. Applications
   should call the release function for any Media resource that is no longer
   needed (especially on Android).
 
-  Doesn't work on Amazon-Fire or FirefoxOS
+  Doesn't work on Amazon-FireOS or FirefoxOS
 
   * media -- a media object, (js/Media. src mediaSuccess [err] [status])"
   [media]
-  (chenex/ex! [:amazon-fire :firefoxos] (.release media)))
+  (chenex/ex! [:amazon-fireos :firefoxos] (.release media)))
 
-(comment (throw (js/Error. "Browserific Error: media/release does not work on amazon-fire or firefoxos")))
+(comment (throw (js/Error. "Browserific Error: media/release does not work on amazon-fireos or firefoxos")))
 
 (defn seek-to
   "Moves the position within the audio file.
 
-  Doesn't work on Amazon-Fire or FirefoxOS
+  Doesn't work on Amazon-FireOS or FirefoxOS
 
   * media -- a media object, (js/Media. src mediaSuccess [err] [status])
   * pos -- the position to set the playback position within the audio, in
@@ -80,9 +80,9 @@
   quirks:
   - blackberry: doesn't work on BlackBerry OS5"
   [media pos]
-  (chenex/ex! [:amazon-fire :firefoxos] (.seekTo media pos)))
+  (chenex/ex! [:amazon-fireos :firefoxos] (.seekTo media pos)))
 
-(comment (throw (js/Error. "Browserific Error: media/seek-to does not work on amazon-fire or firefoxos")))
+(comment (throw (js/Error. "Browserific Error: media/seek-to does not work on amazon-fireos or firefoxos")))
 
 (defn set-vol
   "Set the volume for audio playback.
@@ -128,17 +128,17 @@
 
   * media -- a media object, (js/Media. src mediaSuccess [err] [status])"
   [media]
-  (chenex/ex! [:amazon-fire :firefoxos] (.stopRecord media)))
+  (chenex/ex! [:amazon-fireos :firefoxos] (.stopRecord media)))
 
 (comment (throw (js/Error. "Browserific Error: media/stop-rec only works on android, ios, wp7, and wp8")))
 
 (defn stop
   "Stop playing an audio file.
 
-  Doesn't work on Amazon-Fire or FirefoxOS
+  Doesn't work on Amazon-FireOS or FirefoxOS
 
   * media -- a media object, (js/Media. src mediaSuccess [err] [status])"
   [media]
-  (chenex/ex! [:amazon-fire :firefoxos] (.stop media)))
+  (chenex/ex! [:amazon-fireos :firefoxos] (.stop media)))
 
-(comment (throw (js/Error. "Browserific Error: media/stop does not work on amazon-fire or firefoxos")))
+(comment (throw (js/Error. "Browserific Error: media/stop does not work on amazon-fireos or firefoxos")))

@@ -62,25 +62,25 @@
 (defn back
   "The event fires when the user presses the back button.
 
-  Only works on Amazon-Fire, Android, Blackberry, and WP8
+  Only works on Amazon-FireOS, Android, Blackberry, and WP8
 
   * success -- onBackButton callback, a fn to handle pressing the back button. It
                may be better to create an SPA app and handle this with
                ClojureScript"
   [success]
   (chenex/in!
-    [:amazon-fire :android :blackberry :wp8]
+    [:amazon-fireos :android :blackberry :wp8]
     (js/document.addEventListener "backbutton" success false)))
 
 (defn menu
   "The event fires when the user presses the menu button.
 
-  Only works on Amazon-Fire, Android, and BlackBerry
+  Only works on Amazon-FireOS, Android, and BlackBerry
 
   * success -- onMenuButton callback, a fn to handle menu button presses."
   [success]
   (chenex/in!
-    [:amazon-fire :android :blackberry]
+    [:amazon-fireos :android :blackberry]
     (js/document.addEventListener "menubutton" success false)))
 
 (defn search

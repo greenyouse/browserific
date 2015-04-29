@@ -17,7 +17,7 @@
      {:type :checkbox-list :data (reagent/cursor [:mobile :platforms] config-db) :label "Mobile Platforms"
       :htxt "The mobile platforms to deploy your app on."
       :hurl "https://cordova.apache.org/docs/en/4.0.0/guide_support_index.md.html#Platform%20Support"
-      :boxes ["amazon-fire" "android" "blackberry" "firefoxos" "ios" "ubuntu" "wp7" "wp8" "tizen"]}
+      :boxes ["amazon-fireos" "android" "blackberry" "firefoxos" "ios" "ubuntu" "wp7" "wp8" "tizen"]}
      ;; FIXME: should have a default of index.html
      {:type :name :data (reagent/cursor [:mobile :content] config-db) :label "Content"
       :htxt "The optional <content> element defines the app's starting page in the top-level web assets directory. The default value is /index.html, which customarily appears in a project's top-level www directory."

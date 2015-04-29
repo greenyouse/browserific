@@ -1,4 +1,4 @@
-(defproject lein-browserific "0.1.2-alpha4"
+(defproject lein-browserific "0.1.2-SNAPSHOT"
   :description "A Leiningen build tool for unified app development"
   :url "https://github.com/greenyouse/browserific/tree/master/lein-browserific"
   :license {:name "Eclipse Public License"
@@ -40,4 +40,12 @@
                                    :optimizations :none
                                    :source-map true
                                    :asset-path "js/out"
-                                   :main browserific.config.core}}]})
+                                   :main browserific.config.core}}
+                       {:id "release"
+                        :source-paths ["src/cljs"]
+                        :compiler {:output-to "resources/public/js/client.js"
+                                   :output-dir "resources/public/js/release"
+                                   :optimizations :advanced
+                                   :source-map "resources/public/js/client.map.js"
+                                   :main browserific.config.core
+                                   :pretty-print false}}]})
