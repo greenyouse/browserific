@@ -1,1 +1,0 @@
-(ns browserific.mobile.core)
