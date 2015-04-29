@@ -17,7 +17,7 @@
       [{:type :checkbox :data (reagent/cursor [:mobile :preferences :KeepRunning] config-db) :label "Keep Runing?"
         :help "Determines whether the application stays running in the background even after a pause event fires. Applies to Amazon-Fire and Android."}
        {:type :name :data (reagent/cursor [:mobile :preferences :LoadUrlTimeoutValue] config-db) :label "Load URL Timeout"
-        :help "When loading a page, the amount of time to wait before throwing a timeout error. Default is 2000 msec or 20 seconds. Applies to Amazon-Fire and Android."}
+        :help "When loading a page, the amount of time to wait before throwing a timeout error. Default is 20000 msec or 20 seconds. Applies to Amazon-Fire and Android."}
        {:type :name :data (reagent/cursor [:mobile :preferences :SplashScreen] config-db) :label "Splash Screen"
         :help "The name of the file minus its extension in the res/drawable directory. Various assets must share this common name in various subdirectories. Applies to Amazon-Fire and Android."}
        {:type :name :data (reagent/cursor [:mobile :preferences :SplashScreenDelay] config-db) :label "Splash Screen Delay"

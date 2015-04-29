@@ -20,7 +20,7 @@
       :boxes ["amazon-fire" "android" "blackberry" "firefoxos" "ios" "ubuntu" "wp7" "wp8" "tizen"]}
      ;; FIXME: should have a default of index.html
      {:type :name :data (reagent/cursor [:mobile :content] config-db) :label "Content"
-      :htxt "The optional <content> element defines the app's starting page in the top-level web assets directory. The default value is index.html, which customarily appears in a project's top-level www directory."
+      :htxt "The optional <content> element defines the app's starting page in the top-level web assets directory. The default value is /index.html, which customarily appears in a project's top-level www directory."
       :hurl "https://cordova.apache.org/docs/en/4.0.0/config_ref_index.md.html#The%20config.xml%20File"}
      {:type :name :data (reagent/cursor [:mobile :icons :global :src] config-db) :label "Icons"
       :htxt "Enter the relative path to your icon. This is a global icon and can be used for all your platforms and is the default if none other is specified. Other icons can be created for each platform for more exact sizes."
