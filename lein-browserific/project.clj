@@ -3,20 +3,21 @@
   :url "https://github.com/greenyouse/browserific/tree/master/lein-browserific"
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
-  :dependencies [[org.clojure/clojure "1.6.0"]
+  :dependencies [[org.clojure/clojure "1.7.0"]
                  [org.clojure/data.xml "0.0.8"]
+                 [org.clojure/core.async "0.1.346.0-17112a-alpha"]
                  [cheshire "5.3.1"]
+                 [com.greenyouse/chenex "0.2.1"]
+                 [com.greenyouse/deepfns "0.1.2"]
+                 [compojure "1.2.1"]
+                 [fogus/ring-edn "0.2.0"]
                  [instaparse "1.3.4"]
                  [me.raynes/fs "1.4.6"]
                  [ring "1.3.2"]
-                 [fogus/ring-edn "0.2.0"]
-                 [compojure "1.2.1"]
-                 [org.clojure/core.async "0.1.346.0-17112a-alpha"]
-                 [com.greenyouse/chenex "0.2.1"]
                  ;; cljs
                  [org.clojure/clojurescript "0.0-3119"]
-                 [reagent "0.5.0-alpha"]
-                 [cljsjs/react "0.12.2-5"]]
+                 [cljsjs/react "0.12.2-5"]
+                 [reagent "0.5.0-alpha"]]
 
   :eval-in-leiningen true
 

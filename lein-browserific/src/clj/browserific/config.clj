@@ -1,11 +1,13 @@
 (ns browserific.config
   "Generates config files from config.edn"
   (:require [browserific.helpers.plist :as p]
-            [browserific.helpers.utils :as u :refer [get-config]]
+            [browserific.helpers.utils :as u]
             [cheshire.core :as js]
             [clojure.data.xml :as xml]
-            [clojure.string :as st]
             [clojure.java.io :as io]
+            [clojure.string :as st]
+            [deepfns.core :as d]
+            [deepfns.transitive :as t]
             [leiningen.core.main :as l]))
 
 ;; TODO: Not sure if necessary but some things, such as Firefox Extension stuff,
@@ -34,280 +36,288 @@ linux32, linux64, osx32, osx64, windows32, windows64")))
                (str "Browserific Error: mobile system " mobile " not supported, options are:
  amazon-fireos, android, blackberry, firefoxos, ios, ubuntu, wp7, wp8, tizen")))))
 
+(defn- with-config
+  "Run some function f over the config file"
+  [f]
+  (let [conf (u/get-config)]
+    (f conf)))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; Config parsing
-
-;; FIXME: This still feels yucky because my transformations are tied closely to
-;; my data structure. There should be a more abstract, data-independent way to
-;; handle this. That would be much better for the long term.
-(defn- nested-options
-  "Adds a nested option to the output config file."
-  [[a ad d :as ks] val acc]
-  (if (nil? d)
-    (assoc-in acc [a ad] val) ; single nested
-    (assoc-in acc [a ad d] val))) ; double nested
-
-(defn- icon-parser
-  "Formats the icons for output."
-  [type name val acc]
-  (let [v (reduce #(assoc % (keyword (:size %2)) (:src %2))
-            {} val)]
-    (if (seq? name)
-      (nested-options [type (second name)] v acc)
-      (assoc acc name v))))
-
-(defn- parse-configs [[[k v] d :as item] type acc]
-  (let [val (if (meta v) (first v)  ;required opts have tagged metadata
-              (get-config v))
-        name (if (re-seq #"!" (str k))
-               (as-> (str k) sk
-                 (subs sk 1)
-                 (st/split sk #"!")
-                 (map keyword sk))
-               k)]
-    (if (empty? item)
-      (into {} acc)
-      ;; add clause for required opts (was metadata)
-      (cond
-
-        ;; drop :action!type because it doesn't go into config files
-        (= :action!type k) (recur (rest item) type acc)
-
-        ;; drop any nil values
-        (or (nil? val) (= {} val) (= "" val) (= [] val))
-        (recur (rest item) type acc)
-
-        ;; icons need to be formated and then sent to nested-options
-        (or (= :icons name) (and (seq? name)
-                             (some #(#{:default-icon :icons :splash} %) name)))
-        (recur (rest item) type (icon-parser type name val acc))
-
-        ;; page/browser actions require special formatting
-        (and (seq? name) (some #(#{:action} %) name))
-        (recur (rest item) type
-          (nested-options [type (second name)] val acc))
-
-        ;; generic nested options go to nested-options
-        (seq? name) (recur (rest item) type (nested-options name val acc))
-
-        :default
-        (recur (rest item) type (assoc acc name val))))))
-
-(defn- config-reader
-  "This generates a config file from a given map. Enter ! to
-  indicate a nested config option. Otherwise it will output a
-  normal key value pair."
-  [conf-map]
-  (if (some #(= % :action!type) (keys conf-map)) ; format browser/page actions
-      (let [type (keyword (str (get-config (:action!type conf-map)) "-action"))]
-        (parse-configs (vec conf-map) type {}))
-      (parse-configs (vec conf-map) nil {})))
+(defn- to-js-config
+  "Uses a transitive for the configuration file called config-t,
+  applies the trasitives, and generates JSON string of the results"
+  [config-t]
+  (js/generate-string
+    (with-config config-t)
+    {:pretty true}))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; Config Builders
+;;; Config Transitives
 
-;; TODO: These configs are too verbose, let's just pass fields that need
-;; special formatting to config-reader and pull the rest directly from
-;; config.edn. The pulled values will be filtered with empty?.
+(def chrome-opera-configs
+  "Shared configs for Chrome and Opera"
+  {:name :name
+   :version :version
+   :manifest_version 2
+   :description :description
+   :developer {:name (t/=> :author :author-name)
+               :url (t/=> :author :url)}
+   :default_locale :default-locale
+   :action {:type (t/=> :extensions :action :type)
+            ;; FIXME default-icon
+            :default_icon (t/=> :extensions :action :default-icon)
+            :default_title (t/=> :extensions :action :default-title)
+            :default_popup (t/=> :extensions :action :default-popup)}
+   :background {:scripts (t/=> :extensions :background :scripts)
+                :persistent (t/=> :extensions :background :persistent)}
+   :content_scripts {:matches (t/=> :extensions :content :matches)
+                     :exclude (t/=> :extensions :content :exclude)
+                     :js (t/=> :extensions :content :js)
+                     :css (t/=> :extensions :content :css)}
+   :homepage (t/=> :extensions :homepage)
+   :incognito (t/=> :extensions :incognito)
+   :options_page (t/=> :extensions :options-page)
+   :permissions (t/=> :extensions :permissions)
+   :requirements (t/=> :extensions :requirements)
+   :web_accessible-resources (t/=> :extensions :web-accessible-resources)
+   :sandbox (t/=> :extensions :sandbox)})
+
+(def chrome-config>
+  (<=>
+    (assoc chrome-opera-configs
+      :icons (t/=> :extensions :icons :chrome)
+      :update_url (t/=> :extensions :update-url :chrome)
+      :chrome_ui_overrides (t/=> :extensions :extra :chrome :chrome-ui-overrides)
+      :chrome_settings_overrides (t/=> :extensions :extra :chrome :chrome-settings-overrides)
+      :chrome_url_overrides (t/=> :extensions :extra :chrome :chrome-url-overrides)
+      :commands (t/=> :extensions :extra :chrome :commands)
+      :current_locale (t/=> :extensions :extra :chrome :current-locale)
+      :devtools_page (t/=> :extensions :extra :chrome :devtools_page)
+      :externally_connectable (t/=> :extensions :extra :chrome :externally-connectable)
+      :file_browser_handlers (t/=> :extensions :extra :chrome :file-browser-handlers)
+      :import (t/=> :extensions :extra :chrome :import)
+      :input_components (t/=> :extensions :extra :chrome :input-components)
+      :minimum_chrome_version (t/=> :extensions :extra :chrome :minimum-chrome-version)
+      :nacl_modules (t/=> :extensions :extra :chrome :nacl-modules)
+      :oauth2 (t/=> :extensions :extra :chrome :oauth2)
+      :offline_enabled (t/=> :extensions :extra :chrome :offline-enabled)
+      :omnibox (t/=> :extensions :extra :chrome :omnibox)
+      :optional_permissions (t/=> :extensions :extra :chrome :optional-permissions)
+      :platforms (t/=> :extensions :extra :chrome :platforms)
+      :script_badge (t/=> :extensions :extra :chrome :script-badge)
+      :short_name (t/=> :extensions :extra :chrome :short-name)
+      :signature (t/=> :extensions :extra :chrome :signature)
+      :spellcheck (t/=> :extensions :extra :chrome :spellcheck)
+      :storage (t/=> :extensions :extra :chrome :storage)
+      :system_indicator (t/=> :extensions :extra :chrome :system-indicator)
+      :tts_engine (t/=> :extensions :extra :chrome :tts-engine))))
+
+(def opera-config>
+  (<=>  (assoc chrome-opera-configs
+          :icons (t/=> :extensions :icons :opera)
+          :update_url (t/=> :extensions :update-url :opera))))
+
+(def firefox-config>
+  (<=>
+    {:author (t/=> :author :author-name)
+     :contributors (t/=> :author :contributors)
+     :dependencies (t/=> :extensions :extra :firefox :dependencies)
+     :fullName :name
+     :homepage (t/=> :extensions :homepage)
+     :icon (t/=> :extensions :icons :firefox :48)
+     :icon64 (t/=> :extensions :icons :firefox :64)
+     :id (t/=> :author :author-id)
+     :lib (t/=> :extensions :extra :firefox :lib)
+     :license :license
+     :main (t/=> :extensions :extra :firefox :main)
+     :name (t/=> :extensions :extra :firefox :name)
+     :packages (t/=> :extensions :extra :firefox :packages)
+     :permissions {:private-browsing (t/=> :extensions :private)
+                   :cross-domain-content (t/=> :extensions :extra :firefox :permissions :cross-domain-content)}
+     :preferences (t/=> :extensions :extra :firefox :preferences)
+     :tests (t/=> :extensions :extra :firefox :tests)
+     :title (t/=> :extensions :extra :firefox :title)
+     :translators (t/=> :extensions :extra :firefox :translators)
+     :version :version}))
+
+(def safari-config>
+  (<=>
+    {:Author (t/=> :author :author-name)
+     :Builder-.-Version "6534.59.10" ; Shouldn't matter
+     :CFBundleDisplayName :name
+     :CFBundleIdentifier (t/=> :author :author-id)
+     :CFBundleInfoDictionaryVersion "6.0" ; Shouldn't matter
+     :CFBundleShortVersionString :version
+     :CFBundleVersion "1.0"; Shouldn't matter
+     :Chrome {:Bars (t/=> :extensions :extra :safari :bars)
+              :Context-.-Menu-.-Items (t/=> :extensions :extra :safari :context-items)
+              :Database-.-Quota (t/=> :extensions :extra :safari :database-quota)
+              :Popovers (t/=> :extensions :extra :safari :popovers)
+              :Global-.-Page (t/=> :extensions :extra :safari :global-page)
+              ;; TODO: there should be a better handling for this
+              :Menus (t/=> :extensions :extra :safari :menus
+                       (fn [menus]
+                         (mapv
+                           (<=> {:Identifier :Identifier
+                                 :Menu-.-Items {:Identifier :Menu-Identifier
+                                                :Command :Command
+                                                :Disabled :Disabled
+                                                :Title :Title}})
+                           menus)))}
+     :Content {:Blacklist (t/=> :extensions :content :exclude)
+               :Scripts {:Start (t/=> :extensions :extra :safari :start-script)
+                         :End (t/=> :extensions :content :js)}
+               :Content {:Stylesheets (t/=> :extensions :content :css)
+                         :Whitelist (t/=> :extensions :content :matches)}}
+     :Description :description
+     :ExtensionInfoDictionaryVersion "1.0" ; Shouldn't matter
+     ;; FIXME: are options like "tabs" just negligeable?
+     :Permissions {:Website-.-Access
+                   {:Allowed-.-Domains (t/=> :extensions :permissions)
+                    :Include-.-Secure-.-Pages (t/=> :extensions :private)
+                    :Level (t/=> :extensions :extra :safari :access-level)}}
+     :Update-.-Manifest-.-URL (t/=> :extensions :update-url :safari)
+     :Website (t/=> :extensions :homepage)}))
+
+;; FIXME: make each option output nothing if nil
+(def mobile-config>
+  (<=>
+    [(constantly :widget)
+     {:id (t/=> :mobile :id)
+      :version :version
+      :xmlns "http://www.w3.org/ns/widgets"
+      :xmlns:cdv "http://cordova.apache.org/ns/1.0"}
+     [(constantly :name) :name]
+     [(constantly :description) :description]
+     [(constantly :author) {:email (t/=> :author :email)
+                            :href (t/=> :author :url)}
+      (t/=> :author :author-name)]
+     [(constantly :content) {:src (t/=> :mobile :content)}]
+     [(constantly :icon) (t/=> :mobile :icons :global)]
+     [(constantly :description) :description]
+     [(constantly :description) :description]
+     (t/map> #(conj [:access] {:origin %})
+       (t/=> :mobile :permissions))
+     (t/map> (fn [[name val]]
+               [:preference {:name (subs (str name) 1) :value val}])
+       (t/=> :mobile :preferences))
+     (t/map> (fn [[name icns]]
+               [:platform {:name name} icns])
+       (t/=> :mobile :icons))
+     (t/map> (fn [[name icns]]
+               [:platform {:name name} icns])
+       (t/=> :mobile :splash))]))
+
+(def firefoxos-config>
+  (<=> {:name :name
+        :description :description
+        :type (t/=> :mobile :firefoxos :type)
+        :launch_path (t/=> :mobile :content)
+        :icons (t/=> :mobile :firefoxos :icons)
+        :developer {:name (t/=> :author :author-name)
+                    :url (t/=> :author :url)}
+        :default_locale (t/=> :default-locale)
+        :activities (t/=> :mobile :firefoxos :activities)
+        :appcache_path (t/=> :mobile :firefoxos :appcache)
+        :chrome (t/=> :mobile :firefoxos :chrome)
+        :fullscreen (t/=> :mobile :firefoxos :fullscreen)
+        :installs_allowed_from (t/=> :mobile :firefoxos :installs-allowed-from)
+        :locales (t/=> :mobile :firefoxos :locales)
+        :messages (t/=> :mobile :firefoxos :messages)
+        :orientation (t/=> :mobile :firefoxos :orientation)
+        :origin (t/=> :mobile :firefoxos :origin)
+        :permissions (t/=> :mobile :firefoxos :permissions)
+        :precompile (t/=> :mobile :firefoxos :precompile)
+        :redirects (t/=> :mobile :firefoxos :redirects)
+        :role (t/=> :mobile :firefoxos :role)
+        :version :version}))
+
+(def desktop-config>
+  (<=> {:name :name
+        :main (t/=> :desktop :main)
+        :nodejs (t/=> :desktop :nodejs)
+        :node-main (t/=> :desktop :node-main)
+        :user {:%name (t/=> :desktop :user-agent :name)
+               :%ver (t/=> :desktop :user-agent :ver)
+               :%nwver (t/=> :desktop :user-agent :nwver)
+               :%webkit_ver (t/=> :desktop :user-agent :webkit-ver)
+               :%osinfo (t/=> :desktop :user-agent :osinfo)}
+        :node-remote (t/=> :desktop :permissions)
+        :chromium-args (t/=> :desktop :chromium-args)
+        :js-flags (t/=> :desktop :js-flags)
+        :inject-js-start (t/=> :desktop :inject-js-start)
+        :inject-js-end (t/=> :desktop :inject-js-end)
+        :snapshot (t/=> :desktop :snapshot)
+        :dom_storage_quota (t/=> :desktop :dom-storage-quota)
+        :keywords (t/=> :desktop :keywords)
+        :bugs (t/=> :desktop :bugs)
+        :repositories (t/=> :desktop :repositories)
+        :window {:title (t/=> :desktop :window :title)
+                 :width (t/=> :desktop :window :width)
+                 :height (t/=> :desktop :window :height)
+                 :toolbar (t/=> :desktop :window :toolbar)
+                 :icon (t/=> :desktop :window :icon)
+                 :position (t/=> :desktop :window :position)
+                 :min_width (t/=> :desktop :window :min-width)
+                 :min_height (t/=> :desktop :window :min-height)
+                 :max_width (t/=> :desktop :window :max-width)
+                 :max_height (t/=> :desktop :window :max-height)
+                 :as_desktop (t/=> :desktop :window :as-desktop)
+                 :resizable (t/=> :desktop :window :resizable)
+                 :always_on_top (t/=> :desktop :window :always-on-top)
+                 :fullscreen (t/=> :desktop :window :fullscreen)
+                 :show_in_taskbar (t/=> :desktop :window :show-in-taskbar)
+                 :frame (t/=> :desktop :window :frame)
+                 :show (t/=> :desktop :window :show)
+                 :kiosk (t/=> :desktop :window :kiosk)}
+        :webkit {:plugin (t/=> :desktop :webkit :plugin)
+                 :java (t/=> :desktop :webkit :java)
+                 :page-cache (t/=> :desktop :webkit :page-cache)}}))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Config Builders
 
 ;;; Browser Configs
 
 ;; NOTE: :key isn't really necessary so we'll leave it out for now (chrome + opera)
 ;;   and we're omitting :plugins because that is being phased out
-(defn- chrome-config
+(defn- write-chrome-config
   "Creates the chrome extension config file using config.edn"
   []
   (io/make-parents (str "resources/extension/chrome/" u/project-name "/manifest.json"))
   (spit (str "resources/extension/chrome/" u/project-name "/manifest.json")
-        (js/generate-string
-         (config-reader
-          {:name [:name]
-           :version [:version]
-           :manifest_version ^{:browserific "config"} [2]
-           :description [:description]
-           :developer!name [:author :author-name]
-           :developer!url [:author :url]
-           :icons [:extensions :icons :chrome]
-           :default_locale [:default-locale]
-           :action!type [:extensions :action :type]
-           ;; FIXME default-icon
-           :action!default_icon [:extensions :action :default-icon]
-           :action!default_title [:extensions :action :default-title]
-           :action!default_popup [:extensions :action :default-popup]
-           :background!scripts [:extensions :background :scripts]
-           :background!persistent [:extensions :background :persistent]
-           :content_scripts!matches [:extensions :content :matches]
-           :content_scripts!exclude [:extensions :content :exclude]
-           :content_scripts!js [:extensions :content :js]
-           :content_scripts!css [:extensions :content :css]
-           :homepage [:extensions :homepage]
-           :incognito [:extensions :incognito]
-           :options_page [:extensions :options-page]
-           :permissions [:extensions :permissions]
-           :requirements [:extensions :requirements]
-           :web_accessible-resources [:extensions :web-accessible-resources]
-           :update_url [:extensions :update-url :chrome]
-
-           :chrome_ui_overrides [:extensions :extra :chrome :chrome-ui-overrides]
-           :chrome_settings_overrides [:extensions :extra :chrome :chrome-settings-overrides]
-           :chrome_url_overrides [:extensions :extra :chrome :chrome-url-overrides]
-           :commands [:extensions :extra :chrome :commands]
-           :current_locale [:extensions :extra :chrome :current-locale]
-           :devtools_page [:extensions :extra :chrome :devtools_page]
-           :externally_connectable [:extensions :extra :chrome :externally-connectable]
-           :file_browser_handlers [:extensions :extra :chrome :file-browser-handlers]
-           :import [:extensions :extra :chrome :import]
-           :input_components [:extensions :extra :chrome :input-components]
-           :minimum_chrome_version [:extensions :extra :chrome :minimum-chrome-version]
-           :nacl_modules [:extensions :extra :chrome :nacl-modules]
-           :oauth2 [:extensions :extra :chrome :oauth2]
-           :offline_enabled [:extensions :extra :chrome :offline-enabled]
-           :omnibox [:extensions :extra :chrome :omnibox]
-           :optional_permissions [:extensions :extra :chrome :optional-permissions]
-           :platforms [:extensions :extra :chrome :platforms]
-           :script_badge [:extensions :extra :chrome :script-badge]
-           :short_name [:extensions :extra :chrome :short-name]
-           :signature [:extensions :extra :chrome :signature]
-           :spellcheck [:extensions :extra :chrome :spellcheck]
-           :storage [:extensions :extra :chrome :storage]
-           :system_indicator [:extensions :extra :chrome :system-indicator]
-           :tts_engine [:extensions :extra :chrome :tts-engine]
-           :sandbox [:extensions :sandbox]})
-         {:pretty true})))
+    (to-js-config chrome-config>)))
 
 (defn- firefox-config
   "Creates the firefox config file using config.edn"
   []
   (io/make-parents (str "resources/extension/firefox/" u/project-name "/package.json"))
   (spit (str "resources/extension/firefox/" u/project-name "/package.json")
-        (js/generate-string
-         (config-reader
-          {:author [:author :author-name]
-           :contributors [:author :contributors]
-           :dependencies [:extensions :extra :firefox :dependencies]
-           :fullName [:name]
-           :homepage [:extensions :homepage]
-           :icon [:extensions :icons :firefox :48]
-           :icon64 [:extensions :icons :firefox :64]
-           :id [:author :author-id]
-           :lib [:extensions :extra :firefox :lib]
-           :license [:license]
-           :main [:extensions :extra :firefox :main]
-           :name [:extensions :extra :firefox :name]
-           :packages [:extensions :extra :firefox :packages]
-           :permissions!private-browsing [:extensions :private]
-           :permissions!cross-domain-content [:extensions :extra :firefox :permissions :cross-domain-content]
-           :preferences [:extensions :extra :firefox :preferences]
-           :tests [:extensions :extra :firefox :tests]
-           :title [:extensions :extra :firefox :title]
-           :translators [:extensions :extra :firefox :translators]
-           :version [:version]})
-         {:pretty true})))
+        (to-js-config firefox-config>)))
 
 (defn- opera-config
   "Creates the opera config file using config.edn"
   []
   (io/make-parents (str "resources/extension/opera/" u/project-name "/manifest.json"))
   (spit (str "resources/extension/opera/" u/project-name "/manifest.json")
-        (js/generate-string
-         (config-reader
-          {:name [:name]
-           :version [:version]
-           :manifest_version ^{:browserific "config"} [2]
-           :description [:description]
-           :developer!name [:author :author-name]
-           :developer!url [:author :url]
-           :icons [:extensions :icons :opera]
-           :default_locale [:default-locale]
-           :action!type [:extensions :action :type]
-           :action!default_icon [:extensions :action :default-icon :opera]
-           :action!default_title [:extensions :action :default-title]
-           :action!default_popup [:extensions :action :default-popup]
-           :background!scripts [:extensions :background :scripts]
-           :background!persistent [:extensions :background :persistent]
-           :content_scripts!matches [:extensions :content :matches]
-           :content_scripts!exclude [:extensions :content :exclude]
-           :content_scripts!js [:extensions :content :js]
-           :content_scripts!css [:extensions :content :css]
-           :homepage [:extensions :homepage]
-           :incognito [:extensions :incognito]
-           :options_page [:extensions :options-page]
-           :permissions [:extensions :permissions]
-           :requirements [:extensions :requirements]
-           :web_accessible_resources [:extensions :web-accessible-resources]
-           :update_url [:extensions :update-url :opera]
-           :sandbox [:extensions :sandbox]})
-         {:pretty true})))
+        (to-js-config )))
 
-;; FIXME: This is so bad
-(defn- safari-menus []
-  "Special parsing for Safari menus"
-  (vec
-    (for [menu (map vec (get-config [:extensions :extra :safari :menu]))]
-      (reduce
-        (fn [acc [k v]]
-          (case k
-            :Identifier (assoc acc k v)
-            :Menu-Identifier (assoc-in acc [:Menu-.-Items :Identifier] v)
-            (assoc-in acc [:Menu-.-Items k] v)))
-        {:Menu-.-Items {}} menu))))
-
-;; TODO: make sure that plist output order is not imporant
 (defn- safari-config
   "Creates the safari config file using config.edn"
   []
   (io/make-parents (str "resources/extension/safari/" u/project-name "/Info.plist"))
   (let [doctype "<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">"]
     (spit (str "resources/extension/safari/" u/project-name "/Info.plist")
-          (st/replace
-           (xml/indent-str
-            (xml/sexp-as-element
-             (p/plist
-               (->
-                 (config-reader
-                        {:Author [:author :author-name]
-                         :Builder-.-Version ^{:browserific "config"} ["6534.59.10"] ; Shouldn't matter
-                         :CFBundleDisplayName [:name]
-                         :CFBundleIdentifier [:author :author-id]
-                         :CFBundleInfoDictionaryVersion ^{:browserific "config"} ["6.0"] ; Shouldn't matter
-                         :CFBundleShortVersionString [:version]
-                         :CFBundleVersion ^{:browserific "config"} ["1.0"]; FIXME: lookup what this value signifies
-                         :Chrome!Bars [:extensions :extra :safari :bars]
-                         :Chrome!Context-.-Menu-.-Items [:extensions :extra :safari :context-items]
-                         :Chrome!Database-.-Quota [:extensions :extra :safari :database-quota]
-                         :Chrome!Popovers [:extensions :extra :safari :popovers]
-                         :Chrome!Global-.-Page [:extensions :extra :safari :global-page]
-                         :Content!Blacklist [:extensions :content :exclude]
-                         :Content!Scripts!Start[:extensions :extra :safari :start-script]
-                         :Content!Scripts!End [:extensions :content :js]
-                         :Content!Stylesheets [:extensions :content :css]
-                         :Content!Whitelist [:extensions :content :matches]
-                         :Description [:description]
-                         :ExtensionInfoDictionaryVersion ^{:browserific "config"} ["1.0"] ; FIXME: what is this?
-                         :Permissions!Website-.-Access!Allowed-.-Domains [:extensions :permissions] ; FIXME: are options like "tabs" just negligeable?
-                         :Permissions!Website-.-Access!Include-.-Secure-.-Pages [:extensions :private]
-                         :Permissions!Website-.-Access!Level [:extensions :extra :safari :access-level]
-                         :Update-.-Manifest-.-URL [:extensions :update-url :safari]
-                         :Website [:extensions :homepage]})
-                 (assoc-in [:Chrome :Menus] (safari-menus))))))
-           "?>" (str "?>\n" doctype "\n")))))
+      (st/replace
+        (xml/indent-str
+          (xml/sexp-as-element
+            (p/plist
+              (safari-config> (u/get-config)))))
+        "?>" (str "?>\n" doctype "\n")))))
 
 
 ;;; Mobile Configs
 
-(defn- get-image
-  "Returns the icons or splashes for some platform."
-  [type plat]
-  (into [:platform {:name plat}]
-    (if (= type :icon)
-      (map #(conj [:icon] %)
-        (get-config [:mobile :icons (keyword plat)]))
-      (map #(conj [:splash] %)
-        (get-config [:mobile :splash (keyword plat)])))))
-
-;; FIXME: make each option output nothing if nil
 (defn- mobile-config
   "Outputs the mobile config file from the config.edn data"
   []
@@ -316,27 +326,7 @@ linux32, linux64, osx32, osx64, windows32, windows64")))
     (spit loc
       (xml/indent-str
         (xml/sexp-as-element
-          (-> [:widget {:id (get-config [:mobile :id])
-                        :version (get-config [:version])
-                        :xmlns "http://www.w3.org/ns/widgets"
-                        :xmlns:cdv "http://cordova.apache.org/ns/1.0"}
-               [:name (get-config [:name])]
-               [:description (get-config [:description])]
-               [:author {:email (get-config [:author :email])
-                         :href (get-config [:author :url])}
-                (get-config [:author :author-name])]
-               [:content {:src (get-config [:mobile :content])}]
-               [:icon (get-config [:mobile :icons :global])]]
-            (into (map #(conj [:access] {:origin %})
-                    (get-config [:mobile :permissions])))
-            (into
-              (map (fn [[name val]]
-                     [:preference {:name (subs (str name) 1) :value val}])
-                (get-config [:mobile :preferences])))
-            (into (map #(get-image :icon %) ["amazon-fireos" "android"
-                                             "blackberry" "ios" "tizen" "wp8"]))
-            (into (map #(get-image :splash %) ["amazon-fireos" "android"
-                                               "blackberry" "ios" "wp8"]))))))))
+          (mobile-config> (u/get-config)))))))
 
 
 (defn- firefoxos-config
@@ -346,31 +336,7 @@ linux32, linux64, osx32, osx64, windows32, windows64")))
                      "/merges/firefoxos/manifest.webapp"))
   (spit (str "resources/mobile/" u/project-name
           "/merges/firefoxos/manifest.webapp")
-    (js/generate-string
-      (config-reader
-        {:name [:name]
-         :description [:description]
-         :type [:mobile :firefoxos :type]
-         :launch_path [:mobile :content]
-         :icons [:mobile :firefoxos :icons]
-         :developer!name [:author :author-name]
-         :developer!url [:author :url]
-         :default_locale [:default-locale]
-         :activities [:mobile :firefoxos :activities]
-         :appcache_path [:mobile :firefoxos :appcache]
-         :chrome [:mobile :firefoxos :chrome]
-         :fullscreen [:mobile :firefoxos :fullscreen]
-         :installs_allowed_from [:mobile :firefoxos :installs-allowed-from]
-         :locales [:mobile :firefoxos :locales]
-         :messages [:mobile :firefoxos :messages]
-         :orientation [:mobile :firefoxos :orientation]
-         :origin [:mobile :firefoxos :origin]
-         :permissions [:mobile :firefoxos :permissions]
-         :precompile [:mobile :firefoxos :precompile]
-         :redirects [:mobile :firefoxos :redirects]
-         :role [:mobile :firefoxos :role]
-         :version [:version]})
-      {:pretty true})))
+    (to-js-config firefoxos-config>)))
 
 
 ;;; Desktop Configs
@@ -380,49 +346,7 @@ linux32, linux64, osx32, osx64, windows32, windows64")))
   [platform]
   (io/make-parents (str "resources/desktop/deploy/" platform "/package.json"))
   (spit (str "resources/desktop/deploy/" platform "/package.json")
-        (js/generate-string
-         (config-reader
-          {:name [:name]
-           :main [:desktop :main]
-           :nodejs [:desktop :nodejs]
-           :node-main [:desktop :node-main]
-           :user!%name [:desktop :user-agent :name]
-           :user!%ver [:desktop :user-agent :ver]
-           :user!%nwver [:desktop :user-agent :nwver]
-           :user!%webkit_ver [:desktop :user-agent :webkit-ver]
-           :user!%osinfo [:desktop :user-agent :osinfo]
-           :node-remote [:desktop :permissions]
-           :chromium-args [:desktop :chromium-args]
-           :js-flags [:desktop :js-flags]
-           :inject-js-start [:desktop :inject-js-start]
-           :inject-js-end [:desktop :inject-js-end]
-           :snapshot [:desktop :snapshot]
-           :dom_storage_quota [:desktop :dom-storage-quota]
-           :keywords [:desktop :keywords]
-           :bugs [:desktop :bugs]
-           :repositories [:desktop :repositories]
-           :window!title [:desktop :window :title]
-           :window!width [:desktop :window :width]
-           :window!height [:desktop :window :height]
-           :window!toolbar [:desktop :window :toolbar]
-           :window!icon [:desktop :window :icon]
-           :window!position [:desktop :window :position]
-           :window!min_width [:desktop :window :min-width]
-           :window!min_height [:desktop :window :min-height]
-           :window!max_width [:desktop :window :max-width]
-           :window!max_height [:desktop :window :max-height]
-           :window!as_desktop [:desktop :window :as-desktop]
-           :window!resizable [:desktop :window :resizable]
-           :window!always_on_top [:desktop :window :always-on-top]
-           :window!fullscreen [:desktop :window :fullscreen]
-           :window!show_in_taskbar [:desktop :window :show-in-taskbar]
-           :window!frame [:desktop :window :frame]
-           :window!show [:desktop :window :show]
-           :window!kiosk [:desktop :window :kiosk]
-           :webkit!plugin [:desktop :webkit :plugin]
-           :webkit!java[:desktop :webkit :java]
-           :webkit!page-cache [:desktop :webkit :page-cache]})
-         {:pretty true})))
+        (to-js-config desktop-config>)))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

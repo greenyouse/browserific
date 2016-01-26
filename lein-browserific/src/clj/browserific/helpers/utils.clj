@@ -17,10 +17,9 @@
   (or (:config options) "src/config.edn"))
 
 (defn get-config
-  "Helper fn for getting data from the config-file"
-  [coll]
-  (let [conf (-> config-file slurp read-string)]
-    (get-in conf coll)))
+  "Helper fn that returns the contents of the config file"
+  []
+  (-> config-file slurp read-string))
 
 (defn yellow-text
   [msg & more]
