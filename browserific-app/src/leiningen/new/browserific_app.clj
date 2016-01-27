@@ -19,12 +19,9 @@
       ["project.clj" (render "project.clj" data)]
       ["README.md" (render "project-README.md" data)]
       ["LICENSE" (render "LICENSE" data)]
-      ["builds/browserific-build.clj" (render "browserific-build.clj" data)]
-      ["builds/chenex-build.clj" (render "chenex-build.clj" data)]
       ["src/config.edn" (render "config.edn" data)]
       ["src/{{sanitized}}/core.cljx" (render "core.cljx" data)]
       ["test/core_test.clj" (render "test.cljs" data)]
-      ["dev/brepl.cljs" (render "brepl.cljs" data)]
 
       ;; public
       ["resources/public/index.html" (render "index.html" data)]
@@ -37,4 +34,5 @@
       "resources/mobile/{{sanitized}}/www/img"
       "resources/mobile/{{sanitized}}/platforms"
       "resources/mobile/{{sanitized}}/plugins"
-      "resources/mobile/{{sanitized}}/merges")))
+      "resources/mobile/{{sanitized}}/merges"
+      "dev")))

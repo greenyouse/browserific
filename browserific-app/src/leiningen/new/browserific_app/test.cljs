@@ -1,7 +1,6 @@
 (ns {{name}}.core-test
-    (:require-macros [cemerick.cljs.test
-                      :refer (is deftest with-test run-tests testing test-var)])
-    (:require [cemerick.cljs.test :as t]))
+    (:require-macros [cljs.test :as test :refer [test-var]
+                      :refer-macros [are is deftest]]))
 
 
 (deftest a-test
