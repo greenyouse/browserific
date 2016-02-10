@@ -1,0 +1,125 @@
+(ns browserific.builds.browserific
+  "Writes the browserific builds"
+  (:require [browserific.helpers.utils :as u]
+            [clojure.java.io :as io]
+            [clojure.pprint :refer [pprint]]
+            [plugin-helpers.core :as p]))
+
+;; TODO: split browser extensions using gclosure modules
+;; TODO: add :cache-analysis
+;; FIXME: have :pretty-print false
+;; FIXME: watch out! the browser extensions may need a web_accessible_resource (aka permissions)
+;; in manifest.json (or whatever) pointing to the sourcemap file
+;; http://stackoverflow.com/questions/15097945/do-source-maps-work-for-chrome-extensions
+;; https://developer.chrome.com/extensions/manifest/web_accessible_resources
+(defn- build-template
+  "A general template for lein-cljsbuild profiles"
+  [env platform]
+  (fn [id profile type]
+    (let [root (case env
+                 "mobile" (str "resources/" env "/" u/project-name "/merges/" platform "/js/")
+                 "desktop" (str "resources/" env "/deploy/" platform "/js/")
+                 ;;FIXME: use correct output path for extensions
+                 "extension" (str "resources/" env "/" platform "/" u/project-name "/js/"))
+          to  (str root id ".js")
+          main (case id
+                 "app"  (symbol (str u/project-name ".core"))
+                 "content"  (symbol (str u/project-name ".content.core"))
+                 "background"  (symbol (str u/project-name ".background.core")))
+          src (if (not= "app" id) (str "target/intermediate/" platform "/" id)
+                  (str "target/intermediate/" platform))
+          asset (str "js/" profile "-" id)
+          nodejs (if (= env "desktop")
+                   [[:target] :nodejs])
+          assoc-build (fn [coll]
+                        (reduce (fn [acc [k v]]
+                                  (assoc-in acc k v))
+                                {} coll))]
+      (case type
+        "dev" (assoc-build
+               [[[:compiler :optimizations] :none]
+                [[:compiler :main] main]
+                nodejs
+                [[:compiler :output-to] to]
+                [[:compiler :output-dir] (str root profile "-" id)]
+                [[:compiler :asset-path] asset]
+                [[:compiler :source-map] true]
+                [[:source-paths] ["dev" src]]
+                [[:id] (str profile "-dev")]])
+
+        "test" (assoc-build
+                 [[[:compiler :optimizations] :none]
+                  [[:compiler :main] main]
+                  nodejs
+                  [[:compiler :output-dir] (str root profile "-" id "-test")]
+                  [[:compiler :source-map] true]
+                  [[:source-paths] [src (str"test/" platform)]]
+                  [[:id] (str profile "-test")]])
+
+        "release" (assoc-build
+                    [[[:compiler :optimizations] :advanced]
+                     [[:compiler :main] main]
+                     nodejs
+                     [[:compiler :output-to] to]
+                     [[:compiler :output-dir] (str root profile "-" id "-release")]
+                     [[:compiler :source-map] (str to ".map")]
+                     [[:source-paths] [src]]
+                     [[:id] profile]])))))
+
+;; env := 'extension' | 'desktop' | 'mobile'
+;; platform := [vendor-id]
+;; id := 'app' | 'background' | 'content'
+;; profile := platform | 'all' | env
+;; type := 'dev' | 'test' | 'release'
+(defn- write-platform
+  "This creates a correct build configuration for each platform"
+  [platform multi]
+  (let [id (if multi ["background" "content"] ["app"])
+        build (fn [env]
+                (let [b (build-template env platform)]
+                  (for [i id
+                        p [platform "all" env]
+                        t ["dev" "test" "release"]]
+                    (b i p t))))]
+    (cond
+      (u/mobile platform) (build "mobile")
+      (u/desktop platform) (build "desktop")
+      (u/browsers platform) (build "extension"))))
+
+
+
+(defn write-browserific-builds
+  "Creates a builds/builds.clj file full of all the cljsbuild
+  configurations. Also reads config.edn to only build relevant
+  platform configs."
+  [{:keys [draft multi]}]
+  (let [custom-build (if multi
+                       ;; for browser extensions, there's two JS outputs
+                       [{:id "draft-background"
+                         :source-paths ["dev" (str "target/intermediate/" draft "/background")]
+                         :compiler {:output-to "resources/public/js/background.js"
+                                    :output-dir "resources/public/js/background"
+                                    :source-map true
+                                    :optimizations :none
+                                    :asset-path "js/background"
+                                    :main (symbol (str u/project-name ".background.core"))}}
+                        {:id "draft-content"
+                         :source-paths ["dev" (str "target/intermediate/" draft "/content")]
+                         :compiler {:output-to "resources/public/js/content.js"
+                                    :output-dir "resources/public/js/content"
+                                    :source-map true
+                                    :optimizations :none
+                                    :asset-path "js/content"
+                                    :main (symbol (str u/project-name ".content.core"))}}]
+                       ;; just one JS output for everything else
+                       {:id "draft"
+                        :source-paths ["dev" (str "target/intermediate/" draft)]
+                        :compiler {:output-to "resources/public/js/app.js"
+                                   :output-dir "resources/public/js/out"
+                                   :source-map true
+                                   :optimizations :none
+                                   :asset-path "js/out"
+                                   :main (symbol (str u/project-name ".core"))}})
+        builds (reduce #(into % (write-platform %2 multi))
+                 (if draft [custom-build] []) u/platforms)]
+    (p/assoc-in-project [:cljsbuild :builds] builds)))
