@@ -21,6 +21,11 @@
   []
   (-> config-file slurp read-string))
 
+(defn select-config
+  "Looks up a value from the config file"
+  [& ks]
+  (get-in (get-config) ks))
+
 (defn yellow-text
   [msg & more]
   (if more
@@ -39,17 +44,17 @@
 
 ;; here are the different platforms we're targeting
 (def browsers
-  (-> (try (get-config [:extensions :platforms])
+  (-> (try (select-config :extensions :platforms)
            (catch Exception e (config-warning e)))
       set))
 
 (def mobile
-  (-> (try (get-config [:mobile :platforms])
+  (-> (try (select-config :mobile :platforms)
            (catch Exception e (config-warning e)))
       set))
 
 (def desktop
-  (-> (try (get-config [:desktop :platforms])
+  (-> (try (select-config :desktop :platforms)
            (catch Exception e (config-warning e)))
       set))
 

@@ -3,14 +3,14 @@
   of the config.edn file and saves a snapshot of the state
   each time a configuration option gets edited."
   (:require [browserific.helpers.utils :as u]
+            [clojure.java.io :as io]
+            [clojure.pprint :refer [pprint]]
+            [compojure.core :refer [GET PUT DELETE defroutes]]
             [compojure.handler :as handler]
             [compojure.route :as route]
-            [compojure.core :refer [GET PUT DELETE defroutes]]
-            [ring.util.response :as resp]
-            [ring.middleware.edn :refer [wrap-edn-params]]
-            [clojure.java.io :as io]
             [ring.adapter.jetty :as jetty]
-            [clojure.pprint :refer [pprint]]))
+            [ring.middleware.edn :refer [wrap-edn-params]]
+            [ring.util.response :as resp]))
 
 (defn- edn-response [data & [status]]
   {:status (or status 200)
@@ -20,8 +20,7 @@
 (defn- init
   "Loads the config file on startup"
   []
-  (let [config (-> u/config-file slurp read-string)]
-    (edn-response {:coll config})))
+  (edn-response {:coll (u/get-config)}))
 
 (defn- update-config
   "Saves a copy of the current state back to the config.edn file"

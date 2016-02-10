@@ -6,7 +6,7 @@
             [clojure.data.xml :as xml]
             [clojure.java.io :as io]
             [clojure.string :as st]
-            [deepfns.core :as d]
+            [deepfns.core :refer [<=>]]
             [deepfns.transitive :as t]
             [leiningen.core.main :as l]))
 
@@ -281,7 +281,7 @@ linux32, linux64, osx32, osx64, windows32, windows64")))
 
 ;; NOTE: :key isn't really necessary so we'll leave it out for now (chrome + opera)
 ;;   and we're omitting :plugins because that is being phased out
-(defn- write-chrome-config
+(defn- chrome-config
   "Creates the chrome extension config file using config.edn"
   []
   (io/make-parents (str "resources/extension/chrome/" u/project-name "/manifest.json"))
