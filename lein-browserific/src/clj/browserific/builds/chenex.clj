@@ -2,7 +2,8 @@
   "Writes the chenex build configurations"
   (:require [browserific.helpers.utils :as u]
             [clojure.java.io :as io]
-            [clojure.pprint :refer [pprint]]))
+            [clojure.pprint :refer [pprint]]
+            [plugin-helpers.core :as p]))
 
 (defn- to-set [{:keys [class plat]}]
   "helper fn to convert the platform into a set"
@@ -38,6 +39,5 @@
         c-set (to-set custom)
         all-platforms (mapv #(classify-platform %) u/platforms)
         builds (mapv write-build all-platforms)]
-    (do (io/make-parents "builds/chenex-builds.clj")
-        (spit "builds/chenex-build.clj" (with-out-str (pprint builds)))
-        (if plat (spit "builds/chenex-repl.clj" (with-out-str (pprint c-set)))))))
+    (do (p/assoc-in-project [:chenex :builds] builds)
+        (when plat (p/assoc-in-project [:chenex :repl] c-set)))))
