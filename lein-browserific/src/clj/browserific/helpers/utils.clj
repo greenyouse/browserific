@@ -63,6 +63,16 @@
     ~@mobile
     ~@desktop})
 
+;; these are lists of every platform
+(def all-browsers
+  #{"firefox" "chrome" "opera" "safari"})
+
+(def all-mobile
+  #{"amazon-fireos" "android" "blackberry" "firefoxos" "ios"
+    "ubuntu" "wp7" "wp8" "tizen"})
+
+(def all-desktop
+  #{"osx32" "osx64" "windows32" "windows64" "linux32" "linux64"})
 
 (def project-file
   (-> "project.clj" slurp))
