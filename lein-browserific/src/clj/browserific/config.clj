@@ -8,7 +8,7 @@
             [clojure.string :as st]
             [deepfns.core :refer [<=>]]
             [deepfns.transitive :as t]
-            [leiningen.core.main :as l]))
+            [plugin-helpers.core :as ph]))
 
 ;; TODO: Not sure if necessary but some things, such as Firefox Extension stuff,
 ;; can be injected with chenex's inner transformations. Error checking for
@@ -20,21 +20,22 @@
 (defn- config-check
   "Validates whether the config file has proper platforms listed"
   [browsers desktops mobiles]
-  (letfn [(checker [platform platform-types err]
+  (letfn [(fmt-error [msg platform all]
+            (let [all-text (st/join " " all)]
+              (format msg platform all-text)))
+          (checker [platform all msg]
             (if-not (contains? platform-types platform)
-              (l/abort (u/red-text err))))]
+              (let [err (fmt-error msg platform all)]
+                (ph/abort err))))]
     (doseq [browser browsers]
-      (checker browser u/browsers
-                (str "Browserific Error: browser " browser " not supported, options are:
-firefox, chrome, opera, safari")))
+      (checker browser u/all-browsers
+        "Browserific Error: browser %s not supported, options are: \n%s"))
     (doseq [desktop desktops]
-      (checker desktop u/desktop
-               (str "Browserific Error: desktop system " desktop " not supported, options are:
-linux32, linux64, osx32, osx64, windows32, windows64")))
+      (checker desktop u/all-desktop
+        "Browserific Error: desktop system %s not supported, options are: \n%s"))
     (doseq [mobile mobiles]
-      (checker mobile u/mobile
-               (str "Browserific Error: mobile system " mobile " not supported, options are:
- amazon-fireos, android, blackberry, firefoxos, ios, ubuntu, wp7, wp8, tizen")))))
+      (checker mobile u/all-mobile
+        "Browserific Error: mobile system %s not supported, options are: \n%s" ))))
 
 (defn- with-config
   "Run some function f over the config file"
@@ -361,11 +362,11 @@ linux32, linux64, osx32, osx64, windows32, windows64")))
         mobile u/mobile]
     (config-check browsers desktops mobile)
     (doseq [vendor browsers]
-      (cond
-       (= vendor "chrome") (chrome-config)
-       (= vendor "firefox") (firefox-config)
-       (= vendor "opera") (opera-config)
-       (= vendor "safari") (safari-config)))
+      (case vendor
+        "chrome" (chrome-config)
+        "firefox" (firefox-config)
+        "opera" (opera-config)
+        "safari" (safari-config)))
     (doseq [vendor mobile]
       (cond
        (= vendor "firefoxos") (do (mobile-config)
@@ -373,10 +374,4 @@ linux32, linux64, osx32, osx64, windows32, windows64")))
        :else
         (mobile-config)))
     (doseq [vendor desktops]
-      (cond
-        (= vendor "linux32" ) (desktop-config "linux32")
-        (= vendor "linux64" ) (desktop-config "linux64")
-        (= vendor "osx32") (desktop-config "osx32")
-        (= vendor "osx64") (desktop-config "osx64")
-        (= vendor "windows32") (desktop-config "windows32")
-        (= vendor "windows64") (desktop-config "windows64")))))
+      (desktop-config vendor))))

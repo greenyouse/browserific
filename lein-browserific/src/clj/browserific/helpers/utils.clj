@@ -1,20 +1,17 @@
 (ns browserific.helpers.utils
-  (:require [leiningen.core.main :as l]
-            [clojure.string :as st]))
+  (:require [clojure.set :as s]
+            [clojure.string :as st]
+            [leiningen.core.main :as l]
+            [plugin-helpers.core :as p]))
 
-;; TODO: look in all profiles, any other spots I missed?
-(def options
+(def project-opts
   "Map of browserific options"
-  (let [p (-> "project.clj" slurp read-string (nthrest 3))
-        psplit (partition 2 p)
-        m (reduce #(into %1 [(into [] %2)])
-            {} psplit)]
-    (or (:browserific m)
-      (get-in m [:profiles :dev :browserific]))))
+  (or (p/get-project-value :browserific)
+      (p/get-project-value :profiles :dev :browserific)))
 
 (def config-file
   "Path of the selected config.edn file to use"
-  (or (:config options) "src/config.edn"))
+  (or (:config project-opts) "src/config.edn"))
 
 (defn get-config
   "Helper fn that returns the contents of the config file"
@@ -26,20 +23,8 @@
   [& ks]
   (get-in (get-config) ks))
 
-(defn yellow-text
-  [msg & more]
-  (if more
-    (str "\033[33m" (reduce #(str % %2) msg more) "\033[0m")
-    (str "\033[33m" msg "\033[0m")))
-
-(defn red-text
-  [msg & more]
-  (if more
-    (str "\033[31m" (reduce #(str % %2) msg more) "\033[0m")
-    (str "\033[31m" msg "\033[0m")))
-
 (defn- config-warning [e]
-  (l/warn (str (red-text e) "\n\n")))
+  (p/warning (str e "\n\n")))
 
 
 ;; here are the different platforms we're targeting
@@ -59,11 +44,9 @@
       set))
 
 (def platforms
-  `#{~@browsers
-    ~@mobile
-    ~@desktop})
+  (clojure.set/union browsers mobile desktop))
 
-;; these are lists of every platform
+;; these are all available platforms
 (def all-browsers
   #{"firefox" "chrome" "opera" "safari"})
 
@@ -74,14 +57,8 @@
 (def all-desktop
   #{"osx32" "osx64" "windows32" "windows64" "linux32" "linux64"})
 
-(def project-file
-  (-> "project.clj" slurp))
-
-;; HACK: matches the project name using this crappy regex, works OK
 (def project-name
-  (-> (re-find #"\(defproject [A-Za-z1-9-_/.]+" project-file)
-      (st/split #" ")
-      (second)))
+  (p/get-project-name))
 
 (defn sub-file-location
   "Gives the base name of a file and the path from
@@ -94,5 +71,5 @@
    (not-empty (re-seq #"content/" file)) (->> (.indexOf file "content")
                                               (subs file))
    :default
-   (l/abort (red-text "Browserific Error: Could not compile file: " file
-                      "\n\nBrowserific source files must be in either the background or content directores.\n"))))
+   (p/abort (str "Browserific Error: Could not compile file: " file
+              "\n\nBrowserific source files must be in either the background or content directores.\n"))))
