@@ -24,7 +24,7 @@
             (let [all-text (st/join " " all)]
               (format msg platform all-text)))
           (checker [platform all msg]
-            (if-not (contains? platform-types platform)
+            (if-not (contains? all platform)
               (let [err (fmt-error msg platform all)]
                 (ph/abort err))))]
     (doseq [browser browsers]
