@@ -6,7 +6,7 @@
             [browserific.config :as conf]
             [browserific.helpers.utils :as u :refer [yellow-text red-text]]
             [browserific.config.server :as server]
-            [browserific.builds.browserific :as bbuilds]
+            [browserific.builds.cljsbuild :as cljsbuild]
             [browserific.builds.chenex :as cb]
             [clojure.java.browse :as b]
             [greenyouse.chenex.core :as cc])
@@ -27,7 +27,7 @@
 (defn- build
   "Write lein-cljsbuilds for all relevant platforms"
   ([]
-   (let [{:keys [draft multi] :as opts} u/options]
+   (let [{:keys [draft builds] :as opts} u/options]
      (lmain/info (yellow-text "Writing a new lein-cljsbuild configuration.\n"))
      (cond
        (and draft (not (contains? u/platforms draft))) ;invalid draft platform
@@ -37,11 +37,11 @@
        (do (lmain/warn
              (red-text "Warning: no draft platform specified but building config anyway.\n"))
            (fs/delete-dir "builds")
-           (bbuilds/write-browserific-builds opts)
+           (cljsbuild/write-builds opts)
            (cb/write-chenex-builds))
        :else
        (do (fs/delete-dir "builds")
-           (bbuilds/write-browserific-builds opts)
+           (cljsbuild/write-builds opts)
            (cb/write-chenex-builds draft))))))
 
 (defn- compile

@@ -31,9 +31,7 @@
    plat))
 
 (defn write-chenex-builds
-  "Creates a builds/chenex-builds.clj for chenex to parse with and a
-  builds/chenex-repl.clj for the REPL. Also reads config.edn to only
-  build relevant platform configs."
+  "Inserts chenex builds and chenex repl settings into the project.clj."
   [& plat]
   (let [custom (classify-platform (first plat))
         c-set (to-set custom)
